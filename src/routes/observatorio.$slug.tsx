@@ -19,7 +19,6 @@ import {
   MethodologySection,
 } from "@/features/observatorio/components";
 import type { Metric } from "@/features/observatorio/types";
-import AcumarDataExplorer from "@/features/observatorio/AcumarDataExplorer";
 
 export const Route = createFileRoute("/observatorio/$slug")({
   loader: ({ params }) => {
@@ -210,9 +209,6 @@ function CloacalStudy() {
             </div>
           )}
         </div>
-      </section>
-      <section className="mx-auto max-w-7xl px-5 py-12">
-        <AcumarDataExplorer />
       </section>
       <section className="mx-auto max-w-7xl px-5 py-12">
         <p className="eyebrow text-lime">Indicadores y seguimiento</p>
