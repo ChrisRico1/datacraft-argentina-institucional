@@ -243,7 +243,7 @@ function Index() {
                 Transformamos información en soluciones. <span className="iridescent-text">Tecnología en resultados.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg text-ink-muted">
-                Acompañamos a organizaciones públicas y privadas a convertir sus procesos y datos en herramientas concretas: soluciones propias y desarrollos a medida.
+                Acompañamos a organizaciones públicas y empresas privadas a convertir sus procesos y datos en herramientas concretas: soluciones propias y desarrollos a medida.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <a href={primaryCtaHref} {...ext} className={btnPrimary}>
