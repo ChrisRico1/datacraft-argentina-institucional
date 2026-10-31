@@ -49,8 +49,9 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           title: `${ref.name}: referencia aproximada`, alt: `${ref.name}: referencia aproximada`, keyboard: true,
         }).bindPopup(popup).addTo(group);
       });
-      if (refs.length === 1) map.setView([refs[0].lat, refs[0].lng], 12);
-      else map.fitBounds(L.latLngBounds(refs.map((ref) => [ref.lat, ref.lng])), { padding: [28, 28] });
+      const first = refs[0];
+      if (refs.length === 1 && first) map.setView([first.lat, first.lng], 12);
+      else if (refs.length > 0) map.fitBounds(L.latLngBounds(refs.map((ref) => [ref.lat, ref.lng])), { padding: [28, 28] });
     });
     return () => { cancelled = true; };
   }, [municipality, ready]);
