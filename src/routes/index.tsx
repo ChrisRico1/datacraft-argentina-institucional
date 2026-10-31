@@ -117,7 +117,7 @@ function DataViz() {
   return (
     <div aria-hidden className="relative rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 backdrop-blur">
       <div className="flex items-center justify-between text-xs text-ink-muted">
-        <span className="eyebrow">Señal · datos</span>
+        <span className="eyebrow">WORKFLOWS</span>
         <span className="flex items-center gap-1.5"><span className="pulse-soft h-2 w-2 rounded-full bg-lime" />en proceso</span>
       </div>
       <div className="mt-6 flex h-40 items-end gap-3">
@@ -171,7 +171,7 @@ function Index() {
               ))}
             </ul>
           </nav>
-          <a href={primaryCtaHref} {...ext} className={`${btnPrimary} hidden !px-4 !py-2 lg:inline-flex`}>Hablemos de tu proyecto</a>
+          <a href={primaryCtaHref} {...ext} className={`${btnPrimary} hidden !px-4 !py-2 lg:inline-flex`}>Agenda una reunión</a>
           <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="menu-movil"
             aria-label={open ? "Cerrar menú" : "Abrir menú"} className="rounded-md p-2 text-ink-foreground lg:hidden">
             {open ? <X /> : <Menu />}
@@ -195,7 +195,7 @@ function Index() {
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-lime/30 px-3 py-1.5 text-lime">
-                <span className="h-1.5 w-1.5 rounded-full bg-lime" /> Consultora tecnológica integral · Argentina
+                <span className="h-1.5 w-1.5 rounded-full bg-lime" /> CONSULTORA TECNOLÓGICA · ARGENTINA
               </p>
               <h1 className="mt-6 text-4xl font-semibold leading-[1.05] text-ink-foreground sm:text-6xl">
                 Transformamos información en soluciones. <span className="iridescent-text">Tecnología en resultados.</span>
@@ -205,7 +205,7 @@ function Index() {
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <a href={primaryCtaHref} {...ext} className={btnPrimary}>
-                  Hablemos de tu proyecto <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  Agenda una reunión <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
                 <a href="#soluciones" className={btnGhost}>Conocé nuestras soluciones <ArrowRight className="h-4 w-4" /></a>
               </div>
