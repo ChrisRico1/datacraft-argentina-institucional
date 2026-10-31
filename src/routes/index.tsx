@@ -3,6 +3,8 @@ import { useState, type ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, Building2, Store, Landmark, Workflow, BarChart3, Bot,
   LayoutGrid, ShieldCheck, Map, Menu, X, Instagram, Facebook, Youtube, Check,
+  LayoutDashboard, MessageCircle, Wrench, Smartphone, GraduationCap, Boxes,
+  type LucideIcon,
 } from "lucide-react";
 import { site, primaryCtaHref } from "@/config/site";
 import logoAsset from "@/assets/datacraft-logo.jpeg.asset.json";
@@ -64,16 +66,16 @@ const sectors = [
     needs: ["Consultas por canales digitales", "Stock y ventas", "Seguimiento de clientes"] },
 ];
 
-const experience = [
-  { tag: "Experiencia", title: "Tablero ejecutivo de información territorial",
+const experience: { icon: LucideIcon; tag: string; title: string; text: string }[] = [
+  { icon: LayoutDashboard, tag: "Experiencia", title: "Tablero ejecutivo de información territorial",
     text: "Diseño de un tablero para visualizar indicadores territoriales y apoyar la toma de decisiones." },
-  { tag: "Desarrollo", title: "Captación de consultas vía WhatsApp",
+  { icon: MessageCircle, tag: "Desarrollo", title: "Captación de consultas vía WhatsApp",
     text: "Integración con WhatsApp Cloud API que registra consultas entrantes en Google Sheets." },
-  { tag: "Desarrollo", title: "Herramientas de gestión con Apps Script",
+  { icon: Wrench, tag: "Desarrollo", title: "Herramientas de gestión con Apps Script",
     text: "Automatizaciones, formularios y flujos sobre Google Workspace para ordenar procesos." },
-  { tag: "Prototipo", title: "Gestión y financiación de celulares",
+  { icon: Smartphone, tag: "Prototipo", title: "Gestión y financiación de celulares",
     text: "Prototipo funcional para administrar ventas financiadas, cuotas y seguimiento." },
-  { tag: "Experiencia", title: "Landing pages y capacitaciones",
+  { icon: GraduationCap, tag: "Experiencia", title: "Landing pages y capacitaciones",
     text: "Sitios institucionales y espacios de formación en herramientas digitales y datos." },
 ];
 
@@ -109,6 +111,46 @@ function SectionHead({ eyebrow, title, text, dark }: { eyebrow: string; title: R
       <h2 className={`mt-3 text-3xl font-semibold sm:text-4xl ${dark ? "text-ink-foreground" : ""}`}>{title}</h2>
       {text && <p className={`mt-4 text-lg ${dark ? "text-ink-muted" : "text-muted-foreground"}`}>{text}</p>}
     </div>
+  );
+}
+
+type CardProps = {
+  icon: LucideIcon;
+  label: string;
+  title: string;
+  text?: string;
+  items?: string[];
+  dark?: boolean;
+  id?: string;
+};
+
+/** Tarjeta única: todas las tarjetas del sitio comparten estructura y fondo de etiquetas. */
+function Card({ icon: Icon, label, title, text, items, dark, id }: CardProps) {
+  const shell = dark
+    ? "border-ink-foreground/10 bg-ink-2/60 hover:border-lime/50"
+    : "border-border bg-card hover:shadow-lg";
+  const chip = dark ? "bg-ink-foreground/10 text-ink-foreground" : "bg-secondary text-secondary-foreground";
+  const check = dark ? "text-lime" : "text-sage";
+  return (
+    <article id={id} className={`scroll-mt-24 rounded-2xl border p-7 transition hover:-translate-y-1 ${shell}`}>
+      <div className="flex items-start justify-between gap-3">
+        <span className={`grid h-12 w-12 place-items-center rounded-xl ${chip}`}>
+          <Icon className="h-6 w-6" aria-hidden />
+        </span>
+        <span className={`eyebrow rounded-full px-3 py-1.5 ${chip}`}>{label}</span>
+      </div>
+      <h3 className={`mt-6 text-xl font-semibold ${dark ? "text-ink-foreground" : ""}`}>{title}</h3>
+      {text && <p className={`mt-2 ${dark ? "text-sm text-ink-muted" : "text-muted-foreground"}`}>{text}</p>}
+      {items && items.length > 0 && (
+        <ul className={`mt-5 grid gap-2 text-sm sm:grid-cols-2 ${dark ? "text-ink-foreground" : ""}`}>
+          {items.map((it) => (
+            <li key={it} className="flex gap-2">
+              <Check className={`mt-0.5 h-4 w-4 shrink-0 ${check}`} aria-hidden />{it}
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
   );
 }
 
@@ -236,22 +278,7 @@ function Index() {
             </ul>
             <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, i) => (
-                <article id={s.id} key={s.id}
-                  className="group scroll-mt-24 rounded-2xl border bg-card p-7 transition hover:-translate-y-1 hover:shadow-lg">
-                  <div className="flex items-start justify-between">
-                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-secondary-foreground">
-                      <s.icon className="h-6 w-6" aria-hidden />
-                    </span>
-                    <span className="font-display text-sm text-sage">0{i + 1}</span>
-                  </div>
-                  <h3 className="mt-6 text-xl font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{s.desc}</p>
-                  <ul className="mt-5 grid gap-2 text-sm sm:grid-cols-2">
-                    {s.items.map((it) => (
-                      <li key={it} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden />{it}</li>
-                    ))}
-                  </ul>
-                </article>
+                <Card key={s.id} id={s.id} icon={s.icon} label={`0${i + 1}`} title={s.title} text={s.desc} items={s.items} />
               ))}
             </div>
           </div>
@@ -261,17 +288,9 @@ function Index() {
         <section id="sectores" className="py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Sectores" title="Soluciones pensadas para cada tipo de organización." />
-            <div className="mt-12 grid gap-4 md:grid-cols-3">
-              {sectors.map((s) => (
-                <article key={s.title} className="rounded-2xl border bg-card p-7 transition hover:border-primary">
-                  <s.icon className="h-8 w-8 text-primary" aria-hidden />
-                  <h3 className="mt-5 text-xl font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{s.text}</p>
-                  <p className="eyebrow mt-6 text-sage">Necesidades frecuentes</p>
-                  <ul className="mt-3 space-y-2 text-sm">
-                    {s.needs.map((n) => <li key={n} className="border-t pt-2">{n}</li>)}
-                  </ul>
-                </article>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {sectors.map((s, i) => (
+                <Card key={s.title} icon={s.icon} label={`0${i + 1}`} title={s.title} text={s.text} items={s.needs} />
               ))}
             </div>
           </div>
@@ -284,18 +303,9 @@ function Index() {
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {experience.map((e) => (
-                <article key={e.title} className="rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 transition hover:border-lime/50">
-                  <span className={`eyebrow rounded-full px-2.5 py-1 ${e.tag === "Prototipo" ? "border border-lime/40 text-lime" : e.tag === "Desarrollo" ? "bg-lime text-lime-foreground" : "bg-ink-foreground/10 text-ink-foreground"}`}>{e.tag}</span>
-                  <h3 className="mt-5 text-lg font-semibold text-ink-foreground">{e.title}</h3>
-                  <p className="mt-2 text-sm text-ink-muted">{e.text}</p>
-                </article>
+                <Card key={e.title} dark icon={e.icon} label={e.tag} title={e.title} text={e.text} />
               ))}
-              <article className="rounded-2xl border border-lime/30 p-6">
-                <h3 className="text-lg font-semibold text-ink-foreground">Herramientas con las que trabajamos</h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {stack.map((t) => <li key={t} className="rounded-md bg-ink-foreground/10 px-2.5 py-1 text-xs text-ink-foreground">{t}</li>)}
-                </ul>
-              </article>
+              <Card dark icon={Boxes} label="Herramientas" title="Herramientas con las que trabajamos" items={stack} />
             </div>
           </div>
         </section>
