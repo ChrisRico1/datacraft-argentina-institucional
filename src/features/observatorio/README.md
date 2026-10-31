@@ -7,6 +7,7 @@ El catálogo se define en `catalog.ts`. Las rutas `/observatorio` y `/observator
 ## CSV de obras
 
 Encabezado obligatorio:
+
 ```csv
 id,municipality,jurisdiction,sector,name,service,infrastructure,status,progress,beneficiaries,cutoff,sourceId,territorialScope
 ```

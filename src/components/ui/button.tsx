@@ -10,7 +10,8 @@ const buttonVariants = cva(
     variants: {
       variant: {
         lab: "rounded-full bg-lime text-lime-foreground hover:bg-lime/90",
-        labOutline: "rounded-full border border-ink-foreground/25 bg-ink text-ink-foreground hover:border-lime hover:text-lime",
+        labOutline:
+          "rounded-full border border-ink-foreground/25 bg-ink text-ink-foreground hover:border-lime hover:text-lime",
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
