@@ -191,7 +191,7 @@ function Index() {
 
       <main id="contenido">
         {/* Hero */}
-        <section id="inicio" className="relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
+        <section id="inicio" className="grid-lines relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-lime/30 px-3 py-1.5 text-lime">
@@ -226,7 +226,7 @@ function Index() {
         </section>
 
         {/* Soluciones */}
-        <section id="soluciones" className="bg-muted py-20 sm:py-28">
+        <section id="soluciones" className="bg-muted/70 py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Soluciones" title="Seis unidades, una visión integral." text="Cada unidad resuelve un problema concreto y se combina con las demás según lo que necesites." />
             <ul className="mt-10 flex flex-wrap gap-2" aria-label="Accesos a cada unidad">
@@ -278,7 +278,7 @@ function Index() {
         </section>
 
         {/* Experiencia */}
-        <section id="experiencia" className="bg-ink py-20 sm:py-28">
+        <section id="experiencia" className="grid-lines bg-ink py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead dark eyebrow="Experiencia y capacidades" title="Lo que ya hicimos, contado con honestidad."
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
