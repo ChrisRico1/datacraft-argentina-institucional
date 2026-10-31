@@ -98,9 +98,20 @@
 
 @utility grid-lines {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--lime) 10%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--lime) 10%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--sky) 14%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--sky) 14%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
+}
+
+@utility iridescent {
+  background-image: var(--gradient-iridescent);
+}
+
+@utility iridescent-text {
+  background-image: var(--gradient-iridescent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 @utility eyebrow {
