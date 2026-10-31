@@ -123,7 +123,7 @@ function DataViz() {
       <div className="mt-6 flex h-40 items-end gap-3">
         {bars.map((h, i) => (
           <div key={i} className="flex-1 rounded-t-md bg-ink-foreground/10">
-            <div className={`rounded-t-md ${i === 5 ? "bg-lime" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px` }} />
+            <div className={`rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px` }} />
           </div>
         ))}
       </div>
@@ -198,7 +198,7 @@ function Index() {
                 <span className="h-1.5 w-1.5 rounded-full bg-lime" /> Consultora tecnológica integral · Argentina
               </p>
               <h1 className="mt-6 text-4xl font-semibold leading-[1.05] text-ink-foreground sm:text-6xl">
-                Transformamos información en soluciones. <span className="text-lime">Tecnología en resultados.</span>
+                Transformamos información en soluciones. <span className="iridescent-text">Tecnología en resultados.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg text-ink-muted">
                 Acompañamos a organizaciones públicas y privadas a convertir sus procesos y datos en herramientas concretas: soluciones propias y desarrollos a medida.
@@ -319,7 +319,7 @@ function Index() {
 
         {/* CTA final */}
         <section className="px-5 pb-20 sm:pb-28">
-          <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-lime p-10 text-lime-foreground sm:p-16">
+          <div className="iridescent mx-auto max-w-7xl overflow-hidden rounded-3xl p-10 text-lime-foreground sm:p-16">
             <h2 className="max-w-3xl text-3xl font-semibold sm:text-5xl">¿Tenés información, procesos o datos que podrían rendir más?</h2>
             <p className="mt-4 max-w-xl text-lg opacity-80">Contanos tu desafío y lo pensamos juntos.</p>
             <a href={primaryCtaHref} {...ext}
