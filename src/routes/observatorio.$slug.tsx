@@ -11,7 +11,6 @@ import {
 import { emptyFilters, filterWorks, works, metrics } from "@/features/observatorio/data";
 import {
   Kpi,
-  EmptyChart,
   StudyFilters,
   StudyMap,
   WorksTable,
@@ -208,22 +207,6 @@ function CloacalStudy() {
               <SourceLink source={pisa} />
             </div>
           )}
-        </div>
-      </section>
-      <section className="mx-auto max-w-7xl px-5 py-12">
-        <p className="eyebrow text-lime">Indicadores y seguimiento</p>
-        <h2 className="mt-3 text-3xl font-semibold">Cobertura y obras</h2>
-        <div className="mt-7 grid gap-8 md:grid-cols-2">
-          <EmptyChart
-            title="Cobertura / servicio cloacal"
-            sourceId="census"
-            description="La serie de cuenca está pendiente de validación espacial. Se utilizará el Censo 2022, con variable, universo y denominador de viviendas u hogares confirmados en la tabla oficial. Los porcentajes municipales corresponden al partido completo."
-          />
-          <EmptyChart
-            title="Estado y avance de obras"
-            sourceId="works-2025"
-            description="El inventario cloacal está pendiente de validación. El seguimiento presentará el estado y avance individual de cada obra con su fecha de referencia; las comparaciones identificarán los períodos de cada ficha. El agua potable se analiza como servicio separado."
-          />
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-5 pb-12">
