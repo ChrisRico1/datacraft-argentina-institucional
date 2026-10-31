@@ -10,33 +10,65 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ObservatorioRouteImport } from './routes/observatorio'
+import { Route as ObservatorioIndexRouteImport } from './routes/observatorio.index'
+import { Route as ObservatorioSlugRouteImport } from './routes/observatorio.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ObservatorioRoute = ObservatorioRouteImport.update({
+  id: '/observatorio',
+  path: '/observatorio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObservatorioIndexRoute = ObservatorioIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ObservatorioRoute,
+} as any)
+const ObservatorioSlugRoute = ObservatorioSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ObservatorioRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/observatorio': typeof ObservatorioRouteWithChildren
+  '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio/': typeof ObservatorioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio': typeof ObservatorioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/observatorio': typeof ObservatorioRouteWithChildren
+  '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio/': typeof ObservatorioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/observatorio' | '/observatorio/$slug' | '/observatorio/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/observatorio/$slug' | '/observatorio'
+  id:
+    | '__root__'
+    | '/'
+    | '/observatorio'
+    | '/observatorio/$slug'
+    | '/observatorio/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ObservatorioRoute: typeof ObservatorioRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +80,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/observatorio': {
+      id: '/observatorio'
+      path: '/observatorio'
+      fullPath: '/observatorio'
+      preLoaderRoute: typeof ObservatorioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/observatorio/': {
+      id: '/observatorio/'
+      path: '/'
+      fullPath: '/observatorio/'
+      preLoaderRoute: typeof ObservatorioIndexRouteImport
+      parentRoute: typeof ObservatorioRoute
+    }
+    '/observatorio/$slug': {
+      id: '/observatorio/$slug'
+      path: '/$slug'
+      fullPath: '/observatorio/$slug'
+      preLoaderRoute: typeof ObservatorioSlugRouteImport
+      parentRoute: typeof ObservatorioRoute
+    }
   }
 }
 
+interface ObservatorioRouteChildren {
+  ObservatorioSlugRoute: typeof ObservatorioSlugRoute
+  ObservatorioIndexRoute: typeof ObservatorioIndexRoute
+}
+
+const ObservatorioRouteChildren: ObservatorioRouteChildren = {
+  ObservatorioSlugRoute: ObservatorioSlugRoute,
+  ObservatorioIndexRoute: ObservatorioIndexRoute,
+}
+
+const ObservatorioRouteWithChildren = ObservatorioRoute._addFileChildren(
+  ObservatorioRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ObservatorioRoute: ObservatorioRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

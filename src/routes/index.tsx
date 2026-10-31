@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   ArrowRight, ArrowUpRight, Building2, Store, Landmark, Workflow, BarChart3, Bot,
@@ -211,6 +211,7 @@ function Index() {
               {nav.map(([id, label]) => (
                 <li key={id}><a href={`#${id}`} className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime">{label}</a></li>
               ))}
+              <li><Link to="/observatorio" className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime">Observatorio</Link></li>
             </ul>
           </nav>
           <a href={primaryCtaHref} {...ext} className={`${btnPrimary} hidden !px-4 !py-2 lg:inline-flex`}>Agenda una reunión</a>
@@ -225,6 +226,7 @@ function Index() {
               {nav.map(([id, label]) => (
                 <li key={id}><a href={`#${id}`} onClick={() => setOpen(false)} className="block py-3 text-ink-foreground hover:text-lime">{label}</a></li>
               ))}
+              <li><Link to="/observatorio" onClick={() => setOpen(false)} className="block py-3 text-ink-foreground hover:text-lime">Observatorio</Link></li>
             </ul>
             <a href={primaryCtaHref} {...ext} className={`${btnPrimary} w-full`}>Hablemos de tu proyecto</a>
           </nav>

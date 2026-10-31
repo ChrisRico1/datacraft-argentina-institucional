@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "leaflet/dist/leaflet.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -124,3 +125,12 @@
 
 @keyframes dc-pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 @utility pulse-soft { animation: dc-pulse 3.2s ease-in-out infinite; }
+
+.observatory { letter-spacing: 0; }
+.observatory :is(h1,h2,h3,h4,.eyebrow) { letter-spacing: 0; }
+.observatory-map { color: var(--foreground); z-index: 0; }
+.observatory-marker span { display: block; width: 16px; height: 16px; border: 3px solid var(--ink); border-radius: 50%; box-shadow: 0 0 0 2px var(--ink-foreground); }
+.reference-pba { background: var(--lime); }
+.reference-caba { background: var(--blush); }
+.observatory-map .leaflet-popup-content-wrapper, .observatory-map .leaflet-popup-tip { background: var(--card); color: var(--card-foreground); }
+.observatory-map .leaflet-control-zoom a { background: var(--ink); color: var(--ink-foreground); border-color: var(--ink-muted); }
