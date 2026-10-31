@@ -362,7 +362,8 @@ export function WorksTable({
                   {work.name}
                   {work.territorialScope === "Partido completo" && (
                     <p className="mt-1 text-xs text-lime">
-                      Alcance: partido completo. El análisis de cuenca requiere un recorte espacial específico.
+                      Alcance: partido completo. El análisis de cuenca requiere un recorte espacial
+                      específico.
                     </p>
                   )}
                 </td>
@@ -394,9 +395,7 @@ export function WorksTable({
         >
           <Database className="h-6 w-6 text-lime" />
           <h3 className="text-lg font-semibold">
-            {hasRecords
-              ? "Búsqueda sin coincidencias"
-              : "Inventario en proceso de consolidación"}
+            {hasRecords ? "Búsqueda sin coincidencias" : "Inventario en proceso de consolidación"}
           </h3>
           <p className="max-w-2xl text-sm text-ink-muted">
             {hasRecords
