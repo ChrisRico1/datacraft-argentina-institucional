@@ -142,7 +142,7 @@ function Card({ icon: Icon, label, title, text, items, dark, id }: CardProps) {
       <h3 className={`mt-6 text-xl font-semibold ${dark ? "text-ink-foreground" : ""}`}>{title}</h3>
       {text && <p className={`mt-2 ${dark ? "text-sm text-ink-muted" : "text-muted-foreground"}`}>{text}</p>}
       {items && items.length > 0 && (
-        <ul className="mt-5 grid gap-2 text-sm sm:grid-cols-2">
+        <ul className={`mt-5 grid gap-2 text-sm sm:grid-cols-2 ${dark ? "text-ink-foreground" : ""}`}>
           {items.map((it) => (
             <li key={it} className="flex gap-2">
               <Check className={`mt-0.5 h-4 w-4 shrink-0 ${check}`} aria-hidden />{it}
