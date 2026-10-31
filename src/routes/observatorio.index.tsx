@@ -70,7 +70,7 @@ function ObservatoryIndex() {
               cuando estén definidos.
             </p>
             <ul className="mt-6 text-sm text-ink-muted">
-              <li>Sin estudios adicionales anunciados</li>
+              <li>Catálogo en desarrollo</li>
             </ul>
           </article>
         </div>

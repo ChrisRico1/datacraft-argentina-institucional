@@ -134,7 +134,7 @@ export function ProjectCard({ project }: { project: Observatory }) {
       <p className="mt-4 text-sm leading-relaxed text-ink-muted">{project.description}</p>
       <ul className="my-6 space-y-2 text-sm text-ink-muted">
         <li>Fuentes públicas y trazabilidad</li>
-        <li>Datos pendientes identificados</li>
+        <li>Alcance y estado de validación documentados</li>
       </ul>
       <Button asChild variant="lab" className="mt-auto w-fit">
         <Link to="/observatorio/$slug" params={{ slug: project.slug }}>
@@ -290,7 +290,7 @@ export function StudyMap({ municipality }: { municipality: string }) {
         <span className="inline-flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-blush" /> CABA · referencia jurisdiccional
         </span>
-        <span>Centros aproximados · sin polígonos ni ubicaciones de obras</span>
+        <span>Centros urbanos aproximados · orientación municipal</span>
       </div>
     </div>
   );
@@ -329,7 +329,7 @@ export function WorksTable({
       >
         <table className="w-full min-w-[1050px] text-left text-sm">
           <caption className="sr-only">
-            Obras cloacales con fecha de corte y fuente; sin obras de agua potable
+            Inventario exclusivo de obras cloacales con fecha de corte y fuente
           </caption>
           <thead className="bg-ink-2 text-ink-muted">
             <tr>
@@ -362,7 +362,7 @@ export function WorksTable({
                   {work.name}
                   {work.territorialScope === "Partido completo" && (
                     <p className="mt-1 text-xs text-lime">
-                      Referencia del partido completo; no equivale al área de cuenca.
+                      Alcance: partido completo. El análisis de cuenca requiere un recorte espacial específico.
                     </p>
                   )}
                 </td>
@@ -395,13 +395,13 @@ export function WorksTable({
           <Database className="h-6 w-6 text-lime" />
           <h3 className="text-lg font-semibold">
             {hasRecords
-              ? "No hay obras que coincidan con estos filtros"
+              ? "Búsqueda sin coincidencias"
               : "Inventario en proceso de consolidación"}
           </h3>
           <p className="max-w-2xl text-sm text-ink-muted">
             {hasRecords
               ? "Probá otra búsqueda o restablecé los filtros."
-              : "Todavía no se incorporaron registros verificados. Un dato pendiente no significa cero obras, cero conexiones ni cero beneficiarios."}
+              : "La incorporación de fichas está pendiente de verificación de fuente, alcance y fecha. Los valores de obras, conexiones y beneficiarios se presentarán cuando estén validados."}
           </p>
           {source && (
             <Button asChild variant="labOutline">

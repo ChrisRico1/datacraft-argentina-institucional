@@ -60,7 +60,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
         const title = document.createElement("strong");
         title.textContent = ref.name;
         const detail = document.createElement("p");
-        detail.textContent = `${ref.jurisdiction} · Centro urbano aproximado. Referencia municipal, no obra ni límite de cuenca; puede estar fuera del polígono.`;
+        detail.textContent = `${ref.jurisdiction} · Centro urbano aproximado para orientación ${ref.jurisdiction === "CABA" ? "jurisdiccional" : "municipal"}. Pertenencia a la cuenca por verificar. La delimitación oficial y las ubicaciones de obras se consultan en Monitor PISA.`;
         popup.append(title, detail);
         L.marker([ref.lat, ref.lng], {
           icon: L.divIcon({
@@ -90,7 +90,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
       <div
         ref={container}
         role="region"
-        aria-label="Mapa navegable de referencias municipales aproximadas, sin delimitación de cuenca"
+        aria-label="Mapa navegable de centros urbanos aproximados para orientación municipal"
         className="observatory-map h-[420px] w-full bg-ink-2 sm:h-[510px]"
       />
       {!ready && (
@@ -99,7 +99,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           className="absolute inset-0 grid place-items-center bg-ink-2 text-ink-muted"
         >
           {failed
-            ? "No pudimos cargar el mapa. Consultá Monitor PISA."
+            ? "La carga del mapa requiere un nuevo intento. Podés consultar la cartografía oficial en Monitor PISA."
             : "Cargando mapa de referencias…"}
         </p>
       )}
@@ -108,8 +108,8 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           role="status"
           className="absolute bottom-8 left-3 right-3 z-[450] rounded-md bg-ink p-3 text-sm text-ink-foreground"
         >
-          El mapa base no está disponible. Las referencias siguen siendo aproximadas; consultá
-          Monitor PISA.
+          La carga del mapa base está interrumpida. Los puntos corresponden a centros urbanos
+          aproximados; la cartografía oficial se consulta en Monitor PISA.
         </p>
       )}
       <Button
