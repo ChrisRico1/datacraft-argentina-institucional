@@ -68,12 +68,12 @@ const sectors = [
 
 const experience: { icon: LucideIcon; tag: string; title: string; text: string }[] = [
   { icon: LayoutDashboard, tag: "Experiencia", title: "Tablero ejecutivo de información territorial",
-    text: "Diseño de un tablero para visualizar indicadores territoriales y apoyar la toma de decisiones." },
+    text: "Diseño de tableros para visualizar indicadores territoriales y apoyar la toma de decisiones." },
   { icon: MessageCircle, tag: "Desarrollo", title: "Captación de consultas vía WhatsApp",
     text: "Integración con WhatsApp Cloud API que registra consultas entrantes en Google Sheets." },
   { icon: Wrench, tag: "Desarrollo", title: "Herramientas de gestión con Apps Script",
     text: "Automatizaciones, formularios y flujos sobre Google Workspace para ordenar procesos." },
-  { icon: Smartphone, tag: "Prototipo", title: "Gestión y financiación de celulares",
+  { icon: Smartphone, tag: "PROTOTIPO", title: "Gestión y financiación de celulares",
     text: "Prototipo funcional para administrar ventas financiadas, cuotas y seguimiento." },
   { icon: GraduationCap, tag: "Experiencia", title: "Landing pages y capacitaciones",
     text: "Sitios institucionales y espacios de formación en herramientas digitales y datos." },
