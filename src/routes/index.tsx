@@ -5,6 +5,7 @@ import {
   LayoutGrid, ShieldCheck, Map, Menu, X, Instagram, Facebook, Youtube, Check,
 } from "lucide-react";
 import { site, primaryCtaHref } from "@/config/site";
+import logoAsset from "@/assets/datacraft-logo.jpeg.asset.json";
 
 const TITLE = "Datacraft Argentina | Transformación digital, datos y automatización";
 const DESC =
@@ -93,10 +94,7 @@ const btnGhost = "inline-flex items-center justify-center gap-2 rounded-full bor
 function Wordmark({ light = false }: { light?: boolean }) {
   return (
     <span className="flex items-center gap-2.5 font-display">
-      <span aria-hidden className="relative grid h-8 w-8 place-items-center">
-        <span className="absolute inset-0 rounded-md border-2 border-lime [clip-path:polygon(0_0,35%_0,35%_15%,15%_15%,15%_35%,0_35%,0_65%,15%_65%,15%_85%,35%_85%,35%_100%,0_100%,0_0,100%_0,100%_100%,65%_100%,65%_85%,85%_85%,85%_65%,100%_65%,100%_35%,85%_35%,85%_15%,65%_15%,65%_0)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-lime" />
-      </span>
+      <img src={logoAsset.url} alt="" className="h-9 w-9 rounded-full" width={36} height={36} />
       <span className={`text-lg font-bold tracking-tight ${light ? "text-ink-foreground" : "text-foreground"}`}>
         Datacraft<span className="font-normal text-sage"> Argentina</span>
       </span>
