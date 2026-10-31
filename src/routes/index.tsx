@@ -278,22 +278,7 @@ function Index() {
             </ul>
             <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, i) => (
-                <article id={s.id} key={s.id}
-                  className="group scroll-mt-24 rounded-2xl border bg-card p-7 transition hover:-translate-y-1 hover:shadow-lg">
-                  <div className="flex items-start justify-between">
-                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-secondary-foreground">
-                      <s.icon className="h-6 w-6" aria-hidden />
-                    </span>
-                    <span className="font-display text-sm text-sage">0{i + 1}</span>
-                  </div>
-                  <h3 className="mt-6 text-xl font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{s.desc}</p>
-                  <ul className="mt-5 grid gap-2 text-sm sm:grid-cols-2">
-                    {s.items.map((it) => (
-                      <li key={it} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden />{it}</li>
-                    ))}
-                  </ul>
-                </article>
+                <Card key={s.id} id={s.id} icon={s.icon} label={`0${i + 1}`} title={s.title} text={s.desc} items={s.items} />
               ))}
             </div>
           </div>
@@ -303,17 +288,9 @@ function Index() {
         <section id="sectores" className="py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Sectores" title="Soluciones pensadas para cada tipo de organización." />
-            <div className="mt-12 grid gap-4 md:grid-cols-3">
-              {sectors.map((s) => (
-                <article key={s.title} className="rounded-2xl border bg-card p-7 transition hover:border-primary">
-                  <s.icon className="h-8 w-8 text-primary" aria-hidden />
-                  <h3 className="mt-5 text-xl font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-muted-foreground">{s.text}</p>
-                  <p className="eyebrow mt-6 text-sage">Necesidades frecuentes</p>
-                  <ul className="mt-3 space-y-2 text-sm">
-                    {s.needs.map((n) => <li key={n} className="border-t pt-2">{n}</li>)}
-                  </ul>
-                </article>
+            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {sectors.map((s, i) => (
+                <Card key={s.title} icon={s.icon} label={`0${i + 1}`} title={s.title} text={s.text} items={s.needs} />
               ))}
             </div>
           </div>
@@ -326,18 +303,9 @@ function Index() {
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {experience.map((e) => (
-                <article key={e.title} className="rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 transition hover:border-lime/50">
-                  <span className={`eyebrow rounded-full px-2.5 py-1 ${e.tag === "Prototipo" ? "border border-lime/40 text-lime" : e.tag === "Desarrollo" ? "bg-lime text-lime-foreground" : "bg-ink-foreground/10 text-ink-foreground"}`}>{e.tag}</span>
-                  <h3 className="mt-5 text-lg font-semibold text-ink-foreground">{e.title}</h3>
-                  <p className="mt-2 text-sm text-ink-muted">{e.text}</p>
-                </article>
+                <Card key={e.title} dark icon={e.icon} label={e.tag} title={e.title} text={e.text} />
               ))}
-              <article className="rounded-2xl border border-lime/30 p-6">
-                <h3 className="text-lg font-semibold text-ink-foreground">Herramientas con las que trabajamos</h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {stack.map((t) => <li key={t} className="rounded-md bg-ink-foreground/10 px-2.5 py-1 text-xs text-ink-foreground">{t}</li>)}
-                </ul>
-              </article>
+              <Card dark icon={Boxes} label="Herramientas" title="Herramientas con las que trabajamos" items={stack} />
             </div>
           </div>
         </section>
