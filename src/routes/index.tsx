@@ -233,7 +233,7 @@ function Index() {
 
       <main id="contenido">
         {/* Hero */}
-        <section id="inicio" className="grid-lines relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
+        <section id="inicio" className="grid-lines relative overflow-hidden bg-ink pt-28 pb-14 sm:pt-36 sm:pb-20">
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-lime/30 px-3 py-1.5 text-lime">
@@ -257,8 +257,8 @@ function Index() {
         </section>
 
         {/* Qué hacemos */}
-        <section className="py-20 sm:py-28">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-2">
+        <section className="py-14 sm:py-20">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-2">
             <SectionHead eyebrow="Qué hacemos" title="Ordenamos, conectamos y potenciamos cómo trabaja tu organización." />
             <div className="space-y-5 text-lg text-muted-foreground">
               <p>Partimos de tu realidad: la información que ya tenés, los procesos que funcionan y los que se traban. Desde ahí diseñamos soluciones tecnológicas que se usan de verdad.</p>
@@ -268,10 +268,10 @@ function Index() {
         </section>
 
         {/* Soluciones */}
-        <section id="soluciones" className="bg-muted/70 py-20 sm:py-28">
+        <section id="soluciones" className="bg-muted/70 py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Soluciones" title="Seis unidades, una visión integral." text="Cada unidad resuelve un problema concreto y se combina con las demás según lo que necesites." />
-            <ul className="mt-10 flex flex-wrap gap-2" aria-label="Accesos a cada unidad">
+            <ul className="mt-7 flex flex-wrap gap-2" aria-label="Accesos a cada unidad">
               {services.map((s) => (
                 <li key={s.id}><a href={`#${s.id}`} className="inline-block rounded-full border bg-card px-3 py-1.5 text-sm transition hover:border-primary hover:text-primary">{s.title}</a></li>
               ))}
@@ -285,10 +285,10 @@ function Index() {
         </section>
 
         {/* Sectores */}
-        <section id="sectores" className="py-20 sm:py-28">
+        <section id="sectores" className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Sectores" title="Soluciones pensadas para cada tipo de organización." />
-            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {sectors.map((s, i) => (
                 <Card key={s.title} icon={s.icon} label={`0${i + 1}`} title={s.title} text={s.text} items={s.needs} />
               ))}
@@ -297,11 +297,11 @@ function Index() {
         </section>
 
         {/* Experiencia */}
-        <section id="experiencia" className="grid-lines bg-ink py-20 sm:py-28">
+        <section id="experiencia" className="grid-lines bg-ink py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead dark eyebrow="Experiencia y capacidades" title="Lo que ya hicimos, contado con honestidad."
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
-            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {experience.map((e) => (
                 <Card key={e.title} dark icon={e.icon} label={e.tag} title={e.title} text={e.text} />
               ))}
@@ -311,10 +311,10 @@ function Index() {
         </section>
 
         {/* Metodología */}
-        <section id="metodologia" className="py-20 sm:py-28">
+        <section id="metodologia" className="py-14 sm:py-20">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead eyebrow="Metodología" title="Un proceso claro, de punta a punta." />
-            <ol className="mt-12 grid gap-4 md:grid-cols-5">
+            <ol className="mt-8 grid gap-4 md:grid-cols-5">
               {steps.map(([t, d], i) => (
                 <li key={t} className="relative rounded-2xl border bg-card p-6">
                   <span className="font-display text-3xl font-semibold text-sage">0{i + 1}</span>
@@ -328,7 +328,7 @@ function Index() {
         </section>
 
         {/* CTA final */}
-        <section className="px-5 pb-20 sm:pb-28">
+        <section className="px-5 pb-14 sm:pb-20">
           <div className="iridescent mx-auto max-w-7xl overflow-hidden rounded-3xl p-10 text-lime-foreground sm:p-16">
             <h2 className="max-w-3xl text-3xl font-semibold sm:text-5xl">¿Tenés información, procesos o datos que podrían rendir más?</h2>
             <p className="mt-4 max-w-xl text-lg opacity-80">Contanos tu desafío y lo pensamos juntos.</p>
@@ -340,8 +340,8 @@ function Index() {
         </section>
 
         {/* Contacto */}
-        <section id="contacto" className="border-t py-20 sm:py-24">
-          <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-2">
+        <section id="contacto" className="border-t py-14 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 lg:grid-cols-2">
             <SectionHead eyebrow="Contacto" title="Encontranos en nuestras redes." text="Escribinos por mensaje directo y te respondemos." />
             <div className="grid gap-3">
               {contacts.map((c) => c.href ? (
@@ -361,7 +361,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="bg-carbon py-10">
+      <footer className="bg-carbon py-8">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 sm:flex-row sm:items-center">
           <Wordmark light />
           <p className="text-sm text-ink-muted">© {year} {site.name}. Todos los derechos reservados.</p>
