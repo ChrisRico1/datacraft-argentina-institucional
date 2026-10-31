@@ -79,7 +79,7 @@ const pendingMetrics: Metric[] = [
     id: "coverage",
     label: "Desagüe del inodoro a red pública",
     value: null,
-    unit: "% de viviendas/hogares según universo oficial",
+    unit: "% de viviendas u hogares; universo oficial por confirmar",
     year: "Censo 2022",
     scope: "Cuenca: intersección espacial pendiente",
     sourceId: "census",
@@ -97,7 +97,7 @@ const pendingMetrics: Metric[] = [
     id: "progress",
     label: "Avance por obra",
     value: null,
-    unit: "% informado por obra; no agregado",
+    unit: "% informado individualmente por obra",
     year: "Fecha de corte de cada ficha",
     scope: "Obras cloacales de cuenca",
     sourceId: "works-2025",
@@ -106,7 +106,7 @@ const pendingMetrics: Metric[] = [
     id: "beneficiaries",
     label: "Beneficiarios informados",
     value: null,
-    unit: "personas según ficha; sin sumar duplicados",
+    unit: "personas según ficha; total sujeto a revisión de solapamientos",
     year: "Fecha de corte de cada ficha",
     scope: "Obras cloacales de cuenca",
     sourceId: "works-2025",
@@ -139,15 +139,15 @@ function CloacalStudy() {
         </h1>
         <p className="mt-5 max-w-3xl text-lg text-ink-muted">
           Cobertura de saneamiento y seguimiento de obras, con fuentes públicas y una lectura
-          territorial que distingue lo publicado de lo pendiente.
+          territorial con fuentes, fechas de referencia y alcance documentados.
         </p>
         <p className="mt-5 text-sm text-ink-muted">
-          Corte documental de fuente:{" "}
+          Publicación de la fuente:{" "}
           <span className="font-medium text-ink-foreground">publicación ACUMAR 12/12/2025</span> ·
           Frecuencia anual.
           <br />
-          No es una actualización a hoy. Los recursos refieren al segundo semestre de 2024 y 2025;
-          el corte de cada obra queda pendiente de carga.
+          Los recursos corresponden al segundo semestre de 2024 y 2025. La fecha de referencia de
+          cada obra se incorporará junto con su ficha validada.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           {pisa && (
@@ -170,12 +170,15 @@ function CloacalStudy() {
         <aside className="mt-8 flex gap-3 border-l-2 border-lime bg-ink-2/60 p-5">
           <Info className="mt-1 h-5 w-5 shrink-0 text-lime" />
           <div>
-            <p className="font-semibold">La cuenca no equivale a los partidos completos.</p>
+            <p className="font-semibold">
+              El análisis de cuenca comprende porciones de cada jurisdicción.
+            </p>
             <p className="mt-2 text-sm text-ink-muted">
               Abarca parte de 14 municipios bonaerenses y atraviesa CABA, tratada como jurisdicción
               diferenciada. Los datos municipales del Censo 2022 son{" "}
               <strong className="text-ink-foreground">
-                referencia del partido completo; no equivalen al área de cuenca
+                referencia del partido completo; el indicador de cuenca requiere un recorte espacial
+                específico
               </strong>
               .
             </p>
@@ -192,10 +195,11 @@ function CloacalStudy() {
           <p className="eyebrow text-lime">Lectura territorial</p>
           <h2 className="mt-3 text-3xl font-semibold">Mapa de referencias municipales</h2>
           <p className="mb-6 mt-4 max-w-3xl text-sm text-ink-muted">
-            No se incorporó un polígono oficial de cuenca a esta vista. Los puntos son centros
-            urbanos aproximados, pueden estar fuera de la cuenca y no representan obras ni cobertura
-            de servicio. La selección municipal centra el mapa; los filtros de sector y tipo se
-            aplicarán al inventario, no delimitan la cuenca.
+            Los puntos ubican centros urbanos aproximados para orientar la navegación municipal, con
+            pertenencia a la cuenca por verificar. La delimitación oficial, las obras y la cobertura
+            de red se consultan en Monitor PISA; la integración del polígono oficial a esta vista
+            está pendiente. La selección municipal centra el mapa; los filtros de sector y tipo
+            corresponden al inventario.
           </p>
           <StudyFilters value={filters} onChange={setFilters} records={works} />
           <StudyMap municipality={filters.municipality} />
@@ -213,12 +217,12 @@ function CloacalStudy() {
           <EmptyChart
             title="Cobertura / servicio cloacal"
             sourceId="census"
-            description="Sin serie verificada para el polígono de cuenca. Referencia prevista: Censo 2022; universo oficial de viviendas/hogares por confirmar. No se presenta un porcentaje municipal como cobertura de cuenca."
+            description="La serie de cuenca está pendiente de validación espacial. Se utilizará el Censo 2022, con variable, universo y denominador de viviendas u hogares confirmados en la tabla oficial. Los porcentajes municipales corresponden al partido completo."
           />
           <EmptyChart
             title="Estado y avance de obras"
             sourceId="works-2025"
-            description="Sin inventario cloacal validado por obra y fecha de corte. No se agregan avances de fichas de distintos períodos ni obras de agua potable."
+            description="El inventario cloacal está pendiente de validación. El seguimiento presentará el estado y avance individual de cada obra con su fecha de referencia; las comparaciones identificarán los períodos de cada ficha. El agua potable se analiza como servicio separado."
           />
         </div>
       </section>
@@ -240,13 +244,13 @@ function CloacalStudy() {
         <MethodologySection id="que-medimos" title="Qué estamos midiendo">
           <p>
             La variable censal oficial de desagüe del inodoro a red pública, la disponibilidad
-            territorial de red cloacal y el estado de obras de saneamiento. Son dimensiones
-            distintas, no un único indicador.
+            territorial de red cloacal y el estado de obras de saneamiento. Cada dimensión se
+            analiza con su indicador y fuente específicos.
           </p>
           <p>
             El Censo 2022 mide viviendas u hogares según el universo de la tabla oficial. Ese
-            universo y su denominador deben verificarse antes de calcular porcentajes. No mide por
-            sí solo avances de obras ni población beneficiaria.
+            universo y su denominador se verifican antes de calcular porcentajes. Los avances de
+            obras y la población beneficiaria corresponden a las fichas de seguimiento de obras.
           </p>
         </MethodologySection>
         <MethodologySection id="metodologia-estudio" title="Metodología">
@@ -259,13 +263,14 @@ function CloacalStudy() {
               hidrográfico/jurisdiccional oficial.
             </li>
             <li>
-              Verificar escala, variable, universo y fecha de cada fuente. El prorrateo por
-              superficie no estima conexiones sin supuestos documentados.
+              Verificar escala, variable, universo y fecha de cada fuente. Una estimación de
+              conexiones mediante prorrateo por superficie requiere supuestos documentados y
+              validación específica.
             </li>
             <li>Clasificar el servicio: agua potable y cloacas se mantienen separados.</li>
             <li>
               Etiquetar visualizaciones con año de referencia, unidad, cobertura territorial y
-              fuente; no comparar cortes distintos sin indicarlo.
+              fuente; identificar los distintos cortes en cada comparación.
             </li>
           </ol>
         </MethodologySection>
@@ -279,31 +284,38 @@ function CloacalStudy() {
             . Además, CABA como jurisdicción diferenciada.
           </p>
           <p>
-            La delimitación hidrográfica/jurisdiccional oficial no coincide con los límites
-            municipales completos. Ningún partido se colorea íntegramente como área de cuenca.
+            Para el análisis territorial se utiliza la delimitación hidrográfica/jurisdiccional
+            oficial, que comprende porciones de los municipios. Su integración cartográfica a esta
+            vista está pendiente.
           </p>
           <p className="font-semibold text-lime">
-            Referencia del partido completo; no equivale al área de cuenca.
+            Los datos de partido completo se presentan a escala municipal; los indicadores de cuenca
+            requieren el recorte espacial correspondiente.
           </p>
         </MethodologySection>
-        <MethodologySection id="limitaciones" title="Limitaciones">
+        <MethodologySection id="limitaciones" title="Estado de los datos y criterios de lectura">
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              Geometría oficial no incorporada; referencias municipales aproximadas sin valor de
-              delimitación.
+              La cartografía de esta vista utiliza referencias urbanas aproximadas como orientación.
+              La geometría oficial está disponible para consulta en Monitor PISA y pendiente de
+              integración al estudio.
             </li>
             <li>
-              Inventario de obras, beneficiarios y series censales todavía pendientes de validación
-              y carga. Ausencia de datos no significa valor cero.
-            </li>
-            <li>Área con servicio de red no equivale a hogares efectivamente conectados.</li>
-            <li>
-              El estado del Monitor PISA corresponde al corte indicado en cada capa o ficha, no
-              necesariamente al día de consulta.
+              El inventario de obras, beneficiarios y series censales está pendiente de validación y
+              carga. «Dato pendiente» identifica un valor aún por verificar; el cero corresponde a
+              un valor cuantitativo confirmado por la fuente.
             </li>
             <li>
-              Los beneficiarios pueden solaparse entre obras: no se suman sin verificar
-              duplicaciones.
+              La cobertura de red describe áreas con disponibilidad del servicio; las conexiones
+              efectivas describen viviendas u hogares conectados y requieren su propia medición.
+            </li>
+            <li>
+              El estado del Monitor PISA corresponde a la fecha de referencia indicada en cada capa
+              o ficha.
+            </li>
+            <li>
+              Los beneficiarios se informan por obra. Un total consolidado requiere verificar
+              solapamientos entre fichas y contabilizar cada persona una sola vez.
             </li>
           </ul>
         </MethodologySection>

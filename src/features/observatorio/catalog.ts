@@ -14,13 +14,13 @@ export const sources: Source[] = [
     publishedAt: "2025-12-12",
     frequency: "Anual",
     scope:
-      "Publicación: 12/12/2025. Recursos con corte al segundo semestre de 2024 y 2025; verificar fecha de cada registro.",
+      "Publicación: 12/12/2025. Recursos del segundo semestre de 2024 y 2025; fecha de referencia individual en cada ficha.",
   },
   {
     id: "works-2023",
     name: "ACUMAR · Seguimiento de Obras 2018–2023",
     url: "https://datos.acumar.gob.ar/dataset/seguimiento-de-obras-de-agua-y-cloaca-2018-2023",
-    scope: "Serie histórica 2018–2023; no mezclar cortes",
+    scope: "Serie histórica 2018–2023; cada corte se analiza con su fecha de referencia",
   },
   {
     id: "pisa",
