@@ -5,6 +5,7 @@ import {
   LayoutGrid, ShieldCheck, Map, Menu, X, Instagram, Facebook, Youtube, Check,
 } from "lucide-react";
 import { site, primaryCtaHref } from "@/config/site";
+import logoAsset from "@/assets/datacraft-logo.jpeg.asset.json";
 
 const TITLE = "Datacraft Argentina | Transformación digital, datos y automatización";
 const DESC =
@@ -88,16 +89,13 @@ const steps = [
 
 const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 const btnPrimary = "group inline-flex items-center justify-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105";
-const btnGhost = "inline-flex items-center justify-center gap-2 rounded-full border border-forest-foreground/25 px-6 py-3 text-sm font-semibold text-forest-foreground transition hover:border-lime hover:text-lime";
+const btnGhost = "inline-flex items-center justify-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:border-lime hover:text-lime";
 
 function Wordmark({ light = false }: { light?: boolean }) {
   return (
     <span className="flex items-center gap-2.5 font-display">
-      <span aria-hidden className="relative grid h-8 w-8 place-items-center">
-        <span className="absolute inset-0 rounded-md border-2 border-lime [clip-path:polygon(0_0,35%_0,35%_15%,15%_15%,15%_35%,0_35%,0_65%,15%_65%,15%_85%,35%_85%,35%_100%,0_100%,0_0,100%_0,100%_100%,65%_100%,65%_85%,85%_85%,85%_65%,100%_65%,100%_35%,85%_35%,85%_15%,65%_15%,65%_0)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-lime" />
-      </span>
-      <span className={`text-lg font-bold tracking-tight ${light ? "text-forest-foreground" : "text-foreground"}`}>
+      <img src={logoAsset.url} alt="" className="h-9 w-9 rounded-full" width={36} height={36} />
+      <span className={`text-lg font-bold tracking-tight ${light ? "text-ink-foreground" : "text-foreground"}`}>
         Datacraft<span className="font-normal text-sage"> Argentina</span>
       </span>
     </span>
@@ -108,8 +106,8 @@ function SectionHead({ eyebrow, title, text, dark }: { eyebrow: string; title: R
   return (
     <div className="max-w-2xl">
       <p className={`eyebrow ${dark ? "text-lime" : "text-sage"}`}>{eyebrow}</p>
-      <h2 className={`mt-3 text-3xl font-semibold sm:text-4xl ${dark ? "text-forest-foreground" : ""}`}>{title}</h2>
-      {text && <p className={`mt-4 text-lg ${dark ? "text-forest-muted" : "text-muted-foreground"}`}>{text}</p>}
+      <h2 className={`mt-3 text-3xl font-semibold sm:text-4xl ${dark ? "text-ink-foreground" : ""}`}>{title}</h2>
+      {text && <p className={`mt-4 text-lg ${dark ? "text-ink-muted" : "text-muted-foreground"}`}>{text}</p>}
     </div>
   );
 }
@@ -117,15 +115,15 @@ function SectionHead({ eyebrow, title, text, dark }: { eyebrow: string; title: R
 function DataViz() {
   const bars = [38, 62, 45, 80, 56, 92, 70];
   return (
-    <div aria-hidden className="relative rounded-2xl border border-forest-foreground/10 bg-forest-2/60 p-6 backdrop-blur">
-      <div className="flex items-center justify-between text-xs text-forest-muted">
+    <div aria-hidden className="relative rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 backdrop-blur">
+      <div className="flex items-center justify-between text-xs text-ink-muted">
         <span className="eyebrow">Señal · datos</span>
         <span className="flex items-center gap-1.5"><span className="pulse-soft h-2 w-2 rounded-full bg-lime" />en proceso</span>
       </div>
       <div className="mt-6 flex h-40 items-end gap-3">
         {bars.map((h, i) => (
-          <div key={i} className="flex-1 rounded-t-md bg-forest-foreground/10">
-            <div className={`rounded-t-md ${i === 5 ? "bg-lime" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px` }} />
+          <div key={i} className="flex-1 rounded-t-md bg-ink-foreground/10">
+            <div className={`rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px` }} />
           </div>
         ))}
       </div>
@@ -133,9 +131,9 @@ function DataViz() {
         <polyline fill="none" stroke="var(--lime)" strokeWidth="2" points="0,50 40,42 80,46 120,30 160,34 200,18 240,22 300,6" />
         {[[120, 30], [200, 18], [300, 6]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="3.5" fill="var(--lime)" />)}
       </svg>
-      <div className="mt-4 grid grid-cols-3 gap-3 text-xs text-forest-muted">
+      <div className="mt-4 grid grid-cols-3 gap-3 text-xs text-ink-muted">
         {["Información", "Procesos", "Resultados"].map((t) => (
-          <div key={t} className="rounded-lg border border-forest-foreground/10 px-3 py-2">{t}</div>
+          <div key={t} className="rounded-lg border border-ink-foreground/10 px-3 py-2">{t}</div>
         ))}
       </div>
     </div>
@@ -163,27 +161,27 @@ function Index() {
         Saltar al contenido
       </a>
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-forest-foreground/10 bg-forest/90 backdrop-blur">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-ink-foreground/10 bg-ink/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
           <a href="#inicio" aria-label="Datacraft Argentina, ir al inicio"><Wordmark light /></a>
           <nav aria-label="Principal" className="hidden lg:block">
             <ul className="flex gap-1">
               {nav.map(([id, label]) => (
-                <li key={id}><a href={`#${id}`} className="rounded-full px-3 py-2 text-sm text-forest-muted transition hover:text-lime">{label}</a></li>
+                <li key={id}><a href={`#${id}`} className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime">{label}</a></li>
               ))}
             </ul>
           </nav>
           <a href={primaryCtaHref} {...ext} className={`${btnPrimary} hidden !px-4 !py-2 lg:inline-flex`}>Hablemos de tu proyecto</a>
           <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="menu-movil"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"} className="rounded-md p-2 text-forest-foreground lg:hidden">
+            aria-label={open ? "Cerrar menú" : "Abrir menú"} className="rounded-md p-2 text-ink-foreground lg:hidden">
             {open ? <X /> : <Menu />}
           </button>
         </div>
         {open && (
-          <nav id="menu-movil" aria-label="Menú móvil" className="border-t border-forest-foreground/10 px-5 pb-6 lg:hidden">
+          <nav id="menu-movil" aria-label="Menú móvil" className="border-t border-ink-foreground/10 px-5 pb-6 lg:hidden">
             <ul className="flex flex-col py-2">
               {nav.map(([id, label]) => (
-                <li key={id}><a href={`#${id}`} onClick={() => setOpen(false)} className="block py-3 text-forest-foreground hover:text-lime">{label}</a></li>
+                <li key={id}><a href={`#${id}`} onClick={() => setOpen(false)} className="block py-3 text-ink-foreground hover:text-lime">{label}</a></li>
               ))}
             </ul>
             <a href={primaryCtaHref} {...ext} className={`${btnPrimary} w-full`}>Hablemos de tu proyecto</a>
@@ -193,16 +191,16 @@ function Index() {
 
       <main id="contenido">
         {/* Hero */}
-        <section id="inicio" className="grid-lines relative overflow-hidden bg-forest pt-32 pb-20 sm:pt-40 sm:pb-28">
+        <section id="inicio" className="grid-lines relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-lime/30 px-3 py-1.5 text-lime">
                 <span className="h-1.5 w-1.5 rounded-full bg-lime" /> Consultora tecnológica integral · Argentina
               </p>
-              <h1 className="mt-6 text-4xl font-semibold leading-[1.05] text-forest-foreground sm:text-6xl">
-                Transformamos información en soluciones. <span className="text-lime">Tecnología en resultados.</span>
+              <h1 className="mt-6 text-4xl font-semibold leading-[1.05] text-ink-foreground sm:text-6xl">
+                Transformamos información en soluciones. <span className="iridescent-text">Tecnología en resultados.</span>
               </h1>
-              <p className="mt-6 max-w-xl text-lg text-forest-muted">
+              <p className="mt-6 max-w-xl text-lg text-ink-muted">
                 Acompañamos a organizaciones públicas y privadas a convertir sus procesos y datos en herramientas concretas: soluciones propias y desarrollos a medida.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -239,7 +237,7 @@ function Index() {
             <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, i) => (
                 <article id={s.id} key={s.id}
-                  className={`group scroll-mt-24 rounded-2xl border p-7 transition hover:-translate-y-1 hover:shadow-lg ${i === 0 || i === 5 ? "bg-forest text-forest-foreground border-forest lg:col-span-2" : "bg-card"}`}>
+                  className={`group scroll-mt-24 rounded-2xl border p-7 transition hover:-translate-y-1 hover:shadow-lg ${i === 0 || i === 5 ? "bg-ink text-ink-foreground border-ink lg:col-span-2" : "bg-card"}`}>
                   <div className="flex items-start justify-between">
                     <span className={`grid h-12 w-12 place-items-center rounded-xl ${i === 0 || i === 5 ? "bg-lime text-lime-foreground" : "bg-secondary text-secondary-foreground"}`}>
                       <s.icon className="h-6 w-6" aria-hidden />
@@ -247,7 +245,7 @@ function Index() {
                     <span className="font-display text-sm text-sage">0{i + 1}</span>
                   </div>
                   <h3 className="mt-6 text-xl font-semibold">{s.title}</h3>
-                  <p className={`mt-2 ${i === 0 || i === 5 ? "text-forest-muted" : "text-muted-foreground"}`}>{s.desc}</p>
+                  <p className={`mt-2 ${i === 0 || i === 5 ? "text-ink-muted" : "text-muted-foreground"}`}>{s.desc}</p>
                   <ul className="mt-5 grid gap-2 text-sm sm:grid-cols-2">
                     {s.items.map((it) => (
                       <li key={it} className="flex gap-2"><Check className={`mt-0.5 h-4 w-4 shrink-0 ${i === 0 || i === 5 ? "text-lime" : "text-sage"}`} aria-hidden />{it}</li>
@@ -280,22 +278,22 @@ function Index() {
         </section>
 
         {/* Experiencia */}
-        <section id="experiencia" className="grid-lines bg-forest py-20 sm:py-28">
+        <section id="experiencia" className="grid-lines bg-ink py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead dark eyebrow="Experiencia y capacidades" title="Lo que ya hicimos, contado con honestidad."
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {experience.map((e) => (
-                <article key={e.title} className="rounded-2xl border border-forest-foreground/10 bg-forest-2/60 p-6 transition hover:border-lime/50">
-                  <span className={`eyebrow rounded-full px-2.5 py-1 ${e.tag === "Prototipo" ? "border border-lime/40 text-lime" : e.tag === "Desarrollo" ? "bg-lime text-lime-foreground" : "bg-forest-foreground/10 text-forest-foreground"}`}>{e.tag}</span>
-                  <h3 className="mt-5 text-lg font-semibold text-forest-foreground">{e.title}</h3>
-                  <p className="mt-2 text-sm text-forest-muted">{e.text}</p>
+                <article key={e.title} className="rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 transition hover:border-lime/50">
+                  <span className={`eyebrow rounded-full px-2.5 py-1 ${e.tag === "Prototipo" ? "border border-lime/40 text-lime" : e.tag === "Desarrollo" ? "bg-lime text-lime-foreground" : "bg-ink-foreground/10 text-ink-foreground"}`}>{e.tag}</span>
+                  <h3 className="mt-5 text-lg font-semibold text-ink-foreground">{e.title}</h3>
+                  <p className="mt-2 text-sm text-ink-muted">{e.text}</p>
                 </article>
               ))}
               <article className="rounded-2xl border border-lime/30 p-6">
-                <h3 className="text-lg font-semibold text-forest-foreground">Herramientas con las que trabajamos</h3>
+                <h3 className="text-lg font-semibold text-ink-foreground">Herramientas con las que trabajamos</h3>
                 <ul className="mt-4 flex flex-wrap gap-2">
-                  {stack.map((t) => <li key={t} className="rounded-md bg-forest-foreground/10 px-2.5 py-1 text-xs text-forest-foreground">{t}</li>)}
+                  {stack.map((t) => <li key={t} className="rounded-md bg-ink-foreground/10 px-2.5 py-1 text-xs text-ink-foreground">{t}</li>)}
                 </ul>
               </article>
             </div>
@@ -321,11 +319,11 @@ function Index() {
 
         {/* CTA final */}
         <section className="px-5 pb-20 sm:pb-28">
-          <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-lime p-10 text-lime-foreground sm:p-16">
+          <div className="iridescent mx-auto max-w-7xl overflow-hidden rounded-3xl p-10 text-lime-foreground sm:p-16">
             <h2 className="max-w-3xl text-3xl font-semibold sm:text-5xl">¿Tenés información, procesos o datos que podrían rendir más?</h2>
             <p className="mt-4 max-w-xl text-lg opacity-80">Contanos tu desafío y lo pensamos juntos.</p>
             <a href={primaryCtaHref} {...ext}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-forest-foreground transition hover:-translate-y-0.5 focus-visible:outline-forest">
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:-translate-y-0.5 focus-visible:outline-ink">
               Hablemos de tu proyecto <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
@@ -356,10 +354,10 @@ function Index() {
       <footer className="bg-carbon py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 sm:flex-row sm:items-center">
           <Wordmark light />
-          <p className="text-sm text-forest-muted">© {year} {site.name}. Todos los derechos reservados.</p>
+          <p className="text-sm text-ink-muted">© {year} {site.name}. Todos los derechos reservados.</p>
           <ul className="flex gap-2">
             {socials.map(({ href, label, Icon }) => (
-              <li key={label}><a href={href} {...ext} aria-label={label} className="grid h-10 w-10 place-items-center rounded-full border border-forest-foreground/15 text-forest-foreground transition hover:border-lime hover:text-lime"><Icon className="h-4 w-4" /></a></li>
+              <li key={label}><a href={href} {...ext} aria-label={label} className="grid h-10 w-10 place-items-center rounded-full border border-ink-foreground/15 text-ink-foreground transition hover:border-lime hover:text-lime"><Icon className="h-4 w-4" /></a></li>
             ))}
           </ul>
         </div>
