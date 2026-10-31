@@ -156,7 +156,7 @@ function Index() {
   ].filter(Boolean) as { label: string; value: string; href: string }[];
 
   return (
-    <div className="min-h-screen">
+    <div className="grid-lines min-h-screen">
       <a href="#contenido" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-lime focus:px-4 focus:py-2 focus:text-lime-foreground">
         Saltar al contenido
       </a>
@@ -191,7 +191,7 @@ function Index() {
 
       <main id="contenido">
         {/* Hero */}
-        <section id="inicio" className="grid-lines relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
+        <section id="inicio" className="relative overflow-hidden bg-ink pt-32 pb-20 sm:pt-40 sm:pb-28">
           <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-lime/30 px-3 py-1.5 text-lime">
@@ -237,18 +237,18 @@ function Index() {
             <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((s, i) => (
                 <article id={s.id} key={s.id}
-                  className={`group scroll-mt-24 rounded-2xl border p-7 transition hover:-translate-y-1 hover:shadow-lg ${i === 0 || i === 5 ? "bg-ink text-ink-foreground border-ink lg:col-span-2" : "bg-card"}`}>
+                  className="group scroll-mt-24 rounded-2xl border bg-card p-7 transition hover:-translate-y-1 hover:shadow-lg">
                   <div className="flex items-start justify-between">
-                    <span className={`grid h-12 w-12 place-items-center rounded-xl ${i === 0 || i === 5 ? "bg-lime text-lime-foreground" : "bg-secondary text-secondary-foreground"}`}>
+                    <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-secondary-foreground">
                       <s.icon className="h-6 w-6" aria-hidden />
                     </span>
                     <span className="font-display text-sm text-sage">0{i + 1}</span>
                   </div>
                   <h3 className="mt-6 text-xl font-semibold">{s.title}</h3>
-                  <p className={`mt-2 ${i === 0 || i === 5 ? "text-ink-muted" : "text-muted-foreground"}`}>{s.desc}</p>
+                  <p className="mt-2 text-muted-foreground">{s.desc}</p>
                   <ul className="mt-5 grid gap-2 text-sm sm:grid-cols-2">
                     {s.items.map((it) => (
-                      <li key={it} className="flex gap-2"><Check className={`mt-0.5 h-4 w-4 shrink-0 ${i === 0 || i === 5 ? "text-lime" : "text-sage"}`} aria-hidden />{it}</li>
+                      <li key={it} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden />{it}</li>
                     ))}
                   </ul>
                 </article>
@@ -278,7 +278,7 @@ function Index() {
         </section>
 
         {/* Experiencia */}
-        <section id="experiencia" className="grid-lines bg-ink py-20 sm:py-28">
+        <section id="experiencia" className="bg-ink py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5">
             <SectionHead dark eyebrow="Experiencia y capacidades" title="Lo que ya hicimos, contado con honestidad."
               text="Distinguimos experiencia aplicada, desarrollos y prototipos. Sin datos confidenciales ni nombres de organismos." />
