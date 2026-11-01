@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { z } from "zod";
-import worksJson from "./data/works.json";
+import worksGzipBase64 from "./data/works.json.gz.b64?raw";
 import metricsJson from "./data/metrics.json";
 import { municipalReferences, sources } from "./catalog";
 import type { Filters, Work, Metric } from "./types";
@@ -50,7 +50,12 @@ const metricSchema = z.object({
   scope: z.string(),
   sourceId: z.string().refine((value) => sources.some((source) => source.id === value)),
 });
-export const works: Work[] = z.array(workSchema).parse(worksJson);
+export async function loadWorksData(): Promise<Work[]> {
+  const binary = Uint8Array.from(atob(worksGzipBase64.trim()), (char) => char.charCodeAt(0));
+  const stream = new Blob([binary]).stream().pipeThrough(new DecompressionStream("gzip"));
+  const raw: unknown = JSON.parse(await new Response(stream).text());
+  return z.array(workSchema).parse(raw);
+}
 export const metrics: Metric[] = z.array(metricSchema).parse(metricsJson);
 export const emptyFilters: Filters = {
   query: "",
