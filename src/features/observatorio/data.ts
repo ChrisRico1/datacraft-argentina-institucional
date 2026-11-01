@@ -14,13 +14,7 @@ const nullableNumber = z.preprocess(
         : value,
   z.number().finite().nullable(),
 );
-const validDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((value) => {
-    const date = new Date(`${value}T00:00:00Z`);
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-  }, "Fecha de corte inválida");
+const validDate = z.preprocess((value) => value === "" || value === undefined ? null : value, z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => { const date = new Date(`${value}T00:00:00Z`); return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value; }, "Fecha de corte inválida").nullable());
 export const workSchema = z
   .object({
     id: z.string().min(1),
@@ -40,7 +34,8 @@ export const workSchema = z
     ),
     cutoff: validDate,
     sourceId: z.string().refine((value) => sources.some((source) => source.id === value)),
-    territorialScope: z.enum(["Cuenca", "Partido completo"]),
+    territorialScope: z.enum(["Cuenca", "Partido completo", "Jurisdicción informada"]),
+    sourceWorkId: z.string().nullable().optional(),
   })
   .refine(
     (work) => (work.municipality === "CABA") === (work.jurisdiction === "CABA"),
@@ -72,7 +67,7 @@ export function filterWorks(records: Work[], filters: Filters): Work[] {
       (!filters.sector || work.sector === filters.sector) &&
       (!filters.infrastructure || work.infrastructure === filters.infrastructure) &&
       (!query ||
-        `${work.name} ${work.municipality} ${work.status ?? ""}`
+        `${work.name} ${work.municipality} ${work.status ?? ""} ${work.infrastructure} ${work.id} ${work.sourceWorkId ?? ""}`
           .toLocaleLowerCase("es-AR")
           .includes(query)),
   );
