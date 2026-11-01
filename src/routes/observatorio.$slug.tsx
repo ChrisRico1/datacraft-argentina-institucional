@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,8 @@ import {
   municipalReferences,
   getSource,
 } from "@/features/observatorio/catalog";
-import { emptyFilters, filterWorks, works } from "@/features/observatorio/data";
+import { emptyFilters, filterWorks, loadWorksData } from "@/features/observatorio/data";
+import type { Work } from "@/features/observatorio/types";
 import {
   StudyFilters,
   StudyMap,
@@ -74,6 +75,10 @@ export const Route = createFileRoute("/observatorio/$slug")({
 function CloacalStudy() {
   const project = Route.useLoaderData();
   const [filters, setFilters] = useState(emptyFilters);
+  const [works, setWorks] = useState<Work[]>([]);
+  useEffect(() => {
+    loadWorksData().then(setWorks).catch((error) => console.error("No se pudo cargar el inventario ACUMAR", error));
+  }, []);
   const records = filterWorks(works, filters);
   const source = getSource("works-2025");
   const pisa = getSource("pisa");
