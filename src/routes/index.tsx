@@ -21,7 +21,7 @@ import {
   LayoutDashboard,
   MessageCircle,
   Wrench,
-  Smartphone,
+  ClipboardList,
   GraduationCap,
   Boxes,
   type LucideIcon,
