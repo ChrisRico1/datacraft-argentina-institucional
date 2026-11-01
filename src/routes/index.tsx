@@ -173,10 +173,10 @@ const experience: { icon: LucideIcon; tag: string; title: string; text: string }
     text: "Automatizaciones, formularios y flujos sobre Google Workspace para ordenar procesos.",
   },
   {
-    icon: Smartphone,
+    icon: ClipboardList,
     tag: "PROTOTIPO",
-    title: "Gestión y financiación de celulares",
-    text: "Prototipo funcional para administrar ventas financiadas, cuotas y seguimiento.",
+    title: "Gestión y seguimiento de servicios",
+    text: "Herramienta para centralizar solicitudes, órdenes de trabajo y tareas, asignar responsables y realizar el seguimiento de cada servicio hasta su resolución.",
   },
   {
     icon: GraduationCap,
