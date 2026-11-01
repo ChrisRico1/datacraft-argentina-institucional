@@ -56,7 +56,7 @@ export const observatories: Observatory[] = [
     category: "Infraestructura y territorio",
     zone: "Cuenca Matanza-Riachuelo",
     description:
-      "Una lectura trazable del saneamiento cloacal: cobertura, infraestructura y seguimiento de obras en la cuenca.",
+      "Un estudio sobre la cobertura de la red cloacal y las obras de saneamiento en la Cuenca Matanza-Riachuelo, con foco en la Cuenca Baja.",
     status: "Activo",
     sourceIds: sources.map((source) => source.id),
   },

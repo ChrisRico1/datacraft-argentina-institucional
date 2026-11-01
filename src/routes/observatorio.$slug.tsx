@@ -8,16 +8,14 @@ import {
   municipalReferences,
   getSource,
 } from "@/features/observatorio/catalog";
-import { emptyFilters, filterWorks, works, metrics } from "@/features/observatorio/data";
+import { emptyFilters, filterWorks, works } from "@/features/observatorio/data";
 import {
-  Kpi,
   StudyFilters,
   StudyMap,
   WorksTable,
   SourceLink,
   MethodologySection,
 } from "@/features/observatorio/components";
-import type { Metric } from "@/features/observatorio/types";
 
 export const Route = createFileRoute("/observatorio/$slug")({
   loader: ({ params }) => {
@@ -73,44 +71,6 @@ export const Route = createFileRoute("/observatorio/$slug")({
     </div>
   ),
 });
-const pendingMetrics: Metric[] = [
-  {
-    id: "coverage",
-    label: "Desagüe del inodoro a red pública",
-    value: null,
-    unit: "% de viviendas u hogares; universo oficial por confirmar",
-    year: "Censo 2022",
-    scope: "Cuenca: intersección espacial pendiente",
-    sourceId: "census",
-  },
-  {
-    id: "works",
-    label: "Obras exclusivamente cloacales",
-    value: null,
-    unit: "obras",
-    year: "Recursos 2024–2025",
-    scope: "Registros de cuenca por verificar",
-    sourceId: "works-2025",
-  },
-  {
-    id: "progress",
-    label: "Avance por obra",
-    value: null,
-    unit: "% informado individualmente por obra",
-    year: "Fecha de corte de cada ficha",
-    scope: "Obras cloacales de cuenca",
-    sourceId: "works-2025",
-  },
-  {
-    id: "beneficiaries",
-    label: "Beneficiarios informados",
-    value: null,
-    unit: "personas según ficha; total sujeto a revisión de solapamientos",
-    year: "Fecha de corte de cada ficha",
-    scope: "Obras cloacales de cuenca",
-    sourceId: "works-2025",
-  },
-];
 function CloacalStudy() {
   const project = Route.useLoaderData();
   const [filters, setFilters] = useState(emptyFilters);
@@ -137,16 +97,12 @@ function CloacalStudy() {
           <span className="mt-2 block text-mint">{project.zone}</span>
         </h1>
         <p className="mt-5 max-w-3xl text-lg text-ink-muted">
-          Cobertura de saneamiento y seguimiento de obras, con fuentes públicas y una lectura
-          territorial con fuentes, fechas de referencia y alcance documentados.
+          Un estudio para entender cómo se distribuye el servicio cloacal en la Cuenca Matanza-Riachuelo,
+          con foco en la Cuenca Baja, y conocer las obras de saneamiento que se realizan en el territorio.
         </p>
-        <p className="mt-5 text-sm text-ink-muted">
-          Publicación de la fuente:{" "}
-          <span className="font-medium text-ink-foreground">publicación ACUMAR 12/12/2025</span> ·
-          Frecuencia anual.
-          <br />
-          Los recursos corresponden al segundo semestre de 2024 y 2025. La fecha de referencia de
-          cada obra se incorporará junto con su ficha validada.
+        <p className="mt-5 max-w-3xl text-sm text-ink-muted">
+          La información se consulta a partir de fuentes públicas oficiales. El estudio distingue la
+          cobertura de la red cloacal de las viviendas que efectivamente están conectadas.
         </p>
         <div className="mt-7 flex flex-wrap gap-3">
           {pisa && (
@@ -166,41 +122,55 @@ function CloacalStudy() {
             </Button>
           )}
         </div>
-        <aside className="mt-8 flex gap-3 border-l-2 border-lime bg-ink-2/60 p-5">
-          <Info className="mt-1 h-5 w-5 shrink-0 text-lime" />
-          <div>
-            <p className="font-semibold">
-              El análisis de cuenca comprende porciones de cada jurisdicción.
-            </p>
-            <p className="mt-2 text-sm text-ink-muted">
-              Abarca parte de 14 municipios bonaerenses y atraviesa CABA, tratada como jurisdicción
-              diferenciada. Los datos municipales del Censo 2022 son{" "}
-              <strong className="text-ink-foreground">
-                referencia del partido completo; el indicador de cuenca requiere un recorte espacial
-                específico
-              </strong>
-              .
-            </p>
+        <div className="mt-9 rounded-2xl border border-lime/30 bg-ink-2/60 p-6 sm:p-8">
+          <p className="eyebrow text-lime">Objetivo del estudio</p>
+          <h2 className="mt-3 max-w-3xl text-2xl font-semibold sm:text-3xl">
+            Conocer la cobertura cloacal en la Cuenca Baja
+          </h2>
+          <p className="mt-4 max-w-3xl leading-relaxed text-ink-muted">
+            Buscamos mostrar en qué zonas está disponible la red cloacal, cómo se distribuye en el
+            territorio y dónde se localizan las obras de saneamiento. El foco está puesto en la
+            Cuenca Baja, sin perder de vista el contexto de toda la cuenca.
+          </p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div>
+              <p className="font-semibold">Cobertura de red</p>
+              <p className="mt-1 text-sm text-ink-muted">Dónde llega la infraestructura cloacal.</p>
+            </div>
+            <div>
+              <p className="font-semibold">Obras de saneamiento</p>
+              <p className="mt-1 text-sm text-ink-muted">Qué intervenciones se realizan y dónde.</p>
+            </div>
+            <div>
+              <p className="font-semibold">Lectura territorial</p>
+              <p className="mt-1 text-sm text-ink-muted">Cómo se distribuye el servicio entre sectores y municipios.</p>
+            </div>
           </div>
-        </aside>
-        <div className="mt-10 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
-          {(metrics.length ? metrics : pendingMetrics).map((metric) => (
-            <Kpi key={metric.id} metric={metric} />
-          ))}
+        </div>
+        <div className="mt-6 rounded-xl border border-ink-foreground/15 p-5">
+          <p className="font-semibold">Cobertura cloacal · Cuenca Baja</p>
+          <p className="mt-2 max-w-3xl text-sm text-ink-muted">
+            Para consultar la cobertura territorial de la red, accedé al visualizador oficial de
+            ACUMAR. Allí podés explorar las capas de cobertura y expansión del servicio.
+          </p>
+          {pisa && (
+            <a href={pisa.url} target="_blank" rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-2 text-sm text-mint hover:text-lime">
+              Consultar cobertura en Monitor PISA <ArrowUpRight className="h-4 w-4" />
+              <span className="sr-only">(nueva pestaña)</span>
+            </a>
+          )}
         </div>
       </section>
       <section className="border-y border-ink-foreground/10 bg-carbon/70 py-12">
         <div className="mx-auto max-w-7xl px-5">
-          <p className="eyebrow text-lime">Lectura territorial</p>
-          <h2 className="mt-3 text-3xl font-semibold">Mapa de referencias municipales</h2>
+          <p className="eyebrow text-lime">El territorio</p>
+          <h2 className="mt-3 text-3xl font-semibold">La Cuenca Matanza-Riachuelo y sus municipios</h2>
           <p className="mb-6 mt-4 max-w-3xl text-sm text-ink-muted">
-            Los puntos ubican centros urbanos aproximados para orientar la navegación municipal, con
-            pertenencia a la cuenca por verificar. La delimitación oficial, las obras y la cobertura
-            de red se consultan en Monitor PISA; la integración del polígono oficial a esta vista
-            está pendiente. La selección municipal centra el mapa; los filtros de sector y tipo
-            corresponden al inventario.
+            La cuenca comprende partes de 14 municipios bonaerenses y de la Ciudad Autónoma de
+            Buenos Aires. El mapa ubica sus centros urbanos como referencia: no representa los
+            límites exactos de la cuenca ni la cobertura de la red cloacal.
           </p>
-          <StudyFilters value={filters} onChange={setFilters} records={works} />
           <StudyMap municipality={filters.municipality} />
           {pisa && (
             <div className="mt-4">
@@ -210,11 +180,11 @@ function CloacalStudy() {
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-5 pb-12">
-        <p className="eyebrow text-lime">Inventario trazable</p>
+        <p className="eyebrow text-lime">Obras</p>
         <h2 className="mt-3 text-3xl font-semibold">Obras de saneamiento cloacal</h2>
-        <p className="mt-4 text-sm text-ink-muted">
-          Servicio cloacal únicamente · unidad: obra · alcance y fecha de corte por registro ·
-          fuente vinculada en cada fila.
+        <p className="mt-4 max-w-3xl text-sm text-ink-muted">
+          Este apartado reúne las intervenciones vinculadas al servicio cloacal. Se excluyen las
+          obras de agua potable para mantener clara la información sobre saneamiento.
         </p>
         <WorksTable
           records={records}
@@ -224,16 +194,16 @@ function CloacalStudy() {
         />
       </section>
       <div className="mx-auto grid max-w-7xl gap-x-12 px-5 lg:grid-cols-2">
-        <MethodologySection id="que-medimos" title="Qué estamos midiendo">
+        <MethodologySection id="que-medimos" title="Qué información se analiza">
           <p>
-            La variable censal oficial de desagüe del inodoro a red pública, la disponibilidad
-            territorial de red cloacal y el estado de obras de saneamiento. Cada dimensión se
-            analiza con su indicador y fuente específicos.
+            Se observan tres aspectos: la cobertura territorial de la red cloacal, la conexión de
+            viviendas u hogares al servicio y las obras de saneamiento. Son dimensiones relacionadas,
+            pero no equivalentes.
           </p>
           <p>
-            El Censo 2022 mide viviendas u hogares según el universo de la tabla oficial. Ese
-            universo y su denominador se verifican antes de calcular porcentajes. Los avances de
-            obras y la población beneficiaria corresponden a las fichas de seguimiento de obras.
+            La cobertura indica dónde está disponible la red. La conexión efectiva indica qué
+            viviendas u hogares están conectados. Las obras permiten conocer las intervenciones que
+            amplían, mejoran o mantienen la infraestructura.
           </p>
         </MethodologySection>
         <MethodologySection id="metodologia-estudio" title="Metodología">
@@ -267,49 +237,22 @@ function CloacalStudy() {
             . Además, CABA como jurisdicción diferenciada.
           </p>
           <p>
-            Para el análisis territorial se utiliza la delimitación hidrográfica/jurisdiccional
-            oficial, que comprende porciones de los municipios. Su integración cartográfica a esta
-            vista está pendiente.
+            La cuenca no coincide con los límites completos de los municipios: comprende solo una
+            parte de cada uno. Por eso, los datos de un municipio completo no deben interpretarse
+            automáticamente como datos de la cuenca.
           </p>
-          <p className="font-semibold text-lime">
-            Los datos de partido completo se presentan a escala municipal; los indicadores de cuenca
-            requieren el recorte espacial correspondiente.
+          <p>
+            La Cuenca Baja es el foco principal de este estudio y se analiza dentro del sistema
+            completo de la Cuenca Matanza-Riachuelo.
           </p>
         </MethodologySection>
-        <MethodologySection id="limitaciones" title="Estado de los datos y criterios de lectura">
-          <ul className="list-disc space-y-2 pl-5">
-            <li>
-              La cartografía de esta vista utiliza referencias urbanas aproximadas como orientación.
-              La geometría oficial está disponible para consulta en Monitor PISA y pendiente de
-              integración al estudio.
-            </li>
-            <li>
-              El inventario de obras, beneficiarios y series censales está pendiente de validación y
-              carga. «Dato pendiente» identifica un valor aún por verificar; el cero corresponde a
-              un valor cuantitativo confirmado por la fuente.
-            </li>
-            <li>
-              La cobertura de red describe áreas con disponibilidad del servicio; las conexiones
-              efectivas describen viviendas u hogares conectados y requieren su propia medición.
-            </li>
-            <li>
-              El estado del Monitor PISA corresponde a la fecha de referencia indicada en cada capa
-              o ficha.
-            </li>
-            <li>
-              Los beneficiarios se informan por obra. Un total consolidado requiere verificar
-              solapamientos entre fichas y contabilizar cada persona una sola vez.
-            </li>
-          </ul>
-        </MethodologySection>
-      </div>
+     </div>
       <section className="mx-auto max-w-7xl border-t border-ink-foreground/15 px-5 py-10">
         <p className="eyebrow text-lime">Fuentes públicas</p>
         <h2 className="mt-3 text-3xl font-semibold">Fuentes y trazabilidad</h2>
         <p className="mt-4 text-sm text-ink-muted">
-          Fuentes documentales publicadas, referencias municipales aproximadas y datos cuantitativos
-          pendientes se identifican por separado. Fecha de publicación no equivale a fecha de corte
-          de cada registro.
+          La información se consulta en organismos oficiales. Cada fuente permite ampliar los datos
+          y conocer su alcance.
         </p>
         <div className="mt-6 grid gap-x-12 gap-y-3 md:grid-cols-2">
           {sources
