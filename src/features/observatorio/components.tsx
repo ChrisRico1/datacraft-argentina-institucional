@@ -307,17 +307,10 @@ export function WorksTable({
   onChange: (value: Filters) => void;
 }) {
   const source = getSource("works-2025");
-  const pageSize = 10;
-  const [page, setPage] = useState(1);
-  useEffect(() => setPage(1), [filters.query, filters.municipality, filters.sector, filters.infrastructure]);
-  const pageCount = Math.max(1, Math.ceil(records.length / pageSize));
-  const currentPage = Math.min(page, pageCount);
-  const visibleRecords = records.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   return (
     <div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
-        <span>{records.length.toLocaleString("es-AR")} obras encontradas · {pageSize} por página</span>
-        <span>Página {currentPage} de {pageCount}</span>
+        <span>{records.length.toLocaleString("es-AR")} obras encontradas</span>
       </div>
       <label className="relative mt-3 block max-w-lg">
         <span className="sr-only">Buscar obras</span>
@@ -332,7 +325,7 @@ export function WorksTable({
         />
       </label>
       <div
-        className="mt-3 overflow-x-auto rounded-lg border border-ink-foreground/15"
+        className="mt-3 max-h-[68vh] min-h-[320px] overflow-auto overscroll-contain rounded-lg border border-ink-foreground/15 shadow-inner"
         tabIndex={0}
         role="region"
         aria-label="Inventario de obras cloacales"
@@ -341,7 +334,7 @@ export function WorksTable({
           <caption className="sr-only">
             Inventario exclusivo de obras cloacales con fecha de corte y fuente
           </caption>
-          <thead className="bg-ink-2 text-ink-muted">
+          <thead className="sticky top-0 z-10 bg-ink-2 text-ink-muted shadow-sm">
             <tr>
               {[
                 "Municipio",
@@ -360,7 +353,7 @@ export function WorksTable({
             </tr>
           </thead>
           <tbody>
-            {visibleRecords.map((work) => (
+            {records.map((work) => (
               <tr key={work.id} className="border-t border-ink-foreground/10">
                 <td className="px-3 py-2">
                   {work.municipality}
@@ -398,17 +391,6 @@ export function WorksTable({
           </tbody>
         </table>
       </div>
-      {records.length > pageSize && (
-        <nav aria-label="Paginación de obras" className="mt-3 flex items-center justify-between border-t border-ink-foreground/10 pt-3">
-          <Button type="button" variant="ghost" size="sm" disabled={currentPage === 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>
-            <ArrowLeft className="mr-1 h-4 w-4" /> Anterior
-          </Button>
-          <span className="text-xs text-ink-muted">{(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, records.length)} de {records.length}</span>
-          <Button type="button" variant="ghost" size="sm" disabled={currentPage === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>
-            Siguiente <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
-        </nav>
-      )}
       {!records.length && (
         <div
           role="status"
