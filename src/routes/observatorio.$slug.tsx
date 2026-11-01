@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,8 @@ import {
   municipalReferences,
   getSource,
 } from "@/features/observatorio/catalog";
-import { emptyFilters, filterWorks, works } from "@/features/observatorio/data";
+import { emptyFilters, filterWorks, loadWorksData } from "@/features/observatorio/data";
+import type { Work } from "@/features/observatorio/types";
 import {
   StudyFilters,
   StudyMap,
@@ -74,6 +75,10 @@ export const Route = createFileRoute("/observatorio/$slug")({
 function CloacalStudy() {
   const project = Route.useLoaderData();
   const [filters, setFilters] = useState(emptyFilters);
+  const [works, setWorks] = useState<Work[]>([]);
+  useEffect(() => {
+    loadWorksData().then(setWorks).catch((error) => console.error("No se pudo cargar el inventario ACUMAR", error));
+  }, []);
   const records = filterWorks(works, filters);
   const source = getSource("works-2025");
   const pisa = getSource("pisa");
@@ -185,6 +190,11 @@ function CloacalStudy() {
         <p className="mt-4 max-w-3xl text-sm text-ink-muted">
           Este apartado reúne las intervenciones vinculadas al servicio cloacal. Se excluyen las
           obras de agua potable para mantener clara la información sobre saneamiento.
+        </p>
+        <p className="mt-3 max-w-3xl rounded-lg border border-ink-foreground/15 p-4 text-sm text-ink-muted">
+          El municipio informado por ACUMAR no determina el sector de cuenca ni la ubicación puntual
+          de la obra. Los registros se presentan como referencias jurisdiccionales y no implican
+          que todas las obras estén confirmadas dentro de la Cuenca Baja.
         </p>
         <WorksTable
           records={records}

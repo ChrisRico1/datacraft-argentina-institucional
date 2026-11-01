@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 import { z } from "zod";
-import worksJson from "./data/works.json";
+import worksGzipBase64 from "./data/works.json.gz.b64?raw";
 import metricsJson from "./data/metrics.json";
 import { municipalReferences, sources } from "./catalog";
 import type { Filters, Work, Metric } from "./types";
@@ -14,13 +14,7 @@ const nullableNumber = z.preprocess(
         : value,
   z.number().finite().nullable(),
 );
-const validDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((value) => {
-    const date = new Date(`${value}T00:00:00Z`);
-    return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
-  }, "Fecha de corte inválida");
+const validDate = z.preprocess((value) => value === "" || value === undefined ? null : value, z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => { const date = new Date(`${value}T00:00:00Z`); return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value; }, "Fecha de corte inválida").nullable());
 export const workSchema = z
   .object({
     id: z.string().min(1),
@@ -40,7 +34,8 @@ export const workSchema = z
     ),
     cutoff: validDate,
     sourceId: z.string().refine((value) => sources.some((source) => source.id === value)),
-    territorialScope: z.enum(["Cuenca", "Partido completo"]),
+    territorialScope: z.enum(["Cuenca", "Partido completo", "Jurisdicción informada"]),
+    sourceWorkId: z.string().nullable().optional(),
   })
   .refine(
     (work) => (work.municipality === "CABA") === (work.jurisdiction === "CABA"),
@@ -55,7 +50,12 @@ const metricSchema = z.object({
   scope: z.string(),
   sourceId: z.string().refine((value) => sources.some((source) => source.id === value)),
 });
-export const works: Work[] = z.array(workSchema).parse(worksJson);
+export async function loadWorksData(): Promise<Work[]> {
+  const binary = Uint8Array.from(atob(worksGzipBase64.trim()), (char) => char.charCodeAt(0));
+  const stream = new Blob([binary]).stream().pipeThrough(new DecompressionStream("gzip"));
+  const raw: unknown = JSON.parse(await new Response(stream).text());
+  return z.array(workSchema).parse(raw);
+}
 export const metrics: Metric[] = z.array(metricSchema).parse(metricsJson);
 export const emptyFilters: Filters = {
   query: "",
@@ -72,7 +72,7 @@ export function filterWorks(records: Work[], filters: Filters): Work[] {
       (!filters.sector || work.sector === filters.sector) &&
       (!filters.infrastructure || work.infrastructure === filters.infrastructure) &&
       (!query ||
-        `${work.name} ${work.municipality} ${work.status ?? ""}`
+        `${work.name} ${work.municipality} ${work.status ?? ""} ${work.infrastructure} ${work.id} ${work.sourceWorkId ?? ""}`
           .toLocaleLowerCase("es-AR")
           .includes(query)),
   );
