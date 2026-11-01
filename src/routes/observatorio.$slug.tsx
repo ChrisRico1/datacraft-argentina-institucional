@@ -191,6 +191,11 @@ function CloacalStudy() {
           Este apartado reúne las intervenciones vinculadas al servicio cloacal. Se excluyen las
           obras de agua potable para mantener clara la información sobre saneamiento.
         </p>
+        <p className="mt-3 max-w-3xl rounded-lg border border-ink-foreground/15 p-4 text-sm text-ink-muted">
+          El municipio informado por ACUMAR no determina el sector de cuenca ni la ubicación puntual
+          de la obra. Los registros se presentan como referencias jurisdiccionales y no implican
+          que todas las obras estén confirmadas dentro de la Cuenca Baja.
+        </p>
         <WorksTable
           records={records}
           hasRecords={works.some((work) => work.service === "Cloacal")}
