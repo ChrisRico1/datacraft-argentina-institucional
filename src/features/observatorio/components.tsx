@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { ClientOnly, Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -309,6 +309,7 @@ export function WorksTable({
   const source = getSource("works-2025");
   const pageSize = 10;
   const [page, setPage] = useState(1);
+  useEffect(() => setPage(1), [filters.query, filters.municipality, filters.sector, filters.infrastructure]);
   const pageCount = Math.max(1, Math.ceil(records.length / pageSize));
   const currentPage = Math.min(page, pageCount);
   const visibleRecords = records.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -367,13 +368,8 @@ export function WorksTable({
                     {work.jurisdiction} · {work.sector ?? "Sin clasificación"}
                   </span>
                 </td>
-                <td className="p-4">
+                <td className="px-3 py-2">
                   {work.name}
-                  {work.territorialScope === "Jurisdicción informada" && (
-                    <p className="mt-0.5 text-[11px] text-ink-muted">
-                      Jurisdicción informada por ACUMAR; no confirma sector de cuenca ni ubicación puntual.
-                    </p>
-                  )}
                   {work.territorialScope === "Partido completo" && (
                     <p className="mt-1 text-xs text-lime">
                       Alcance: partido completo. El análisis de cuenca requiere un recorte espacial
@@ -381,18 +377,18 @@ export function WorksTable({
                     </p>
                   )}
                 </td>
-                <td className="p-4">{work.service}</td>
-                <td className="p-4">{work.status ?? "Sin información"}</td>
-                <td className="p-4">
+                <td className="px-3 py-2">{work.service}</td>
+                <td className="px-3 py-2">{work.status ?? "Sin información"}</td>
+                <td className="px-3 py-2">
                   {work.progress === null ? "—" : `${work.progress}%`}
                 </td>
-                <td className="p-4">
+                <td className="px-3 py-2">
                   {work.beneficiaries === null
                     ? "—"
                     : work.beneficiaries.toLocaleString("es-AR")}
                 </td>
-                <td className="p-4">{work.cutoff ?? "No informada por la fuente"}</td>
-                <td className="p-4">
+                <td className="px-3 py-2">{work.cutoff ?? "No informada por la fuente"}</td>
+                <td className="px-3 py-2">
                   {getSource(work.sourceId) && (
                     <SourceLink source={getSource(work.sourceId) as Source} compact />
                   )}
