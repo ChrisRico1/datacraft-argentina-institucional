@@ -16,7 +16,12 @@ const field = (row: Row, key: string) => row[key] ?? row[key.toUpperCase()] ?? "
 
 function parseWkt(wkt: string): GeoJSON.Geometry | null {
   const clean = wkt.trim();
-  const pairs = (text: string) => text.split(",").map((pair) => pair.trim().split(/\s+/).map(Number)).filter((p) => p.length >= 2 && p.every(Number.isFinite)).map((p) => [p[0], p[1]]);
+  const pairs = (text: string): GeoJSON.Position[] => text.split(",").flatMap((pair) => {
+    const values = pair.trim().split(/\s+/).map(Number);
+    const [x, y] = values;
+    if (x === undefined || y === undefined || !values.every(Number.isFinite)) return [];
+    return [[x, y]];
+  });
   try {
     if (clean.startsWith("POLYGON")) {
       const body = clean.slice(clean.indexOf("((") + 2, clean.lastIndexOf("))"));
@@ -92,7 +97,8 @@ function RadioMap({ radios, municipality }: { radios: Radio[]; municipality: str
       map = L.map(container, { scrollWheelZoom: false });
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
       const features = radios.map((r) => ({ type: "Feature" as const, properties: r, geometry: parseWkt(r.wkt) })).filter((f): f is GeoJSON.Feature<GeoJSON.Geometry, Radio> => !!f.geometry);
-      const layer = L.geoJSON({ type: "FeatureCollection", features }, {
+      const collection: GeoJSON.FeatureCollection<GeoJSON.Geometry, Radio> = { type: "FeatureCollection", features };
+      const layer = L.geoJSON(collection, {
         style: (feature) => {
           const value = feature?.properties?.value;
           return { color: "#d7e6d1", weight: 0.5, fillOpacity: 0.72, fillColor: value === null ? "#64748b" : value < 25 ? "#a63d40" : value < 50 ? "#d18b42" : value < 75 ? "#b5bd54" : "#4e9479" };
