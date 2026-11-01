@@ -29,9 +29,10 @@ export interface Work {
   status: string | null;
   progress: number | null;
   beneficiaries: number | null;
-  cutoff: string;
+  cutoff: string | null;
   sourceId: string;
-  territorialScope: "Cuenca" | "Partido completo";
+  territorialScope: "Cuenca" | "Partido completo" | "Jurisdicción informada";
+  sourceWorkId?: string | null;
 }
 export interface Metric {
   id: string;
