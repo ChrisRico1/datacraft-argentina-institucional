@@ -106,7 +106,7 @@ export function SourceLink({ source, compact = false }: { source: Source; compac
       <span>
         {source.name}
         {!compact && (
-          <span className="mt-1 block text-xs text-ink-muted">
+          <span className="mt-0.5 block text-[11px] text-ink-muted">
             {source.scope}
             {source.frequency ? ` · Frecuencia ${source.frequency.toLowerCase()}` : ""}
           </span>
@@ -307,9 +307,18 @@ export function WorksTable({
   onChange: (value: Filters) => void;
 }) {
   const source = getSource("works-2025");
+  const pageSize = 10;
+  const [page, setPage] = useState(1);
+  const pageCount = Math.max(1, Math.ceil(records.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleRecords = records.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   return (
     <div>
-      <label className="relative mt-6 block max-w-lg">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
+        <span>{records.length.toLocaleString("es-AR")} obras encontradas · {pageSize} por página</span>
+        <span>Página {currentPage} de {pageCount}</span>
+      </div>
+      <label className="relative mt-3 block max-w-lg">
         <span className="sr-only">Buscar obras</span>
         <Search className="absolute left-3 top-3.5 h-4 w-4 text-ink-muted" />
         <input
@@ -322,12 +331,12 @@ export function WorksTable({
         />
       </label>
       <div
-        className="mt-5 overflow-x-auto rounded-lg border border-ink-foreground/15"
+        className="mt-3 overflow-x-auto rounded-lg border border-ink-foreground/15"
         tabIndex={0}
         role="region"
         aria-label="Inventario de obras cloacales"
       >
-        <table className="w-full min-w-[1050px] text-left text-sm">
+        <table className="w-full min-w-[1050px] text-left text-xs">
           <caption className="sr-only">
             Inventario exclusivo de obras cloacales con fecha de corte y fuente
           </caption>
@@ -343,16 +352,16 @@ export function WorksTable({
                 "Fecha de corte",
                 "Fuente",
               ].map((heading) => (
-                <th key={heading} scope="col" className="px-4 py-4 font-medium">
+                <th key={heading} scope="col" className="px-3 py-2.5 font-medium">
                   {heading}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {records.map((work) => (
+            {visibleRecords.map((work) => (
               <tr key={work.id} className="border-t border-ink-foreground/10">
-                <td className="p-4">
+                <td className="px-3 py-2">
                   {work.municipality}
                   <span className="mt-1 block text-xs text-ink-muted">
                     {work.jurisdiction} · {work.sector ?? "Sin clasificación"}
@@ -361,7 +370,7 @@ export function WorksTable({
                 <td className="p-4">
                   {work.name}
                   {work.territorialScope === "Jurisdicción informada" && (
-                    <p className="mt-1 text-xs text-ink-muted">
+                    <p className="mt-0.5 text-[11px] text-ink-muted">
                       Jurisdicción informada por ACUMAR; no confirma sector de cuenca ni ubicación puntual.
                     </p>
                   )}
@@ -393,6 +402,17 @@ export function WorksTable({
           </tbody>
         </table>
       </div>
+      {records.length > pageSize && (
+        <nav aria-label="Paginación de obras" className="mt-3 flex items-center justify-between border-t border-ink-foreground/10 pt-3">
+          <Button type="button" variant="ghost" size="sm" disabled={currentPage === 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>
+            <ArrowLeft className="mr-1 h-4 w-4" /> Anterior
+          </Button>
+          <span className="text-xs text-ink-muted">{(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, records.length)} de {records.length}</span>
+          <Button type="button" variant="ghost" size="sm" disabled={currentPage === pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>
+            Siguiente <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </nav>
+      )}
       {!records.length && (
         <div
           role="status"
