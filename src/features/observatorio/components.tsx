@@ -231,7 +231,7 @@ export function StudyFilters({
           onChange={(event) => onChange({ ...value, sector: event.target.value })}
         >
           <option value="">
-            {cloacal.length ? "Todos los sectores" : "Pendiente de registros oficiales"}
+            "Todos los sectores"
           </option>
           {["Alta", "Media", "Baja"].map((sector) => (
             <option key={sector}>{sector}</option>
@@ -248,7 +248,7 @@ export function StudyFilters({
           onChange={(event) => onChange({ ...value, infrastructure: event.target.value })}
         >
           <option value="">
-            {infrastructures.length ? "Todos los tipos" : "Pendiente de inventario"}
+            "Todos los tipos"
           </option>
           {infrastructures.map((type) => (
             <option key={type}>{type}</option>
@@ -355,7 +355,7 @@ export function WorksTable({
                 <td className="p-4">
                   {work.municipality}
                   <span className="mt-1 block text-xs text-ink-muted">
-                    {work.jurisdiction} · {work.sector ?? "Sector pendiente"}
+                    {work.jurisdiction} · {work.sector ?? "Sin clasificación"}
                   </span>
                 </td>
                 <td className="p-4">
@@ -368,13 +368,13 @@ export function WorksTable({
                   )}
                 </td>
                 <td className="p-4">{work.service}</td>
-                <td className="p-4">{work.status ?? "Pendiente"}</td>
+                <td className="p-4">{work.status ?? "Sin información"}</td>
                 <td className="p-4">
-                  {work.progress === null ? "Pendiente" : `${work.progress}%`}
+                  {work.progress === null ? "—" : `${work.progress}%`}
                 </td>
                 <td className="p-4">
                   {work.beneficiaries === null
-                    ? "Pendiente"
+                    ? "—"
                     : work.beneficiaries.toLocaleString("es-AR")}
                 </td>
                 <td className="p-4">{work.cutoff}</td>
@@ -395,12 +395,12 @@ export function WorksTable({
         >
           <Database className="h-6 w-6 text-lime" />
           <h3 className="text-lg font-semibold">
-            {hasRecords ? "Búsqueda sin coincidencias" : "Inventario en proceso de consolidación"}
+            {hasRecords ? "Búsqueda sin coincidencias" : "Consultá las obras publicadas por ACUMAR"}
           </h3>
           <p className="max-w-2xl text-sm text-ink-muted">
             {hasRecords
               ? "Probá otra búsqueda o restablecé los filtros."
-              : "La incorporación de fichas está pendiente de verificación de fuente, alcance y fecha. Los valores de obras, conexiones y beneficiarios se presentarán cuando estén validados."}
+              : "Podés consultar el registro oficial de obras de agua y cloaca en el conjunto de datos de ACUMAR."}
           </p>
           {source && (
             <Button asChild variant="labOutline">
