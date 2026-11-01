@@ -231,7 +231,7 @@ export function StudyFilters({
           onChange={(event) => onChange({ ...value, sector: event.target.value })}
         >
           <option value="">
-            "Todos los sectores"
+            Todos los sectores
           </option>
           {["Alta", "Media", "Baja"].map((sector) => (
             <option key={sector}>{sector}</option>
@@ -248,7 +248,7 @@ export function StudyFilters({
           onChange={(event) => onChange({ ...value, infrastructure: event.target.value })}
         >
           <option value="">
-            "Todos los tipos"
+            Todos los tipos
           </option>
           {infrastructures.map((type) => (
             <option key={type}>{type}</option>
@@ -317,7 +317,7 @@ export function WorksTable({
           aria-label="Buscar obras"
           value={filters.query}
           onChange={(event) => onChange({ ...filters, query: event.target.value })}
-          placeholder="Buscar por obra, municipio o estado"
+          placeholder="Buscar por obra, municipio, estado o ID ACUMAR"
           className={`${selectClass} pl-10`}
         />
       </label>
@@ -360,6 +360,11 @@ export function WorksTable({
                 </td>
                 <td className="p-4">
                   {work.name}
+                  {work.territorialScope === "Jurisdicción informada" && (
+                    <p className="mt-1 text-xs text-ink-muted">
+                      Jurisdicción informada por ACUMAR; no confirma sector de cuenca ni ubicación puntual.
+                    </p>
+                  )}
                   {work.territorialScope === "Partido completo" && (
                     <p className="mt-1 text-xs text-lime">
                       Alcance: partido completo. El análisis de cuenca requiere un recorte espacial
@@ -377,7 +382,7 @@ export function WorksTable({
                     ? "—"
                     : work.beneficiaries.toLocaleString("es-AR")}
                 </td>
-                <td className="p-4">{work.cutoff}</td>
+                <td className="p-4">{work.cutoff ?? "No informada por la fuente"}</td>
                 <td className="p-4">
                   {getSource(work.sourceId) && (
                     <SourceLink source={getSource(work.sourceId) as Source} compact />
