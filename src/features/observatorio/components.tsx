@@ -326,6 +326,7 @@ export function WorksTable({
       </label>
       <div
         className="mt-3 max-h-[68vh] min-h-[320px] overflow-auto overscroll-contain rounded-lg border border-ink-foreground/15 shadow-inner"
+        style={{ contain: "layout paint" }}
         tabIndex={0}
         role="region"
         aria-label="Inventario de obras cloacales"
