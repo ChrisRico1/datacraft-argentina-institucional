@@ -163,7 +163,7 @@ function MunicipioEnObraPage() {
               Inicio
             </Link>
             <Link to="/observatorio" className="text-ink-muted transition hover:text-lime">
-              Observatorio
+              Proyectos
             </Link>
             <Link to="/" hash="contacto" className="text-ink-muted transition hover:text-lime">
               Contacto
