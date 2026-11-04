@@ -612,6 +612,21 @@ function Index() {
                 items={stack}
               />
             </div>
+            <div className="mt-6 rounded-2xl border border-lime/25 bg-ink-2/50 p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div>
+                <p className="eyebrow text-lime">PROPUESTA PARA EL SECTOR PÚBLICO</p>
+                <h3 className="mt-2 text-xl font-semibold text-ink-foreground">Municipio en Obra</h3>
+                <p className="mt-2 max-w-2xl text-sm text-ink-muted">
+                  Una propuesta conceptual para organizar, visualizar y dar seguimiento a proyectos de infraestructura pública.
+                </p>
+              </div>
+              <Link
+                to="/municipio-en-obra"
+                className="mt-5 inline-flex shrink-0 items-center gap-2 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-lime-foreground transition hover:brightness-105 sm:mt-0"
+              >
+                Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </section>
 
