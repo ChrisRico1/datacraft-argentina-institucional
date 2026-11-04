@@ -621,6 +621,27 @@ function Index() {
                   text={e.text}
                 />
               ))}
+              <article className="rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-7 transition hover:-translate-y-1 hover:border-lime/50">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
+                    <Landmark className="h-6 w-6" aria-hidden />
+                  </span>
+                  <span className="eyebrow rounded-full bg-ink-foreground/10 px-3 py-1.5 text-ink-foreground">
+                    Propuesta conceptual
+                  </span>
+                </div>
+                <h3 className="mt-6 text-xl font-semibold text-ink-foreground">Municipio en Obra</h3>
+                <p className="mt-2 text-sm text-ink-muted">
+                  Una propuesta de gestión inteligente para organizar proyectos de infraestructura
+                  pública y mejorar su seguimiento y trazabilidad.
+                </p>
+                <Link
+                  to="/municipio-en-obra"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-lime hover:gap-3"
+                >
+                  Conocer la propuesta <ArrowRight className="h-4 w-4" />
+                </Link>
+              </article>
               <Card
                 dark
                 icon={Boxes}
