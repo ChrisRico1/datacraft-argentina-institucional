@@ -47,6 +47,9 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
             <Link to="/observatorio" className="text-sm text-lime">
               Observatorio
             </Link>
+            <Link to="/municipio-en-obra" className="text-sm text-ink-muted hover:text-lime">
+              Municipio en Obra
+            </Link>
             <Button asChild variant="labOutline">
               <Link to="/" hash="contacto">
                 Contacto <ArrowUpRight />
@@ -76,6 +79,9 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
             </Link>
             <Link to="/observatorio" onClick={() => setOpen(false)} className="text-lime">
               Observatorio
+            </Link>
+            <Link to="/municipio-en-obra" onClick={() => setOpen(false)}>
+              Municipio en Obra
             </Link>
             <Link to="/" hash="contacto">
               Contacto
