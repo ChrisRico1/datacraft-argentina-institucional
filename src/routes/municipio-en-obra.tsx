@@ -415,17 +415,27 @@ function MunicipioEnObraPage() {
 
         <section className="mx-auto max-w-7xl px-5 py-16 sm:py-20">
           <div className="grid gap-5 md:grid-cols-3">
-            {[
-              [Camera, "Evidencia organizada", "Fotografías, informes y observaciones vinculados a cada proyecto."],
-              [MapPinned, "Lectura territorial", "Ubicación y distribución de las obras para comprender su alcance en el territorio."],
-              [ChartNoAxesCombined, "Información para decidir", "Indicadores y reportes para facilitar el seguimiento de la cartera."],
-            ].map(([Icon, heading, text]) => (
-              <article key={heading as string} className="border-t border-ink-foreground/20 pt-5">
-                <Icon className="h-6 w-6 text-lime" />
-                <h3 className="mt-4 text-lg font-semibold">{heading as string}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-muted">{text as string}</p>
-              </article>
-            ))}
+            <article className="border-t border-ink-foreground/20 pt-5">
+              <Camera className="h-6 w-6 text-lime" />
+              <h3 className="mt-4 text-lg font-semibold">Evidencia organizada</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                Fotografías, informes y observaciones vinculados a cada proyecto.
+              </p>
+            </article>
+            <article className="border-t border-ink-foreground/20 pt-5">
+              <MapPinned className="h-6 w-6 text-lime" />
+              <h3 className="mt-4 text-lg font-semibold">Lectura territorial</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                Ubicación y distribución de las obras para comprender su alcance en el territorio.
+              </p>
+            </article>
+            <article className="border-t border-ink-foreground/20 pt-5">
+              <ChartNoAxesCombined className="h-6 w-6 text-lime" />
+              <h3 className="mt-4 text-lg font-semibold">Información para decidir</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                Indicadores y reportes para facilitar el seguimiento de la cartera.
+              </p>
+            </article>
           </div>
         </section>
 
