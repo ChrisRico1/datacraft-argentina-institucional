@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, Building2 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { observatories } from "@/features/observatorio/catalog";
 import { ProjectCard } from "@/features/observatorio/components";
 
@@ -34,13 +33,13 @@ function ObservatoryIndex() {
             <span className="text-lime">Proyectos que muestran lo que podemos hacer.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted">
-            Investigaciones, tableros y visualizaciones basadas en fuentes públicas, con metodología
-            transparente.
+            Proyectos demostrativos que combinan análisis territorial, datos y soluciones
+            digitales para responder a desafíos de organizaciones públicas y privadas.
           </p>
           <div className="mt-10 flex flex-wrap gap-x-10 gap-y-3 border-t border-ink-foreground/15 pt-5 text-xs text-mint">
-            <span>01 / FUENTES PÚBLICAS</span>
-            <span>02 / LECTURA TERRITORIAL</span>
-            <span>03 / TRAZABILIDAD</span>
+            <span>01 / DATOS</span>
+            <span>02 / TECNOLOGÍA</span>
+            <span>03 / SOLUCIONES A MEDIDA</span>
           </div>
         </div>
       </section>
