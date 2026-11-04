@@ -416,6 +416,14 @@ function Index() {
                   Observatorio
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/municipio-en-obra"
+                  className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime"
+                >
+                  Municipio en Obra
+                </Link>
+              </li>
             </ul>
           </nav>
           <a
@@ -461,6 +469,15 @@ function Index() {
                   className="block py-3 text-ink-foreground hover:text-lime"
                 >
                   Observatorio
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/municipio-en-obra"
+                  onClick={() => setOpen(false)}
+                  className="block py-3 text-ink-foreground hover:text-lime"
+                >
+                  Municipio en Obra
                 </Link>
               </li>
             </ul>
