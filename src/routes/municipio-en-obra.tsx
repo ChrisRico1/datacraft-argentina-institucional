@@ -427,15 +427,7 @@ function MunicipioEnObraPage() {
             </div>
           </div>
         </section>
-      </main>
 
-      <footer className="border-t border-ink-foreground/10 bg-carbon py-7">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 text-sm text-ink-muted">
-          <Link to="/" className="inline-flex items-center gap-2 transition hover:text-lime">
-            <ArrowLeft className="h-4 w-4" /> Volver a Datacraft Argentina
-          </Link>
-          <p>© {new Date().getFullYear()} Datacraft Argentina · DATACRAFT LAB</p>
-        </div>
       </>
     </ObservatoryShell>
   );
