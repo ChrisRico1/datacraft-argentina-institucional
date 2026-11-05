@@ -418,13 +418,11 @@ function MunicipioEnObraPage() {
                   podemos analizarlo en una reunión y definir un alcance posible.
                 </p>
               </div>
-              <Link
-                to="/"
-                hash="contacto"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105"
-              >
-                Coordinar una reunión <ArrowUpRight className="h-4 w-4" />
-              </Link>
+              <Button asChild variant="lab">
+                <Link to="/" hash="contacto">
+                  Coordinar una reunión <ArrowUpRight />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
