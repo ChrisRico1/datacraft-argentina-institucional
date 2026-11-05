@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { ObservatoryShell } from "@/features/observatorio/components";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Building2,
@@ -13,7 +14,6 @@ import {
   ShieldCheck,
   Wallet,
 } from "lucide-react";
-import logo from "@/assets/datacraft-logo.jpeg.asset.json";
 
 const title = "Municipio en Obra | Gestión inteligente de infraestructura pública";
 const description =
@@ -114,17 +114,6 @@ const sampleWorks = [
   },
 ];
 
-function Wordmark() {
-  return (
-    <span className="flex items-center gap-2.5 font-display text-lg font-bold">
-      <img src={logo.url} alt="" width={36} height={36} className="h-9 w-9 rounded-full" />
-      <span>
-        Datacraft <span className="font-normal text-ink-muted">Argentina</span>
-      </span>
-    </span>
-  );
-}
-
 function SectionTitle({
   eyebrow,
   title,
@@ -145,40 +134,19 @@ function SectionTitle({
 
 function MunicipioEnObraPage() {
   return (
-    <div className="municipio-en-obra grid-lines min-h-screen bg-ink text-ink-foreground">
-      <a
-        href="#contenido"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-lime focus:px-4 focus:py-2 focus:text-lime-foreground"
-      >
-        Saltar al contenido
-      </a>
-
-      <header className="sticky top-0 z-50 border-b border-ink-foreground/10 bg-ink/95 backdrop-blur">
-        <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-          <Link to="/" aria-label="Datacraft Argentina, inicio">
-            <Wordmark />
-          </Link>
-          <nav aria-label="Principal" className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-            <Link to="/" className="text-ink-muted transition hover:text-lime">
-              Inicio
-            </Link>
-            <Link to="/observatorio" className="text-ink-muted transition hover:text-lime">
-              Proyectos
-            </Link>
-            <Link to="/" hash="contacto" className="text-ink-muted transition hover:text-lime">
-              Contacto
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <main id="contenido">
-        <section className="relative overflow-hidden border-b border-ink-foreground/10 py-16 sm:py-24">
+    <ObservatoryShell>
+      <>
+        <section className="relative overflow-hidden border-b border-ink-foreground/10 py-12 sm:py-16">
           <div className="pointer-events-none absolute -right-32 top-10 h-96 w-96 rounded-full bg-lime/5 blur-3xl" />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-[1fr_1.05fr]">
+          <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-5 lg:grid-cols-[1fr_1.05fr]">
             <div>
-              <p className="eyebrow text-lime">DATACRAFT LAB / SOLUCIÓN PARA EL SECTOR PÚBLICO</p>
-              <p className="mt-7 text-sm font-medium tracking-[0.18em] text-mint">
+              <div className="flex flex-wrap items-center gap-3">
+                <Link to="/observatorio" className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-lime">
+                  <ArrowRight className="h-4 w-4 rotate-180" /> Volver a Proyectos
+                </Link>
+                <span className="eyebrow text-lime">DATACRAFT LAB / SECTOR PÚBLICO</span>
+              </div>
+              <p className="mt-6 text-sm font-medium tracking-[0.18em] text-mint">
                 INFRAESTRUCTURA · GESTIÓN · TRAZABILIDAD
               </p>
               <h1 className="mt-4 max-w-2xl text-4xl font-semibold leading-tight sm:text-6xl">
@@ -191,19 +159,16 @@ function MunicipioEnObraPage() {
                 pública, seguir su ejecución y mejorar la trazabilidad de la inversión municipal.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to="/"
-                  hash="contacto"
-                  className="group inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105"
-                >
-                  Conversar sobre una solución <ArrowUpRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href="#como-funciona"
-                  className="inline-flex items-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:border-lime hover:text-lime"
-                >
-                  Explorar la propuesta <ArrowRight className="h-4 w-4" />
-                </a>
+                <Button asChild variant="lab">
+                  <Link to="/" hash="contacto">
+                    Conversar sobre una solución <ArrowUpRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="labOutline">
+                  <a href="#como-funciona">
+                    Explorar la propuesta <ArrowRight />
+                  </a>
+                </Button>
               </div>
               <p className="mt-5 max-w-lg text-xs leading-relaxed text-ink-muted">
                 Propuesta conceptual. El alcance y las funcionalidades se definen según las
@@ -259,12 +224,12 @@ function MunicipioEnObraPage() {
                     <p className="text-xs font-semibold">Distribución territorial</p>
                     <MapPinned className="h-4 w-4 text-lime" />
                   </div>
-                  <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-ink-foreground/10 bg-[#202d39]">
-                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, #8ba1a5 47%, transparent 48%), linear-gradient(120deg, transparent 46%, #8ba1a5 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
+                  <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-ink-foreground/10 bg-ink-2">
+                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, var(--ink-muted) 47%, transparent 48%), linear-gradient(120deg, transparent 46%, var(--ink-muted) 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
                     <svg viewBox="0 0 220 145" className="absolute inset-0 h-full w-full" aria-label="Mapa ilustrativo de puntos de obras">
-                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="#91a9a8" strokeWidth="2" strokeDasharray="4 5" />
-                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="#91a9a8" strokeWidth="1.5" opacity=".6" />
-                      {[[48,80],[98,48],[130,64],[158,25],[182,105],[72,92],[202,45]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill={i%2===0 ? "#d7ff62" : "#9ed7df"} stroke="#18232d" strokeWidth="2" />)}
+                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="var(--ink-muted)" strokeWidth="2" strokeDasharray="4 5" />
+                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="var(--ink-muted)" strokeWidth="1.5" opacity=".6" />
+                      {[[48,80],[98,48],[130,64],[158,25],[182,105],[72,92],[202,45]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill={i%2===0 ? "var(--lime)" : "var(--mint)"} stroke="var(--ink)" strokeWidth="2" />)}
                     </svg>
                     <span className="absolute bottom-2 left-2 rounded bg-ink/80 px-2 py-1 text-[9px] text-ink-muted">Ubicaciones de ejemplo</span>
                   </div>
@@ -463,16 +428,7 @@ function MunicipioEnObraPage() {
             </div>
           </div>
         </section>
-      </main>
-
-      <footer className="border-t border-ink-foreground/10 bg-carbon py-7">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 text-sm text-ink-muted">
-          <Link to="/" className="inline-flex items-center gap-2 transition hover:text-lime">
-            <ArrowLeft className="h-4 w-4" /> Volver a Datacraft Argentina
-          </Link>
-          <p>© {new Date().getFullYear()} Datacraft Argentina · DATACRAFT LAB</p>
-        </div>
-      </footer>
-    </div>
+      </>
+    </ObservatoryShell>
   );
 }
