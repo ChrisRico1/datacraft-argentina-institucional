@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Building2,
@@ -13,7 +12,8 @@ import {
   ShieldCheck,
   Wallet,
 } from "lucide-react";
-import logo from "@/assets/datacraft-logo.jpeg.asset.json";
+
+import { ObservatoryShell } from "@/features/observatorio/components";
 
 const title = "Municipio en Obra | Gestión inteligente de infraestructura pública";
 const description =
@@ -114,17 +114,6 @@ const sampleWorks = [
   },
 ];
 
-function Wordmark() {
-  return (
-    <span className="flex items-center gap-2.5 font-display text-lg font-bold">
-      <img src={logo.url} alt="" width={36} height={36} className="h-9 w-9 rounded-full" />
-      <span>
-        Datacraft <span className="font-normal text-ink-muted">Argentina</span>
-      </span>
-    </span>
-  );
-}
-
 function SectionTitle({
   eyebrow,
   title,
@@ -145,34 +134,9 @@ function SectionTitle({
 
 function MunicipioEnObraPage() {
   return (
-    <div className="municipio-en-obra grid-lines min-h-screen bg-ink text-ink-foreground">
-      <a
-        href="#contenido"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-lime focus:px-4 focus:py-2 focus:text-lime-foreground"
-      >
-        Saltar al contenido
-      </a>
+    <ObservatoryShell>
+      <>
 
-      <header className="sticky top-0 z-50 border-b border-ink-foreground/10 bg-ink/95 backdrop-blur">
-        <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-          <Link to="/" aria-label="Datacraft Argentina, inicio">
-            <Wordmark />
-          </Link>
-          <nav aria-label="Principal" className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-            <Link to="/" className="text-ink-muted transition hover:text-lime">
-              Inicio
-            </Link>
-            <Link to="/observatorio" className="text-ink-muted transition hover:text-lime">
-              Proyectos
-            </Link>
-            <Link to="/" hash="contacto" className="text-ink-muted transition hover:text-lime">
-              Contacto
-            </Link>
-          </nav>
-        </div>
-      </header>
-
-      <main id="contenido">
         <section className="relative overflow-hidden border-b border-ink-foreground/10 py-16 sm:py-24">
           <div className="pointer-events-none absolute -right-32 top-10 h-96 w-96 rounded-full bg-lime/5 blur-3xl" />
           <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 lg:grid-cols-[1fr_1.05fr]">
@@ -259,11 +223,11 @@ function MunicipioEnObraPage() {
                     <p className="text-xs font-semibold">Distribución territorial</p>
                     <MapPinned className="h-4 w-4 text-lime" />
                   </div>
-                  <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-ink-foreground/10 bg-[#202d39]">
-                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, #8ba1a5 47%, transparent 48%), linear-gradient(120deg, transparent 46%, #8ba1a5 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
+                  <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-ink-foreground/10 bg-ink-2">
+                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, #78918d 47%, transparent 48%), linear-gradient(120deg, transparent 46%, #78918d 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
                     <svg viewBox="0 0 220 145" className="absolute inset-0 h-full w-full" aria-label="Mapa ilustrativo de puntos de obras">
-                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="#91a9a8" strokeWidth="2" strokeDasharray="4 5" />
-                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="#91a9a8" strokeWidth="1.5" opacity=".6" />
+                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="#78918d" strokeWidth="2" strokeDasharray="4 5" />
+                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="#78918d" strokeWidth="1.5" opacity=".6" />
                       {[[48,80],[98,48],[130,64],[158,25],[182,105],[72,92],[202,45]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill={i%2===0 ? "#d7ff62" : "#9ed7df"} stroke="#18232d" strokeWidth="2" />)}
                     </svg>
                     <span className="absolute bottom-2 left-2 rounded bg-ink/80 px-2 py-1 text-[9px] text-ink-muted">Ubicaciones de ejemplo</span>
@@ -463,16 +427,8 @@ function MunicipioEnObraPage() {
             </div>
           </div>
         </section>
-      </main>
 
-      <footer className="border-t border-ink-foreground/10 bg-carbon py-7">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 text-sm text-ink-muted">
-          <Link to="/" className="inline-flex items-center gap-2 transition hover:text-lime">
-            <ArrowLeft className="h-4 w-4" /> Volver a Datacraft Argentina
-          </Link>
-          <p>© {new Date().getFullYear()} Datacraft Argentina · DATACRAFT LAB</p>
-        </div>
-      </footer>
-    </div>
+      </>
+    </ObservatoryShell>
   );
 }
