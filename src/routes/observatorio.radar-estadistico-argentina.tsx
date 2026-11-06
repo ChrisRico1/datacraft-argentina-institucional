@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -28,6 +28,11 @@ type Indicator = {
   frequency: string;
   coverage: string;
   service: string;
+  apiId: string;
+  periodKey: string;
+  valueKey: string;
+  valueLabel: string;
+  contextKey?: string;
 };
 
 const topics: {
@@ -82,6 +87,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional y regiones, según serie",
     service: "IPC",
+    apiId: "ipc", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "salarios",
@@ -92,6 +98,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Salarios",
+    apiId: "salarios", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "emae",
@@ -102,6 +109,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "EMAE",
+    apiId: "emae", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "tipo_de_indicador_descripcion",
   },
   {
     id: "pobreza",
@@ -112,6 +120,7 @@ const indicators: Indicator[] = [
     frequency: "Semestral",
     coverage: "Aglomerados urbanos relevados por EPH",
     service: "Incidencia de pobreza e indigencia",
+    apiId: "pobreza", periodKey: "periodo", valueKey: "tasa_pobreza_personas", valueLabel: "Pobreza en personas (%)", contextKey: "area_geografica_nom",
   },
   {
     id: "mercado-laboral",
@@ -122,6 +131,7 @@ const indicators: Indicator[] = [
     frequency: "Trimestral",
     coverage: "Aglomerados urbanos relevados por EPH",
     service: "Mercado de trabajo",
+    apiId: "mercado-laboral", periodKey: "periodo", valueKey: "tasa_de_desocupacion", valueLabel: "Desocupación (%)", contextKey: "area_geografica_nom",
   },
   {
     id: "canastas",
@@ -132,6 +142,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Cobertura publicada por INDEC",
     service: "Canastas básicas",
+    apiId: "cba-cbt", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "exportaciones",
@@ -142,6 +153,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Intercambio comercial argentino",
+    apiId: "exportaciones", periodKey: "Periodo", valueKey: "valor_FOB", valueLabel: "Valor FOB (USD)", contextKey: "rubro_cod",
   },
   {
     id: "importaciones",
@@ -152,6 +164,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Intercambio comercial argentino",
+    apiId: "importaciones", periodKey: "Periodo", valueKey: "valor_CIF", valueLabel: "Valor CIF (USD)", contextKey: "uso_economico_cod",
   },
   {
     id: "poblacion",
@@ -162,6 +175,82 @@ const indicators: Indicator[] = [
     frequency: "Anual",
     coverage: "Jurisdicciones y departamentos, según servicio",
     service: "Estimaciones y proyecciones de población",
+    apiId: "poblacion-departamento", periodKey: "fecha", valueKey: "poblacion", valueLabel: "Población estimada", contextKey: "departamento_nom",
+  },
+
+  {
+    id: "canasta-crianza",
+    title: "Canasta de crianza · menores de 1 año",
+    topic: "sociedad",
+    description: "Costo de bienes, servicios y tiempo de cuidado por tramo de edad.",
+    unit: "Pesos corrientes",
+    frequency: "Mensual",
+    coverage: "Gran Buenos Aires",
+    service: "Canasta de crianza",
+    apiId: "canasta-crianza",
+    periodKey: "Periodo",
+    valueKey: "tot_men1",
+    valueLabel: "Total mensual · menores de 1 año (ARS)",
+  },
+  {
+    id: "ipi-manufacturero",
+    title: "Producción industrial manufacturera",
+    topic: "economia",
+    description: "Evolución de la actividad industrial y sus aperturas.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Nacional",
+    service: "IPI manufacturero",
+    apiId: "ipi-manufacturero",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "sipm",
+    title: "Precios mayoristas",
+    topic: "economia",
+    description: "Índices de precios internos mayoristas y del productor.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Nacional",
+    service: "SIPM",
+    apiId: "sipm",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "costo-construccion",
+    title: "Costo de la construcción",
+    topic: "economia",
+    description: "Evolución de los costos de construcción.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Gran Buenos Aires",
+    service: "ICC",
+    apiId: "costo-construccion",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "poblacion-jurisdiccion",
+    title: "Población por jurisdicción",
+    topic: "demografia",
+    description: "Proyecciones por jurisdicción, sexo y grupos de edad.",
+    unit: "Personas",
+    frequency: "Anual",
+    coverage: "Jurisdicciones argentinas",
+    service: "Proyecciones de población por jurisdicción",
+    apiId: "poblacion-jurisdiccion",
+    periodKey: "fecha",
+    valueKey: "poblacion",
+    valueLabel: "Población proyectada",
+    contextKey: "jurisdiccion_nom",
   },
 ];
 
@@ -188,6 +277,12 @@ function RadarEstadisticoArgentina() {
   const [selectedIndicator, setSelectedIndicator] = useState("ipc");
   const [period, setPeriod] = useState("all");
   const [search, setSearch] = useState("");
+  const [apiRows, setApiRows] = useState<Record<string, unknown>[]>([]);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [contentRange, setContentRange] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   const visibleIndicators = useMemo(
     () =>
@@ -200,10 +295,67 @@ function RadarEstadisticoArgentina() {
   );
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0];
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0];
+  const totalRows = contentRange?.split("/")[1];
+  const hasNextPage = totalRows && /^\d+$/.test(totalRows)
+    ? offset + 20 < Number(totalRows)
+    : apiRows.length === 20;
+  useEffect(() => {
+    const controller = new AbortController();
+    const currentYear = new Date().getFullYear();
+    const fromYear =
+      period === "5y" ? currentYear - 5 :
+      period === "2y" ? currentYear - 2 :
+      period === "1y" ? currentYear - 1 :
+      null;
+    const params = new URLSearchParams({ limit: "20", offset: String(offset) });
+    if (fromYear !== null) params.set("from", String(fromYear));
+
+    setApiLoading(true);
+    setApiError(null);
+    setApiRows([]);
+    setContentRange(null);
+
+    fetch(`/api/radar/${selected.apiId}?${params.toString()}`, {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const payload = (await response.json()) as {
+          data?: unknown;
+          contentRange?: string | null;
+          error?: string;
+        };
+        if (!response.ok) {
+          throw new Error(payload.error ?? "No se pudo consultar el servicio estadístico.");
+        }
+        const rows = Array.isArray(payload.data)
+          ? payload.data.filter(
+              (row): row is Record<string, unknown> =>
+                typeof row === "object" && row !== null && !Array.isArray(row),
+            )
+          : [];
+        setApiRows(rows);
+        setContentRange(payload.contentRange ?? null);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name === "AbortError") return;
+        setApiError(
+          error instanceof Error
+            ? error.message
+            : "No se pudo consultar el servicio estadístico.",
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setApiLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selected.apiId, period, refreshKey, offset]);
+
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
     const first = indicators.find((indicator) => indicator.topic === topic);
     if (first) setSelectedIndicator(first.id);
+    setOffset(0);
     setSearch("");
   };
 
@@ -262,8 +414,8 @@ function RadarEstadisticoArgentina() {
                 </div>
               </div>
               <p className="mt-5 flex items-center gap-2 text-xs text-mint">
-                <span className="h-2 w-2 rounded-full bg-lime" />
-                Diseño funcional en construcción · Datos aún no conectados
+                <span className={`h-2 w-2 rounded-full ${apiError ? "bg-red-300" : apiLoading ? "bg-amber-300" : apiRows.length ? "bg-lime" : "bg-ink-foreground/40"}`} />
+                {apiLoading ? "Consultando API-INDEC" : apiError ? "Conexión pendiente" : apiRows.length ? "Datos recibidos desde INDEC" : "Esperando respuesta de INDEC"}
               </p>
             </div>
           </div>
@@ -352,7 +504,7 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => setSelectedIndicator(indicator.id)}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); }}
                     className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -383,17 +535,104 @@ function RadarEstadisticoArgentina() {
                 <Metadata label="Servicio INDEC" value={selected.service} icon={Database} />
               </div>
 
-              <div className="mt-6 rounded-xl border border-dashed border-ink-foreground/20 bg-ink/60 p-6 sm:p-8">
-                <div className="mx-auto flex max-w-md flex-col items-center text-center">
-                  <div className="grid h-12 w-12 place-items-center rounded-full bg-ink-foreground/10">
-                    <Activity className="h-6 w-6 text-lime" />
+              <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/60 p-4 sm:p-5">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-semibold">Observaciones oficiales</h4>
+                    <p className="mt-1 text-xs text-ink-muted">
+                      Consulta directa a través del servidor de Datacraft · Fuente: INDEC
+                    </p>
                   </div>
-                  <h4 className="mt-4 text-lg font-semibold">Visualización en preparación</h4>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                    La conexión con este servicio se habilitará después de validar su endpoint, dimensiones, períodos y metadatos oficiales.
-                  </p>
-                  <span className="mt-4 text-xs text-mint">No se muestran valores de ejemplo ni cifras simuladas.</span>
+                  <span className={`rounded-full px-3 py-1 text-[11px] ${apiError ? "bg-red-400/10 text-red-300" : apiLoading ? "bg-amber-300/10 text-amber-200" : "bg-lime/10 text-lime"}`}>
+                    {apiLoading ? "Consultando INDEC" : apiError ? "Servicio no disponible" : "Conexión consultada"}
+                  </span>
                 </div>
+                {apiLoading ? (
+                  <div className="flex items-center justify-center gap-3 py-12 text-sm text-ink-muted">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-lime/30 border-t-lime" />
+                    Consultando datos oficiales...
+                  </div>
+                ) : apiError ? (
+                  <div className="rounded-lg border border-red-300/20 bg-red-300/5 p-5">
+                    <p className="text-sm font-medium text-red-200">No fue posible cargar este indicador.</p>
+                    <p className="mt-2 text-sm text-ink-muted">{apiError}</p>
+                    <p className="mt-3 text-xs text-ink-muted">
+                      La conexión con la fuente oficial no está disponible en este momento. Si administrás el sitio, revisá la configuración del servidor.
+                    </p>
+                  </div>
+                ) : apiRows.length === 0 ? (
+                  <div className="py-10 text-center">
+                    <p className="text-sm font-medium">La consulta no devolvió observaciones para estos filtros.</p>
+                    <p className="mt-2 text-xs text-ink-muted">Fuente: INDEC · {selected.service}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
+                      <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
+                      {contentRange ? <span>Rango informado: {contentRange}</span> : null}
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                        <thead>
+                          <tr className="border-b border-ink-foreground/15 text-[11px] uppercase tracking-wider text-ink-muted">
+                            <th className="px-3 py-3 font-medium">Período</th>
+                            <th className="px-3 py-3 font-medium">Desagregación</th>
+                            <th className="px-3 py-3 text-right font-medium">{selected.valueLabel}</th>
+                            <th className="px-3 py-3 font-medium">Notas</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {apiRows.map((row, index) => {
+                            const periodValue = row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+                            const contextValue = selected.contextKey ? row[selected.contextKey] : null;
+                            const rawValue = row[selected.valueKey];
+                            const displayValue =
+                              typeof rawValue === "number"
+                                ? new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(rawValue)
+                                : rawValue === null || rawValue === undefined
+                                  ? "—"
+                                  : String(rawValue);
+                            const notes = row.observaciones;
+                            return (
+                              <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
+                                <td className="whitespace-nowrap px-3 py-3 font-medium">{periodValue === null || periodValue === undefined ? "—" : String(periodValue)}</td>
+                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : String(contextValue)}</td>
+                                <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
+                                <td className="max-w-[180px] px-3 py-3 text-xs text-ink-muted">{notes === null || notes === undefined || notes === "" ? "—" : String(notes)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-[11px] leading-relaxed text-ink-muted">
+                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1}{totalRows && /^\d+$/.test(totalRows) ? ` · ${totalRows} registros en total` : ""}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={offset === 0 || apiLoading}
+                          onClick={() => setOffset((value) => Math.max(0, value - 20))}
+                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Anterior
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!hasNextPage || apiLoading}
+                          onClick={() => setOffset((value) => value + 20)}
+                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Siguiente
+                        </button>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+                      Se conservan los valores y observaciones recibidos del INDEC, incluidas sus marcas estadísticas.
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
@@ -401,7 +640,7 @@ function RadarEstadisticoArgentina() {
                   Período
                   <select
                     value={period}
-                    onChange={(event) => setPeriod(event.target.value)}
+                    onChange={(event) => { setPeriod(event.target.value); setOffset(0); }}
                     className="mt-2 h-10 w-full rounded-lg border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground"
                   >
                     <option value="all">Todo el período disponible</option>
@@ -410,14 +649,12 @@ function RadarEstadisticoArgentina() {
                     <option value="1y">Último año</option>
                   </select>
                 </label>
-                <label className="text-xs text-ink-muted">
-                  Desagregación
-                  <select disabled className="mt-2 h-10 w-full rounded-lg border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-muted opacity-60">
-                    <option>Según disponibilidad del servicio</option>
-                  </select>
-                </label>
-                <Button className="self-end" variant="lab" disabled>
-                  Consultar <ArrowRight />
+                <div className="flex flex-col justify-end pb-2 text-xs text-ink-muted">
+                  <span className="font-semibold uppercase tracking-wider">Fuente</span>
+                  <span className="mt-2">INDEC · Catálogo API v1</span>
+                </div>
+                <Button className="self-end" variant="lab" disabled={apiLoading} onClick={() => setRefreshKey((value) => value + 1)}>
+                  Actualizar datos <ArrowRight />
                 </Button>
               </div>
               <p className="mt-3 text-right text-[11px] text-ink-muted">Filtro seleccionado: {period === "all" ? "Todo el período" : period === "5y" ? "Últimos 5 años" : period === "2y" ? "Últimos 2 años" : "Último año"}</p>
