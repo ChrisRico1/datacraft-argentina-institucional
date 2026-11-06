@@ -18,9 +18,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
-import { PovertyAreaComparisonChart } from "@/features/radar/components/PovertyAreaComparisonChart";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
+type MetricOption = { valueKey: string; label: string; description?: string };
+
 type Indicator = {
   id: string;
   title: string;
@@ -120,7 +121,7 @@ const indicators: Indicator[] = [
     description: "Incidencia de la pobreza y la indigencia en personas y hogares.",
     unit: "Porcentaje",
     frequency: "Semestral",
-    coverage: "Aglomerados urbanos relevados por EPH",
+    coverage: "Total de 31 aglomerados urbanos · EPH",
     service: "Incidencia de pobreza e indigencia",
     apiId: "pobreza", periodKey: "periodo", valueKey: "tasa_pobreza_personas", valueLabel: "Pobreza en personas (%)", contextKey: "area_geografica_nom",
   },
@@ -256,6 +257,35 @@ const indicators: Indicator[] = [
   },
 ];
 
+const metricOptions: Record<string, MetricOption[]> = {
+  pobreza: [
+    { valueKey: "tasa_pobreza_personas", label: "Pobreza en personas (%)" },
+    { valueKey: "tasa_indigencia_personas", label: "Indigencia en personas (%)" },
+    { valueKey: "tasa_pobreza_hogares", label: "Pobreza en hogares (%)" },
+    { valueKey: "tasa_indigencia_hogares", label: "Indigencia en hogares (%)" },
+  ],
+  "mercado-laboral": [
+    { valueKey: "tasa_de_actividad", label: "Tasa de actividad (%)" },
+    { valueKey: "tasa_de_empleo", label: "Tasa de empleo (%)" },
+    { valueKey: "tasa_de_desocupacion", label: "Tasa de desocupación (%)" },
+    { valueKey: "tasa_de_empleo_formal", label: "Empleo formal (%)" },
+    { valueKey: "tasa_de_empleo_informal", label: "Empleo informal (%)" },
+    { valueKey: "tasa_de_ocupacion_demandante", label: "Ocupación demandante (%)" },
+    { valueKey: "tasa_de_subocupacion", label: "Subocupación (%)" },
+    { valueKey: "tasa_de_subocupacion_demandante", label: "Subocupación demandante (%)" },
+    { valueKey: "tasa_de_subocupacion_no_demandante", label: "Subocupación no demandante (%)" },
+  ],
+};
+
+function formatEphPeriod(value: unknown): string {
+  if (typeof value !== "string") return value == null ? "—" : String(value);
+  const match = /^(\\d{4})([1-4])([ST])$/.exec(value);
+  if (!match) return value;
+  const [, year, quarterOrSemester, kind] = match;
+  if (kind === "S") return `${quarterOrSemester === "1" ? "1.er" : "2.º"} semestre ${year}`;
+  return `${quarterOrSemester}.º trimestre ${year}`;
+}
+
 const title = "Radar Estadístico Argentina | Datacraft";
 const description =
   "Plataforma de exploración de estadísticas oficiales argentinas. Economía, sociedad, comercio exterior y demografía a partir de datos del INDEC.";
@@ -286,6 +316,7 @@ function RadarEstadisticoArgentina() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [offset, setOffset] = useState(0);
   const [chartContext, setChartContext] = useState("");
+  const [selectedMetric, setSelectedMetric] = useState("");
 
   const visibleIndicators = useMemo(
     () =>
@@ -297,6 +328,10 @@ function RadarEstadisticoArgentina() {
     [activeTopic, search],
   );
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0]!;
+  const availableMetrics = metricOptions[selected.id] ?? [];
+  const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
+  const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
+  const selectedValueLabel = activeMetric?.label ?? selected.valueLabel;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = offset + 20 < apiRows.length;
@@ -515,7 +550,7 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); }}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); }}
                     className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -578,8 +613,22 @@ function RadarEstadisticoArgentina() {
                   </div>
                 ) : (
                   <>
+                    {availableMetrics.length > 0 ? (
+                      <div className="mb-4 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
+                        <label htmlFor="radar-metric" className="text-xs text-ink-muted">Indicador para visualizar</label>
+                        <select id="radar-metric" value={selectedValueKey} onChange={(event) => setSelectedMetric(event.target.value)} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
+                          {availableMetrics.map((metric) => <option key={metric.valueKey} value={metric.valueKey}>{metric.label}</option>)}
+                        </select>
+                      </div>
+                    ) : null}
+                    {(selected.id === "pobreza" || selected.id === "mercado-laboral") ? (
+                      <div className="mb-4 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                        Cobertura: total de los 31 aglomerados urbanos relevados por la EPH. Esta consulta no contiene desagregaciones por ciudad o municipio.
+                        {selected.id === "mercado-laboral" ? " Las tasas de actividad, empleo y desocupación tienen denominadores diferentes; la informalidad se calcula sobre la población ocupada." : ""}
+                      </div>
+                    ) : null}
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
-                      <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
+                      <span>{apiRows.length} filas recibidas · {selectedValueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
                     </div>
                     {chartContexts.length > 1 ? (
@@ -596,14 +645,14 @@ function RadarEstadisticoArgentina() {
                         </select>
                       </div>
                     ) : null}
-                    {selected.id === "pobreza" && selected.contextKey ? (
+                    {false && selected.id === "pobreza" && selected.contextKey ? (
                       <div className="mb-5">
                         <PovertyAreaComparisonChart
                           rows={apiRows}
                           periodKey={selected.periodKey}
-                          valueKey={selected.valueKey}
+                          valueKey={selectedValueKey}
                           areaKey={selected.contextKey}
-                          valueLabel={selected.valueLabel}
+                          valueLabel={selectedValueLabel}
                         />
                       </div>
                     ) : null}
@@ -624,7 +673,7 @@ function RadarEstadisticoArgentina() {
                           <tr className="border-b border-ink-foreground/15 text-[11px] uppercase tracking-wider text-ink-muted">
                             <th className="px-3 py-3 font-medium">Período</th>
                             <th className="px-3 py-3 font-medium">Desagregación</th>
-                            <th className="px-3 py-3 text-right font-medium">{selected.valueLabel}</th>
+                            <th className="px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
                             <th className="px-3 py-3 font-medium">Notas</th>
                           </tr>
                         </thead>
@@ -632,7 +681,7 @@ function RadarEstadisticoArgentina() {
                           {visibleRows.map((row, index) => {
                             const periodValue = row[selected.periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
                             const contextValue = selected.contextKey ? row[selected.contextKey] : null;
-                            const rawValue = row[selected.valueKey];
+                            const rawValue = row[selectedValueKey];
                             const displayValue =
                               typeof rawValue === "number"
                                 ? new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(rawValue)
@@ -642,8 +691,8 @@ function RadarEstadisticoArgentina() {
                             const notes = row["observaciones"];
                             return (
                               <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
-                                <td className="whitespace-nowrap px-3 py-3 font-medium">{periodValue === null || periodValue === undefined ? "—" : String(periodValue)}</td>
-                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : String(contextValue)}</td>
+                                <td className="whitespace-nowrap px-3 py-3 font-medium">{formatEphPeriod(periodValue)}</td>
+                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
                                 <td className="max-w-[180px] px-3 py-3 text-xs text-ink-muted">{notes === null || notes === undefined || notes === "" ? "—" : String(notes)}</td>
                               </tr>
