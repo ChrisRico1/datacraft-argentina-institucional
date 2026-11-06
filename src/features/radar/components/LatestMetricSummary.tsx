@@ -6,7 +6,7 @@ type LatestMetricSummaryProps = {
   valueKey: string;
   valueLabel: string;
   unit: string;
-  contextKey?: string;
+  contextKey?: string | undefined;
   contextValue?: string;
 };
 
