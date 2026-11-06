@@ -279,7 +279,7 @@ const metricOptions: Record<string, MetricOption[]> = {
 
 function formatEphPeriod(value: unknown): string {
   if (typeof value !== "string") return value == null ? "—" : String(value);
-  const match = /^(\\d{4})([1-4])([ST])$/.exec(value);
+  const match = /^(\d{4})([1-4])([ST])$/.exec(value);
   if (!match) return value;
   const [, year, quarterOrSemester, kind] = match;
   if (kind === "S") return `${quarterOrSemester === "1" ? "1.er" : "2.º"} semestre ${year}`;
