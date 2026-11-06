@@ -132,7 +132,7 @@ const indicators: Indicator[] = [
     description: "Tasas de actividad, empleo, desocupación y subocupación.",
     unit: "Porcentaje",
     frequency: "Trimestral",
-    coverage: "Aglomerados urbanos relevados por EPH",
+    coverage: "Total de 31 aglomerados urbanos · EPH",
     service: "Mercado de trabajo",
     apiId: "mercado-laboral", periodKey: "periodo", valueKey: "tasa_de_desocupacion", valueLabel: "Desocupación (%)", contextKey: "area_geografica_nom",
   },
@@ -402,6 +402,7 @@ function RadarEstadisticoArgentina() {
     if (first) setSelectedIndicator(first.id);
     setOffset(0);
     setChartContext("");
+    setSelectedMetric("");
     setSearch("");
   };
 
@@ -645,23 +646,12 @@ function RadarEstadisticoArgentina() {
                         </select>
                       </div>
                     ) : null}
-                    {false && selected.id === "pobreza" && selected.contextKey ? (
-                      <div className="mb-5">
-                        <PovertyAreaComparisonChart
-                          rows={apiRows}
-                          periodKey={selected.periodKey}
-                          valueKey={selectedValueKey}
-                          areaKey={selected.contextKey}
-                          valueLabel={selectedValueLabel}
-                        />
-                      </div>
-                    ) : null}
                     <div className="mb-5">
                       <IndicatorTimeSeriesChart
                         rows={apiRows}
                         periodKey={selected.periodKey}
-                        valueKey={selected.valueKey}
-                        valueLabel={selected.valueLabel}
+                        valueKey={selectedValueKey}
+                        valueLabel={selectedValueLabel}
                         unit={selected.unit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
@@ -689,12 +679,14 @@ function RadarEstadisticoArgentina() {
                                   ? "—"
                                   : String(rawValue);
                             const notes = row["observaciones"];
+                            const noteText = notes === null || notes === undefined || notes === "" ? "" : String(notes);
+                            const isProvisional = /provisorio|preliminar|estimado/i.test(noteText);
                             return (
                               <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
                                 <td className="whitespace-nowrap px-3 py-3 font-medium">{formatEphPeriod(periodValue)}</td>
                                 <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
-                                <td className="max-w-[180px] px-3 py-3 text-xs text-ink-muted">{notes === null || notes === undefined || notes === "" ? "—" : String(notes)}</td>
+                                <td className="max-w-[180px] px-3 py-3 text-xs">{noteText ? <span className={isProvisional ? "inline-flex rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-amber-200" : "text-ink-muted"}>{noteText}</span> : <span className="text-ink-muted">—</span>}</td>
                               </tr>
                             );
                           })}
