@@ -650,9 +650,9 @@ function RadarEstadisticoArgentina() {
                         <PovertyAreaComparisonChart
                           rows={apiRows}
                           periodKey={selected.periodKey}
-                          valueKey={selected.valueKey}
+                          valueKey={selectedValueKey}
                           areaKey={selected.contextKey}
-                          valueLabel={selected.valueLabel}
+                          valueLabel={selectedValueLabel}
                         />
                       </div>
                     ) : null}
