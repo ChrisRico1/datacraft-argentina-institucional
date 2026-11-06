@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
+import { PovertyAreaComparisonChart } from "@/features/radar/components/PovertyAreaComparisonChart";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type Indicator = {
@@ -284,6 +285,7 @@ function RadarEstadisticoArgentina() {
   const [contentRange, setContentRange] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [chartContext, setChartContext] = useState("");
 
   const visibleIndicators = useMemo(
     () =>
@@ -297,9 +299,16 @@ function RadarEstadisticoArgentina() {
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0]!;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
-  const hasNextPage = totalRows && /^\d+$/.test(totalRows)
-    ? offset + 20 < Number(totalRows)
-    : apiRows.length === 20;
+  const hasNextPage = offset + 20 < apiRows.length;
+  const visibleRows = apiRows.slice(offset, offset + 20);
+  const chartContexts = selected.contextKey
+    ? [...new Set(
+        apiRows
+          .map((row) => row[selected.contextKey!])
+          .filter((value) => value !== null && value !== undefined && String(value).trim() !== "")
+          .map(String),
+      )].sort((a, b) => a.localeCompare(b, "es"))
+    : [];
   useEffect(() => {
     const controller = new AbortController();
     const currentYear = new Date().getFullYear();
@@ -308,7 +317,7 @@ function RadarEstadisticoArgentina() {
       period === "2y" ? currentYear - 2 :
       period === "1y" ? currentYear - 1 :
       null;
-    const params = new URLSearchParams({ limit: "20", offset: String(offset) });
+    const params = new URLSearchParams({ limit: "1000", offset: "0" });
     if (fromYear !== null) params.set("from", String(fromYear));
 
     setApiLoading(true);
@@ -350,13 +359,14 @@ function RadarEstadisticoArgentina() {
       });
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey, offset]);
+  }, [selected.apiId, period, refreshKey]);
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
     const first = indicators.find((indicator) => indicator.topic === topic);
     if (first) setSelectedIndicator(first.id);
     setOffset(0);
+    setChartContext("");
     setSearch("");
   };
 
@@ -505,7 +515,7 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); }}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); }}
                     className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -572,6 +582,31 @@ function RadarEstadisticoArgentina() {
                       <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
                     </div>
+                    {chartContexts.length > 1 ? (
+                      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
+                        <label htmlFor="radar-chart-context" className="text-xs text-ink-muted">Desagregación para visualizar</label>
+                        <select
+                          id="radar-chart-context"
+                          value={chartContext}
+                          onChange={(event) => setChartContext(event.target.value)}
+                          className="max-w-full rounded-md border border-ink-foreground/15 bg-ink px-3 py-2 text-sm text-ink-foreground"
+                        >
+                          <option value="">Seleccionar una serie</option>
+                          {chartContexts.map((context) => <option key={context} value={context}>{context}</option>)}
+                        </select>
+                      </div>
+                    ) : null}
+                    {selected.id === "pobreza" && selected.contextKey ? (
+                      <div className="mb-5">
+                        <PovertyAreaComparisonChart
+                          rows={apiRows}
+                          periodKey={selected.periodKey}
+                          valueKey={selected.valueKey}
+                          areaKey={selected.contextKey}
+                          valueLabel={selected.valueLabel}
+                        />
+                      </div>
+                    ) : null}
                     <div className="mb-5">
                       <IndicatorTimeSeriesChart
                         rows={apiRows}
@@ -579,6 +614,8 @@ function RadarEstadisticoArgentina() {
                         valueKey={selected.valueKey}
                         valueLabel={selected.valueLabel}
                         unit={selected.unit}
+                        contextKey={selected.contextKey}
+                        contextValue={chartContext}
                       />
                     </div>
                     <div className="overflow-x-auto">
@@ -592,7 +629,7 @@ function RadarEstadisticoArgentina() {
                           </tr>
                         </thead>
                         <tbody>
-                          {apiRows.map((row, index) => {
+                          {visibleRows.map((row, index) => {
                             const periodValue = row[selected.periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
                             const contextValue = selected.contextKey ? row[selected.contextKey] : null;
                             const rawValue = row[selected.valueKey];
