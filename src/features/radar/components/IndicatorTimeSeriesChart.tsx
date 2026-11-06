@@ -49,17 +49,26 @@ export function IndicatorTimeSeriesChart({
       : []
     : rows;
 
-  const points = selectedRows
+  const pointsWithMissing = selectedRows
     .map((row) => {
       const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
-      const value = numericValue(row[valueKey]);
-      if (period === null || period === undefined || value === null) return null;
-      return { period: String(period), value };
+      if (period === null || period === undefined || String(period).trim() === "") return null;
+      return { period: String(period), value: numericValue(row[valueKey]) };
     })
-    .filter((point): point is { period: string; value: number } => point !== null)
+    .filter((point): point is { period: string; value: number | null } => point !== null)
     .sort((a, b) => a.period.localeCompare(b.period, "es", { numeric: true }));
 
-  const skipped = selectedRows.length - points.length;
+  const periodCounts = new Map<string, number>();
+  for (const point of pointsWithMissing) {
+    periodCounts.set(point.period, (periodCounts.get(point.period) ?? 0) + 1);
+  }
+  const duplicatePeriods = [...periodCounts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([period]) => period);
+  const numericPoints = pointsWithMissing.filter(
+    (point): point is { period: string; value: number } => point.value !== null,
+  );
+  const skipped = pointsWithMissing.length - numericPoints.length;
 
   if (requiresContext && !contextValue) {
     return (
@@ -72,7 +81,18 @@ export function IndicatorTimeSeriesChart({
     );
   }
 
-  if (points.length < 2) {
+  if (duplicatePeriods.length > 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-amber-300/25 bg-amber-300/5 px-5 py-8 text-center">
+        <p className="text-sm font-medium">Esta consulta contiene más de una observación por período.</p>
+        <p className="mt-2 text-xs text-ink-muted">
+          No se dibuja una línea porque podrían mezclarse categorías o dimensiones distintas. Refiná la desagregación o consultá los registros en la tabla.
+        </p>
+      </div>
+    );
+  }
+
+  if (numericPoints.length < 2) {
     return (
       <div className="rounded-xl border border-dashed border-ink-foreground/15 bg-ink-2/30 px-5 py-8 text-center">
         <p className="text-sm font-medium">Todavía no hay observaciones suficientes para graficar.</p>
@@ -91,11 +111,11 @@ export function IndicatorTimeSeriesChart({
           <h4 className="mt-1 text-base font-semibold">Evolución del indicador</h4>
           <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}{contextValue ? ` · ${contextValue}` : ""}</p>
         </div>
-        <span className="text-xs text-ink-muted">{points.length} observaciones graficadas</span>
+        <span className="text-xs text-ink-muted">{numericPoints.length} observaciones graficadas</span>
       </div>
       <div className="h-[280px] w-full" role="img" aria-label={`Gráfico de líneas de ${valueLabel} a lo largo de ${points.length} períodos`}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={points} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
+          <LineChart data={pointsWithMissing} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
             <CartesianGrid stroke="currentColor" opacity={0.12} vertical={false} />
             <XAxis
               dataKey="period"
