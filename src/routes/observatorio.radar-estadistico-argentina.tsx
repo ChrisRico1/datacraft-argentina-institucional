@@ -297,7 +297,7 @@ function RadarEstadisticoArgentina() {
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0];
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0];
   const totalRows = contentRange?.split("/")[1];
-  const hasNextPage = totalRows && /^\\d+$/.test(totalRows)
+  const hasNextPage = totalRows && /^\d+$/.test(totalRows)
     ? offset + 20 < Number(totalRows)
     : apiRows.length === 20;
   useEffect(() => {
@@ -608,7 +608,7 @@ function RadarEstadisticoArgentina() {
                     </div>
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                       <p className="text-[11px] leading-relaxed text-ink-muted">
-                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1}{totalRows && /^\\d+$/.test(totalRows) ? ` · ${totalRows} registros en total` : ""}
+                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1}{totalRows && /^\d+$/.test(totalRows) ? ` · ${totalRows} registros en total` : ""}
                       </p>
                       <div className="flex items-center gap-2">
                         <button
