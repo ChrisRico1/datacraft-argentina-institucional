@@ -299,8 +299,12 @@ function RadarEstadisticoArgentina() {
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = totalRows && /^\d+$/.test(totalRows)
-    ? offset + 20 < Number(totalRows)
-    : apiRows.length === 20;
+    ? offset + 20 < Math.min(Number(totalRows), apiRows.length)
+    : offset + 20 < apiRows.length;
+  const visibleRows = apiRows.slice(offset, offset + 20);
+  const chartContexts = selected.contextKey
+    ? [...new Set(apiRows.map((row) => row[selected.contextKey!]).filter((value) => value !== null && value !== undefined && String(value).trim() !== "").map(String))].sort((a, b) => a.localeCompare(b, "es"))
+    : [];
   useEffect(() => {
     const controller = new AbortController();
     const currentYear = new Date().getFullYear();
