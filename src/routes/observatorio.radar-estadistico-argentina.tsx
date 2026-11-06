@@ -414,8 +414,8 @@ function RadarEstadisticoArgentina() {
                 </div>
               </div>
               <p className="mt-5 flex items-center gap-2 text-xs text-mint">
-                <span className="h-2 w-2 rounded-full bg-lime" />
-                Conexión servidor con API-INDEC · Token protegido
+                <span className={`h-2 w-2 rounded-full ${apiError ? "bg-red-300" : apiLoading ? "bg-amber-300" : apiRows.length ? "bg-lime" : "bg-ink-foreground/40"}`} />
+                {apiLoading ? "Consultando API-INDEC" : apiError ? "Conexión pendiente" : apiRows.length ? "Datos recibidos desde INDEC" : "Esperando respuesta de INDEC"}
               </p>
             </div>
           </div>
