@@ -283,6 +283,7 @@ function RadarEstadisticoArgentina() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [contentRange, setContentRange] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   const visibleIndicators = useMemo(
     () =>
@@ -295,6 +296,10 @@ function RadarEstadisticoArgentina() {
   );
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0];
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0];
+  const totalRows = contentRange?.split("/")[1];
+  const hasNextPage = totalRows && /^\\d+$/.test(totalRows)
+    ? offset + 20 < Number(totalRows)
+    : apiRows.length === 20;
   useEffect(() => {
     const controller = new AbortController();
     const currentYear = new Date().getFullYear();
@@ -303,7 +308,7 @@ function RadarEstadisticoArgentina() {
       period === "2y" ? currentYear - 2 :
       period === "1y" ? currentYear - 1 :
       null;
-    const params = new URLSearchParams({ limit: "100", offset: "0" });
+    const params = new URLSearchParams({ limit: "20", offset: String(offset) });
     if (fromYear !== null) params.set("from", String(fromYear));
 
     setApiLoading(true);
@@ -345,12 +350,13 @@ function RadarEstadisticoArgentina() {
       });
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey]);
+  }, [selected.apiId, period, refreshKey, offset]);
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
     const first = indicators.find((indicator) => indicator.topic === topic);
     if (first) setSelectedIndicator(first.id);
+    setOffset(0);
     setSearch("");
   };
 
@@ -499,7 +505,7 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => setSelectedIndicator(indicator.id)}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); }}
                     className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -577,7 +583,7 @@ function RadarEstadisticoArgentina() {
                           </tr>
                         </thead>
                         <tbody>
-                          {apiRows.slice(0, 12).map((row, index) => {
+                          {apiRows.map((row, index) => {
                             const periodValue = row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
                             const contextValue = selected.contextKey ? row[selected.contextKey] : null;
                             const rawValue = row[selected.valueKey];
@@ -600,8 +606,31 @@ function RadarEstadisticoArgentina() {
                         </tbody>
                       </table>
                     </div>
-                    <p className="mt-4 text-[11px] leading-relaxed text-ink-muted">
-                      Los resultados se muestran respetando los valores y observaciones recibidos del INDEC. La tabla presenta hasta 12 filas de la página consultada.
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-[11px] leading-relaxed text-ink-muted">
+                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1}{totalRows && /^\\d+$/.test(totalRows) ? ` · ${totalRows} registros en total` : ""}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={offset === 0 || apiLoading}
+                          onClick={() => setOffset((value) => Math.max(0, value - 20))}
+                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Anterior
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!hasNextPage || apiLoading}
+                          onClick={() => setOffset((value) => value + 20)}
+                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Siguiente
+                        </button>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+                      Se conservan los valores y observaciones recibidos del INDEC, incluidas sus marcas estadísticas.
                     </p>
                   </>
                 )}
@@ -612,7 +641,7 @@ function RadarEstadisticoArgentina() {
                   Período
                   <select
                     value={period}
-                    onChange={(event) => setPeriod(event.target.value)}
+                    onChange={(event) => { setPeriod(event.target.value); setOffset(0); }}
                     className="mt-2 h-10 w-full rounded-lg border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground"
                   >
                     <option value="all">Todo el período disponible</option>
