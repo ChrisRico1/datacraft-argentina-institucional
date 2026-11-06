@@ -38,6 +38,7 @@ type Indicator = {
   valueKey: string;
   valueLabel: string;
   contextKey?: string;
+  available?: boolean;
 };
 
 const topics: {
@@ -211,6 +212,7 @@ const indicators: Indicator[] = [
     valueKey: "valor",
     valueLabel: "Valor publicado",
     contextKey: "descripcion",
+    available: false,
   },
   {
     id: "sipm",
@@ -606,11 +608,12 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
+                    disabled={indicator.available === false}
                     onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
-                    className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
+                    className={`w-full rounded-lg border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
-                    <span className="mt-1 block text-xs text-ink-muted">{indicator.frequency} · {indicator.unit}</span>
+                    <span className="mt-1 block text-xs text-ink-muted">{indicator.available === false ? "Consulta no habilitada por API-INDEC" : `${indicator.frequency} · ${indicator.unit}`}</span>
                   </button>
                 )) : (
                   <p className="rounded-lg border border-dashed border-ink-foreground/15 p-4 text-sm text-ink-muted">
