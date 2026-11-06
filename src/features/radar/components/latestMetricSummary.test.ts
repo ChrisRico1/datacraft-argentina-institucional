@@ -23,6 +23,18 @@ describe("buildLatestMetricSummary", () => {
     if (result.status === "ready") expect(result.change).toBeCloseTo(0.1, 10);
   });
 
+  it("does not compare EPH values across a missing period", () => {
+    const result = buildLatestMetricSummary(
+      [
+        { periodo: "20254T", valor: 7.5 },
+        { periodo: "20262T", valor: 7.9 },
+      ],
+      "periodo",
+      "valor",
+    );
+    expect(result).toMatchObject({ status: "ready", latestValue: 7.9, previousPeriod: null, previousValue: null, change: null });
+  });
+
   it("does not mix multiple geographic contexts when none is selected", () => {
     const result = buildLatestMetricSummary(
       [
