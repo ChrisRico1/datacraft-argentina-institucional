@@ -278,6 +278,10 @@ function RadarEstadisticoArgentina() {
   const [selectedIndicator, setSelectedIndicator] = useState("ipc");
   const [period, setPeriod] = useState("all");
   const [search, setSearch] = useState("");
+  const [apiRows, setApiRows] = useState<Record<string, unknown>[]>([]);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [contentRange, setContentRange] = useState<string | null>(null);
 
   const visibleIndicators = useMemo(
     () =>
@@ -290,6 +294,58 @@ function RadarEstadisticoArgentina() {
   );
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0];
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0];
+  useEffect(() => {
+    const controller = new AbortController();
+    const currentYear = new Date().getFullYear();
+    const fromYear =
+      period === "5y" ? currentYear - 5 :
+      period === "2y" ? currentYear - 2 :
+      period === "1y" ? currentYear - 1 :
+      null;
+    const params = new URLSearchParams({ limit: "100", offset: "0" });
+    if (fromYear !== null) params.set("from", String(fromYear));
+
+    setApiLoading(true);
+    setApiError(null);
+    setApiRows([]);
+    setContentRange(null);
+
+    fetch(`/api/radar/${selected.apiId}?${params.toString()}`, {
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const payload = (await response.json()) as {
+          data?: unknown;
+          contentRange?: string | null;
+          error?: string;
+        };
+        if (!response.ok) {
+          throw new Error(payload.error ?? "No se pudo consultar el servicio estadístico.");
+        }
+        const rows = Array.isArray(payload.data)
+          ? payload.data.filter(
+              (row): row is Record<string, unknown> =>
+                typeof row === "object" && row !== null && !Array.isArray(row),
+            )
+          : [];
+        setApiRows(rows);
+        setContentRange(payload.contentRange ?? null);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name === "AbortError") return;
+        setApiError(
+          error instanceof Error
+            ? error.message
+            : "No se pudo consultar el servicio estadístico.",
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setApiLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [selected.apiId, period]);
+
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
     const first = indicators.find((indicator) => indicator.topic === topic);
@@ -473,17 +529,81 @@ function RadarEstadisticoArgentina() {
                 <Metadata label="Servicio INDEC" value={selected.service} icon={Database} />
               </div>
 
-              <div className="mt-6 rounded-xl border border-dashed border-ink-foreground/20 bg-ink/60 p-6 sm:p-8">
-                <div className="mx-auto flex max-w-md flex-col items-center text-center">
-                  <div className="grid h-12 w-12 place-items-center rounded-full bg-ink-foreground/10">
-                    <Activity className="h-6 w-6 text-lime" />
+              <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/60 p-4 sm:p-5">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-semibold">Observaciones oficiales</h4>
+                    <p className="mt-1 text-xs text-ink-muted">
+                      Consulta directa a través del servidor de Datacraft · Fuente: INDEC
+                    </p>
                   </div>
-                  <h4 className="mt-4 text-lg font-semibold">Visualización en preparación</h4>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                    La conexión con este servicio se habilitará después de validar su endpoint, dimensiones, períodos y metadatos oficiales.
-                  </p>
-                  <span className="mt-4 text-xs text-mint">No se muestran valores de ejemplo ni cifras simuladas.</span>
+                  <span className={`rounded-full px-3 py-1 text-[11px] ${apiError ? "bg-red-400/10 text-red-300" : apiLoading ? "bg-amber-300/10 text-amber-200" : "bg-lime/10 text-lime"}`}>
+                    {apiLoading ? "Consultando INDEC" : apiError ? "Servicio no disponible" : "Conexión consultada"}
+                  </span>
                 </div>
+                {apiLoading ? (
+                  <div className="flex items-center justify-center gap-3 py-12 text-sm text-ink-muted">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-lime/30 border-t-lime" />
+                    Consultando datos oficiales...
+                  </div>
+                ) : apiError ? (
+                  <div className="rounded-lg border border-red-300/20 bg-red-300/5 p-5">
+                    <p className="text-sm font-medium text-red-200">No fue posible cargar este indicador.</p>
+                    <p className="mt-2 text-sm text-ink-muted">{apiError}</p>
+                    <p className="mt-3 text-xs text-ink-muted">
+                      Verificá que el secreto INDEC_API_TOKEN esté configurado en el entorno servidor del sitio.
+                    </p>
+                  </div>
+                ) : apiRows.length === 0 ? (
+                  <div className="py-10 text-center">
+                    <p className="text-sm font-medium">La consulta no devolvió observaciones para estos filtros.</p>
+                    <p className="mt-2 text-xs text-ink-muted">Fuente: INDEC · {selected.service}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
+                      <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
+                      {contentRange ? <span>Rango informado: {contentRange}</span> : null}
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                        <thead>
+                          <tr className="border-b border-ink-foreground/15 text-[11px] uppercase tracking-wider text-ink-muted">
+                            <th className="px-3 py-3 font-medium">Período</th>
+                            <th className="px-3 py-3 font-medium">Desagregación</th>
+                            <th className="px-3 py-3 text-right font-medium">{selected.valueLabel}</th>
+                            <th className="px-3 py-3 font-medium">Notas</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {apiRows.slice(0, 12).map((row, index) => {
+                            const periodValue = row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+                            const contextValue = selected.contextKey ? row[selected.contextKey] : null;
+                            const rawValue = row[selected.valueKey];
+                            const displayValue =
+                              typeof rawValue === "number"
+                                ? new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(rawValue)
+                                : rawValue === null || rawValue === undefined
+                                  ? "—"
+                                  : String(rawValue);
+                            const notes = row.observaciones;
+                            return (
+                              <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
+                                <td className="whitespace-nowrap px-3 py-3 font-medium">{periodValue === null || periodValue === undefined ? "—" : String(periodValue)}</td>
+                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : String(contextValue)}</td>
+                                <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
+                                <td className="max-w-[180px] px-3 py-3 text-xs text-ink-muted">{notes === null || notes === undefined || notes === "" ? "—" : String(notes)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="mt-4 text-[11px] leading-relaxed text-ink-muted">
+                      Los resultados se muestran respetando los valores y observaciones recibidos del INDEC. La tabla presenta hasta 12 filas de la página consultada.
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
