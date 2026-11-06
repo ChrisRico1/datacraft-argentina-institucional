@@ -51,7 +51,15 @@ export function buildLatestAreaComparison(
     .filter((item): item is { area: string; value: number } => item !== null)
     .sort((a, b) => b.value - a.value);
 
-  return { period: latestPeriod, data };
+  const areaCounts = new Map<string, number>();
+  for (const item of data) {
+    areaCounts.set(item.area, (areaCounts.get(item.area) ?? 0) + 1);
+  }
+  const duplicateAreas = [...areaCounts.entries()]
+    .filter(([, count]) => count > 1)
+    .map(([area]) => area);
+
+  return { period: latestPeriod, data, duplicateAreas };
 }
 
 export function PovertyAreaComparisonChart({
@@ -62,6 +70,15 @@ export function PovertyAreaComparisonChart({
   valueLabel,
 }: PovertyAreaComparisonProps) {
   const comparison = buildLatestAreaComparison(rows, periodKey, valueKey, areaKey);
+
+  if (comparison.duplicateAreas.length > 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-amber-300/25 bg-amber-300/5 px-5 py-8 text-center">
+        <p className="text-sm font-medium">Hay más de un registro para algunas áreas en el último período.</p>
+        <p className="mt-2 text-xs text-ink-muted">No se construye la comparación para evitar mezclar desagregaciones. Revisá los registros originales.</p>
+      </div>
+    );
+  }
 
   if (comparison.data.length < 2) {
     return (
