@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
-import { PovertyAreaComparisonChart } from "@/features/radar/components/PovertyAreaComparisonChart";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -693,7 +692,7 @@ function RadarEstadisticoArgentina() {
                             return (
                               <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
                                 <td className="whitespace-nowrap px-3 py-3 font-medium">{formatEphPeriod(periodValue)}</td>
-                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : String(contextValue)}</td>
+                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
                                 <td className="max-w-[180px] px-3 py-3 text-xs text-ink-muted">{notes === null || notes === undefined || notes === "" ? "—" : String(notes)}</td>
                               </tr>
