@@ -27,7 +27,9 @@ function numericValue(value: unknown): number | null {
   if (!validLocalized && !validDecimal) return null;
   const parsed = normalized.includes(",")
     ? Number(normalized.replace(/\./g, "").replace(",", "."))
-    : Number(normalized);
+    : /^-?\d{1,3}(?:\.\d{3})+$/.test(normalized)
+      ? Number(normalized.replace(/\./g, ""))
+      : Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
