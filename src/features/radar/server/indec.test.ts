@@ -23,8 +23,10 @@ describe("getIndecIndicator", () => {
   it("does not call INDEC when the server token is missing", async () => {
     delete process.env.INDEC_API_TOKEN;
 
-    await expect(getIndecIndicator("ipc", {})).rejects.toBeInstanceOf(IndecServiceError);
-    await expect(getIndecIndicator("ipc", {})).rejects.toMatchObject({ status: 503 });
+    await expect(getIndecIndicator("ipc", {})).rejects.toMatchObject({
+      name: "IndecServiceError",
+      status: 503,
+    });
   });
 
   it("uses a fixed upstream endpoint, safe filters and server-side bearer auth", async () => {
