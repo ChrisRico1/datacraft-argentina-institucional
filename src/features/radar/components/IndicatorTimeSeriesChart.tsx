@@ -14,13 +14,15 @@ type IndicatorTimeSeriesChartProps = {
   valueKey: string;
   valueLabel: string;
   unit: string;
+  contextKey?: string;
+  contextValue?: string;
 };
 
 function numericValue(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
   const normalized = value.trim();
-  if (!/^-?\\d+(?:\\.\\d+)?$/.test(normalized)) return null;
+  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) return null;
   const parsed = Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
@@ -31,8 +33,23 @@ export function IndicatorTimeSeriesChart({
   valueKey,
   valueLabel,
   unit,
+  contextKey,
+  contextValue = "",
 }: IndicatorTimeSeriesChartProps) {
-  const points = rows
+  const contexts = contextKey
+    ? [...new Set(rows
+        .map((row) => row[contextKey])
+        .filter((value) => value !== null && value !== undefined && String(value).trim() !== "")
+        .map(String))]
+    : [];
+  const requiresContext = contexts.length > 1;
+  const selectedRows = requiresContext
+    ? contextValue
+      ? rows.filter((row) => String(row[contextKey!]) === contextValue)
+      : []
+    : rows;
+
+  const points = selectedRows
     .map((row) => {
       const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
       const value = numericValue(row[valueKey]);
@@ -42,7 +59,18 @@ export function IndicatorTimeSeriesChart({
     .filter((point): point is { period: string; value: number } => point !== null)
     .sort((a, b) => a.period.localeCompare(b.period, "es", { numeric: true }));
 
-  const skipped = rows.length - points.length;
+  const skipped = selectedRows.length - points.length;
+
+  if (requiresContext && !contextValue) {
+    return (
+      <div className="rounded-xl border border-dashed border-ink-foreground/15 bg-ink-2/30 px-5 py-8 text-center">
+        <p className="text-sm font-medium">Elegí una desagregación para construir la serie.</p>
+        <p className="mt-2 text-xs text-ink-muted">
+          El conjunto contiene {contexts.length} categorías. No se mezclan en una única línea porque representan universos distintos.
+        </p>
+      </div>
+    );
+  }
 
   if (points.length < 2) {
     return (
@@ -61,7 +89,7 @@ export function IndicatorTimeSeriesChart({
         <div>
           <p className="eyebrow text-lime">SERIE TEMPORAL</p>
           <h4 className="mt-1 text-base font-semibold">Evolución del indicador</h4>
-          <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}</p>
+          <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}{contextValue ? ` · ${contextValue}` : ""}</p>
         </div>
         <span className="text-xs text-ink-muted">{points.length} observaciones graficadas</span>
       </div>
