@@ -38,7 +38,7 @@ export function buildLatestAreaComparison(
     .sort((a, b) => a.localeCompare(b, "es", { numeric: true }))
     .at(-1);
 
-  if (!latestPeriod) return { period: null, data: [] as { area: string; value: number }[] };
+  if (!latestPeriod) return { period: null, data: [] as { area: string; value: number }[], duplicateAreas: [] as string[] };
 
   const data = rows
     .filter((row) => String(row[periodKey] ?? "") === latestPeriod)
