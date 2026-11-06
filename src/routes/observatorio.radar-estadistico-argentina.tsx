@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type Indicator = {
@@ -570,6 +571,15 @@ function RadarEstadisticoArgentina() {
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
                       <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
+                    </div>
+                    <div className="mb-5">
+                      <IndicatorTimeSeriesChart
+                        rows={apiRows}
+                        periodKey={selected.periodKey}
+                        valueKey={selected.valueKey}
+                        valueLabel={selected.valueLabel}
+                        unit={selected.unit}
+                      />
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
