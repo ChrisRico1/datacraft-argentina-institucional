@@ -367,6 +367,12 @@ function RadarEstadisticoArgentina() {
   const selectedEconomicMetrics = economicMetricOptions[selected.id] ?? [];
   const activeEconomicMetric = selectedEconomicMetrics.find((metric) => metric.value === economicMetric) ?? selectedEconomicMetrics[0];
   const selectedValueLabel = activeMetric?.label ?? activeEconomicMetric?.label ?? selected.valueLabel;
+  const selectedUnit =
+    selected.id === "emae"
+      ? activeEconomicMetric?.value.startsWith("Índice") ? "Índice" : "Porcentaje"
+      : (selected.id === "sipm" || selected.id === "costo-construccion")
+        ? activeEconomicMetric?.value === "Indice" ? "Índice" : activeEconomicMetric?.value === "incidencia" ? "Puntos porcentuales" : "Porcentaje"
+        : selected.unit;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = offset + 20 < apiRows.length;
@@ -738,7 +744,7 @@ function RadarEstadisticoArgentina() {
                         periodKey={selected.periodKey}
                         valueKey={selectedValueKey}
                         valueLabel={selectedValueLabel}
-                        unit={selected.unit}
+                        unit={selectedUnit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
                       />
@@ -749,7 +755,7 @@ function RadarEstadisticoArgentina() {
                         periodKey={selected.periodKey}
                         valueKey={selectedValueKey}
                         valueLabel={selectedValueLabel}
-                        unit={selected.unit}
+                        unit={selectedUnit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
                       />
