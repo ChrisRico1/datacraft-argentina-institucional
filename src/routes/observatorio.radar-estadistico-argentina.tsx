@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
+import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -645,6 +646,17 @@ function RadarEstadisticoArgentina() {
                           {chartContexts.map((context) => <option key={context} value={context}>{context}</option>)}
                         </select>
                       </div>
+                    ) : null}
+                    {selected.id === "pobreza" || selected.id === "mercado-laboral" ? (
+                      <LatestMetricSummary
+                        rows={apiRows}
+                        periodKey={selected.periodKey}
+                        valueKey={selectedValueKey}
+                        valueLabel={selectedValueLabel}
+                        unit={selected.unit}
+                        contextKey={selected.contextKey}
+                        contextValue={chartContext}
+                      />
                     ) : null}
                     <div className="mb-5">
                       <IndicatorTimeSeriesChart
