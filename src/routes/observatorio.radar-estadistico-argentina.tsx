@@ -649,7 +649,7 @@ function RadarEstadisticoArgentina() {
                   {selectedEconomicMetrics.length > 0 ? (
                     <label className="block text-xs text-ink-muted">
                       Métrica
-                      <select value={activeEconomicMetric?.value ?? ""} onChange={(event) => { setEconomicMetric(event.target.value); setOffset(0); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
+                      <select value={activeEconomicMetric?.value ?? ""} onChange={(event) => { setEconomicMetric(event.target.value); setOffset(0); setChartContext(""); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
                         {selectedEconomicMetrics.map((metric) => <option key={metric.value} value={metric.value}>{metric.label}</option>)}
                       </select>
                     </label>
@@ -657,19 +657,19 @@ function RadarEstadisticoArgentina() {
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       <label className="text-xs text-ink-muted">Indicador
-                        <input value={economicIndicator} onChange={(event) => setEconomicIndicator(event.target.value)} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input value={economicIndicator} onChange={(event) => setEconomicIndicator(event.target.value); setOffset(0); setChartContext("")} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                       </label>
                       <label className="text-xs text-ink-muted">Clasificador
-                        <input value={economicClassification} onChange={(event) => setEconomicClassification(event.target.value)} placeholder="Ej. CIIU3" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input value={economicClassification} onChange={(event) => setEconomicClassification(event.target.value); setOffset(0); setChartContext("")} placeholder="Ej. CIIU3" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                       </label>
                       <label className="text-xs text-ink-muted">Nivel
-                        <input value={economicLevel} onChange={(event) => setEconomicLevel(event.target.value)} placeholder="Código de nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input value={economicLevel} onChange={(event) => setEconomicLevel(event.target.value); setOffset(0); setChartContext("")} placeholder="Código de nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                       </label>
                       <label className="text-xs text-ink-muted">Código de apertura
-                        <input value={economicOpeningCode} onChange={(event) => setEconomicOpeningCode(event.target.value)} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input value={economicOpeningCode} onChange={(event) => setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext("")} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                       </label>
                       <label className="text-xs text-ink-muted sm:col-span-2">Categoría o descripción exacta
-                        <input value={economicCategory} onChange={(event) => setEconomicCategory(event.target.value)} placeholder="Filtrar por descripción publicada" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input value={economicCategory} onChange={(event) => setEconomicCategory(event.target.value); setOffset(0); setChartContext("")} placeholder="Filtrar por descripción publicada" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                       </label>
                     </div>
                   ) : null}
