@@ -40,8 +40,16 @@ export function buildLatestAreaComparison(
 
   if (!latestPeriod) return { period: null, data: [] as { area: string; value: number }[], duplicateAreas: [] as string[] };
 
-  const data = rows
-    .filter((row) => String(row[periodKey] ?? "") === latestPeriod)
+  const latestRows = rows.filter((row) => String(row[periodKey] ?? "") === latestPeriod);
+  const areaCounts = new Map<string, number>();
+  for (const row of latestRows) {
+    const area = row[areaKey];
+    if (area === null || area === undefined || String(area).trim() === "") continue;
+    const areaName = String(area);
+    areaCounts.set(areaName, (areaCounts.get(areaName) ?? 0) + 1);
+  }
+
+  const data = latestRows
     .map((row) => {
       const area = row[areaKey];
       const value = parsePublishedNumber(row[valueKey]);
@@ -50,11 +58,6 @@ export function buildLatestAreaComparison(
     })
     .filter((item): item is { area: string; value: number } => item !== null)
     .sort((a, b) => b.value - a.value);
-
-  const areaCounts = new Map<string, number>();
-  for (const item of data) {
-    areaCounts.set(item.area, (areaCounts.get(item.area) ?? 0) + 1);
-  }
   const duplicateAreas = [...areaCounts.entries()]
     .filter(([, count]) => count > 1)
     .map(([area]) => area);
