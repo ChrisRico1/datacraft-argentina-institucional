@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Minus, TrendingUp } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { buildLatestMetricSummary, formatEphPeriodLabel } from "./latestMetricSummary";
 
 type LatestMetricSummaryProps = {
