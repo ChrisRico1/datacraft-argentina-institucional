@@ -18,19 +18,19 @@ function parseNumericValue(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
   const normalized = value.trim();
-  const localized = /^-?(?:\\d+|\\d{1,3}(?:\\.\\d{3})+)(?:,\\d+)?$/.test(normalized);
-  const decimal = /^-?\\d+(?:\\.\\d+)?$/.test(normalized);
+  const localized = /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(normalized);
+  const decimal = /^-?\d+(?:\.\d+)?$/.test(normalized);
   if (!localized && !decimal) return null;
   const parsed = normalized.includes(",")
-    ? Number(normalized.replace(/\\./g, "").replace(",", "."))
-    : /^-?\\d{1,3}(?:\\.\\d{3})+$/.test(normalized)
-      ? Number(normalized.replace(/\\./g, ""))
+    ? Number(normalized.replace(/\./g, "").replace(",", "."))
+    : /^-?\d{1,3}(?:\.\d{3})+$/.test(normalized)
+      ? Number(normalized.replace(/\./g, ""))
       : Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
 export function formatEphPeriodLabel(value: string): string {
-  const match = /^(\\d{4})([1-4])([ST])$/.exec(value);
+  const match = /^(\d{4})([1-4])([ST])$/.exec(value);
   if (!match) return value;
   const [, year, period, kind] = match;
   return kind === "S"
@@ -39,8 +39,8 @@ export function formatEphPeriodLabel(value: string): string {
 }
 
 function areConsecutiveEphPeriods(previous: string, latest: string): boolean {
-  const previousMatch = /^(\\d{4})([1-4])([ST])$/.exec(previous);
-  const latestMatch = /^(\\d{4})([1-4])([ST])$/.exec(latest);
+  const previousMatch = /^(\d{4})([1-4])([ST])$/.exec(previous);
+  const latestMatch = /^(\d{4})([1-4])([ST])$/.exec(latest);
   if (!previousMatch || !latestMatch || previousMatch[3] !== latestMatch[3]) return false;
   const previousIndex = Number(previousMatch[1]) * (previousMatch[3] === "S" ? 2 : 4) + Number(previousMatch[2]);
   const latestIndex = Number(latestMatch[1]) * (latestMatch[3] === "S" ? 2 : 4) + Number(latestMatch[2]);
@@ -97,9 +97,9 @@ export function buildLatestMetricSummary(
     status: "ready",
     latestPeriod: latest.period,
     latestValue: latest.value,
-    previousPeriod: previous?.period ?? null,
+    previousPeriod: consecutive ? previous?.period ?? null : null,
     previousValue,
-    change: previousValue === null ? null : latest.value - previousValue,
+    change: previousValue === null ? null : Number((latest.value - previousValue).toFixed(2)),
     note,
     provisional: /provisorio|preliminar|estimado/i.test(note),
   };
