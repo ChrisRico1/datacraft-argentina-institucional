@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getIndecIndicator, IndecServiceError } from "./indec";
 
-const originalToken = process.env.INDEC_API_TOKEN;
+const originalToken = process.env["INDEC_API_TOKEN"];
 
 afterEach(() => {
   if (originalToken === undefined) {
-    delete process.env.INDEC_API_TOKEN;
+    delete process.env["INDEC_API_TOKEN"];
   } else {
-    process.env.INDEC_API_TOKEN = originalToken;
+    process.env["INDEC_API_TOKEN"] = originalToken;
   }
   vi.unstubAllGlobals();
 });
@@ -21,7 +21,7 @@ describe("getIndecIndicator", () => {
   });
 
   it("does not call INDEC when the server token is missing", async () => {
-    delete process.env.INDEC_API_TOKEN;
+    delete process.env["INDEC_API_TOKEN"];
 
     await expect(getIndecIndicator("ipc", {})).rejects.toMatchObject({
       name: "IndecServiceError",
@@ -30,7 +30,7 @@ describe("getIndecIndicator", () => {
   });
 
   it("uses a fixed upstream endpoint, safe filters and server-side bearer auth", async () => {
-    process.env.INDEC_API_TOKEN = "test-secret-token";
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify([{ periodo: "202601", valor: 1 }]), {
         status: 200,
@@ -57,7 +57,7 @@ describe("getIndecIndicator", () => {
   });
 
   it("rejects page sizes above the INDEC limit", async () => {
-    process.env.INDEC_API_TOKEN = "test-secret-token";
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
 
     await expect(getIndecIndicator("ipc", { limit: "1001" })).rejects.toMatchObject({
       status: 400,

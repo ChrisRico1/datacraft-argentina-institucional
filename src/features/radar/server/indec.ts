@@ -25,11 +25,11 @@ export type IndecIndicatorId =
 type IndicatorConfig = {
   endpoint: string;
   order: string;
-  periodField?: string;
-  regionField?: string;
-  seriesField?: string;
-  indicatorTypeField?: string;
-  categoryField?: string;
+  periodField?: string | undefined;
+  regionField?: string | undefined;
+  seriesField?: string | undefined;
+  indicatorTypeField?: string | undefined;
+  categoryField?: string | undefined;
 };
 
 const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
@@ -150,14 +150,14 @@ const MAX_OFFSET = 1_000_000;
 const REQUEST_TIMEOUT_MS = 15_000;
 
 export type IndecQuery = {
-  period?: string;
-  from?: string;
-  region?: string;
-  series?: string;
-  indicatorType?: string;
-  category?: string;
-  limit?: string;
-  offset?: string;
+  period?: string | undefined;
+  from?: string | undefined;
+  region?: string | undefined;
+  series?: string | undefined;
+  indicatorType?: string | undefined;
+  category?: string | undefined;
+  limit?: string | undefined;
+  offset?: string | undefined;
 };
 
 export type IndecResult = {
@@ -216,7 +216,7 @@ export async function getIndecIndicator(
   }
 
   const config = INDICATORS[indicatorId as IndecIndicatorId];
-  const token = typeof process !== "undefined" ? process.env?.INDEC_API_TOKEN?.trim() : undefined;
+  const token = typeof process !== "undefined" ? process.env?.["INDEC_API_TOKEN"]?.trim() : undefined;
   if (!token) {
     throw new IndecServiceError("El servicio estadístico no está configurado.", 503);
   }
