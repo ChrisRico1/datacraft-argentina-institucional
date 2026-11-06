@@ -18,6 +18,21 @@ type IndicatorTimeSeriesChartProps = {
   contextValue?: string;
 };
 
+function formatChartPeriod(value: string): string {
+  const eph = /^(\\d{4})([1-4])([ST])$/.exec(value);
+  if (eph) {
+    const [, year, period, kind] = eph;
+    return kind === "S"
+      ? `${period === "1" ? "1.er" : "2.º"} semestre ${year}`
+      : `${period}.º trimestre ${year}`;
+  }
+  return value;
+}
+
+function formatContext(value: string): string {
+  return value === "T_31_A" ? "Total de los 31 aglomerados urbanos" : value;
+}
+
 function numericValue(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
@@ -130,7 +145,7 @@ export function IndicatorTimeSeriesChart({
         <div>
           <p className="eyebrow text-lime">SERIE TEMPORAL</p>
           <h4 className="mt-1 text-base font-semibold">Evolución del indicador</h4>
-          <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}{contextValue ? ` · ${contextValue}` : ""}</p>
+          <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}{contextValue ? ` · ${formatContext(contextValue)}` : ""}</p>
         </div>
         <span className="text-xs text-ink-muted">{numericCount} observaciones graficadas</span>
       </div>
@@ -140,6 +155,7 @@ export function IndicatorTimeSeriesChart({
             <CartesianGrid stroke="currentColor" opacity={0.12} vertical={false} />
             <XAxis
               dataKey="period"
+              tickFormatter={formatChartPeriod}
               tick={{ fill: "currentColor", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "currentColor", opacity: 0.2 }}
@@ -150,13 +166,14 @@ export function IndicatorTimeSeriesChart({
               tick={{ fill: "currentColor", fontSize: 11 }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value: number) => new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(value)}
+              tickFormatter={(value: number) => `${new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(value)}${unit.toLowerCase().includes("porcentaje") ? "%" : ""}`}
               domain={["auto", "auto"]}
             />
             <Tooltip
               contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
               labelStyle={{ color: "#c5d0c7" }}
-              formatter={(value) => [new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(Number(value)), valueLabel]}
+              labelFormatter={(label) => formatChartPeriod(String(label))}
+              formatter={(value) => [`${new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(Number(value))}${unit.toLowerCase().includes("porcentaje") ? "%" : ""}`, valueLabel]}
             />
             <Line
               type="monotone"
