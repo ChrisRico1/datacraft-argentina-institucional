@@ -10,13 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MunicipioEnObraRouteImport } from './routes/municipio-en-obra'
 import { Route as ObservatorioRouteImport } from './routes/observatorio'
 import { Route as ObservatorioIndexRouteImport } from './routes/observatorio.index'
 import { Route as ObservatorioSlugRouteImport } from './routes/observatorio.$slug'
+import { Route as ObservatorioRadarEstadisticoArgentinaRouteImport } from './routes/observatorio.radar-estadistico-argentina'
+import { Route as ApiRadarIndicatorRouteImport } from './routes/api.radar.$indicator'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MunicipioEnObraRoute = MunicipioEnObraRouteImport.update({
+  id: '/municipio-en-obra',
+  path: '/municipio-en-obra',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ObservatorioRoute = ObservatorioRouteImport.update({
@@ -34,41 +42,79 @@ const ObservatorioSlugRoute = ObservatorioSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ObservatorioRoute,
 } as any)
+const ObservatorioRadarEstadisticoArgentinaRoute =
+  ObservatorioRadarEstadisticoArgentinaRouteImport.update({
+    id: '/radar-estadistico-argentina',
+    path: '/radar-estadistico-argentina',
+    getParentRoute: () => ObservatorioRoute,
+  } as any)
+const ApiRadarIndicatorRoute = ApiRadarIndicatorRouteImport.update({
+  id: '/api/radar/$indicator',
+  path: '/api/radar/$indicator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/municipio-en-obra': typeof MunicipioEnObraRoute
   '/observatorio': typeof ObservatorioRouteWithChildren
   '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio/radar-estadistico-argentina': typeof ObservatorioRadarEstadisticoArgentinaRoute
   '/observatorio/': typeof ObservatorioIndexRoute
+  '/api/radar/$indicator': typeof ApiRadarIndicatorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/municipio-en-obra': typeof MunicipioEnObraRoute
   '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio/radar-estadistico-argentina': typeof ObservatorioRadarEstadisticoArgentinaRoute
   '/observatorio': typeof ObservatorioIndexRoute
+  '/api/radar/$indicator': typeof ApiRadarIndicatorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/municipio-en-obra': typeof MunicipioEnObraRoute
   '/observatorio': typeof ObservatorioRouteWithChildren
   '/observatorio/$slug': typeof ObservatorioSlugRoute
+  '/observatorio/radar-estadistico-argentina': typeof ObservatorioRadarEstadisticoArgentinaRoute
   '/observatorio/': typeof ObservatorioIndexRoute
+  '/api/radar/$indicator': typeof ApiRadarIndicatorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/observatorio' | '/observatorio/$slug' | '/observatorio/'
+  fullPaths:
+    | '/'
+    | '/municipio-en-obra'
+    | '/observatorio'
+    | '/observatorio/$slug'
+    | '/observatorio/radar-estadistico-argentina'
+    | '/observatorio/'
+    | '/api/radar/$indicator'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/observatorio/$slug' | '/observatorio'
+  to:
+    | '/'
+    | '/municipio-en-obra'
+    | '/observatorio/$slug'
+    | '/observatorio/radar-estadistico-argentina'
+    | '/observatorio'
+    | '/api/radar/$indicator'
   id:
     | '__root__'
     | '/'
+    | '/municipio-en-obra'
     | '/observatorio'
     | '/observatorio/$slug'
+    | '/observatorio/radar-estadistico-argentina'
     | '/observatorio/'
+    | '/api/radar/$indicator'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MunicipioEnObraRoute: typeof MunicipioEnObraRoute
   ObservatorioRoute: typeof ObservatorioRouteWithChildren
+  ApiRadarIndicatorRoute: typeof ApiRadarIndicatorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -78,6 +124,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/municipio-en-obra': {
+      id: '/municipio-en-obra'
+      path: '/municipio-en-obra'
+      fullPath: '/municipio-en-obra'
+      preLoaderRoute: typeof MunicipioEnObraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/observatorio': {
@@ -101,16 +154,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ObservatorioSlugRouteImport
       parentRoute: typeof ObservatorioRoute
     }
+    '/observatorio/radar-estadistico-argentina': {
+      id: '/observatorio/radar-estadistico-argentina'
+      path: '/radar-estadistico-argentina'
+      fullPath: '/observatorio/radar-estadistico-argentina'
+      preLoaderRoute: typeof ObservatorioRadarEstadisticoArgentinaRouteImport
+      parentRoute: typeof ObservatorioRoute
+    }
+    '/api/radar/$indicator': {
+      id: '/api/radar/$indicator'
+      path: '/api/radar/$indicator'
+      fullPath: '/api/radar/$indicator'
+      preLoaderRoute: typeof ApiRadarIndicatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface ObservatorioRouteChildren {
   ObservatorioSlugRoute: typeof ObservatorioSlugRoute
+  ObservatorioRadarEstadisticoArgentinaRoute: typeof ObservatorioRadarEstadisticoArgentinaRoute
   ObservatorioIndexRoute: typeof ObservatorioIndexRoute
 }
 
 const ObservatorioRouteChildren: ObservatorioRouteChildren = {
   ObservatorioSlugRoute: ObservatorioSlugRoute,
+  ObservatorioRadarEstadisticoArgentinaRoute:
+    ObservatorioRadarEstadisticoArgentinaRoute,
   ObservatorioIndexRoute: ObservatorioIndexRoute,
 }
 
@@ -120,7 +190,9 @@ const ObservatorioRouteWithChildren = ObservatorioRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MunicipioEnObraRoute: MunicipioEnObraRoute,
   ObservatorioRoute: ObservatorioRouteWithChildren,
+  ApiRadarIndicatorRoute: ApiRadarIndicatorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
