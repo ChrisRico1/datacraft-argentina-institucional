@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -28,6 +28,11 @@ type Indicator = {
   frequency: string;
   coverage: string;
   service: string;
+  apiId: string;
+  periodKey: string;
+  valueKey: string;
+  valueLabel: string;
+  contextKey?: string;
 };
 
 const topics: {
@@ -82,6 +87,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional y regiones, según serie",
     service: "IPC",
+    apiId: "ipc", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "salarios",
@@ -92,6 +98,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Salarios",
+    apiId: "salarios", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "emae",
@@ -102,6 +109,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "EMAE",
+    apiId: "emae", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "tipo_de_indicador_descripcion",
   },
   {
     id: "pobreza",
@@ -112,6 +120,7 @@ const indicators: Indicator[] = [
     frequency: "Semestral",
     coverage: "Aglomerados urbanos relevados por EPH",
     service: "Incidencia de pobreza e indigencia",
+    apiId: "pobreza", periodKey: "periodo", valueKey: "tasa_pobreza_personas", valueLabel: "Pobreza en personas (%)", contextKey: "area_geografica_nom",
   },
   {
     id: "mercado-laboral",
@@ -122,6 +131,7 @@ const indicators: Indicator[] = [
     frequency: "Trimestral",
     coverage: "Aglomerados urbanos relevados por EPH",
     service: "Mercado de trabajo",
+    apiId: "mercado-laboral", periodKey: "periodo", valueKey: "tasa_de_desocupacion", valueLabel: "Desocupación (%)", contextKey: "area_geografica_nom",
   },
   {
     id: "canastas",
@@ -132,6 +142,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Cobertura publicada por INDEC",
     service: "Canastas básicas",
+    apiId: "cba-cbt", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
   {
     id: "exportaciones",
@@ -142,6 +153,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Intercambio comercial argentino",
+    apiId: "exportaciones", periodKey: "Periodo", valueKey: "valor_FOB", valueLabel: "Valor FOB (USD)", contextKey: "rubro_cod",
   },
   {
     id: "importaciones",
@@ -152,6 +164,7 @@ const indicators: Indicator[] = [
     frequency: "Mensual",
     coverage: "Nacional",
     service: "Intercambio comercial argentino",
+    apiId: "importaciones", periodKey: "Periodo", valueKey: "valor_CIF", valueLabel: "Valor CIF (USD)", contextKey: "uso_economico_cod",
   },
   {
     id: "poblacion",
@@ -162,6 +175,83 @@ const indicators: Indicator[] = [
     frequency: "Anual",
     coverage: "Jurisdicciones y departamentos, según servicio",
     service: "Estimaciones y proyecciones de población",
+    apiId: "poblacion-departamento", periodKey: "fecha", valueKey: "poblacion", valueLabel: "Población estimada", contextKey: "departamento_nom",
+  },
+
+  {
+    id: "canasta-crianza",
+    title: "Canasta de crianza",
+    topic: "sociedad",
+    description: "Costo de bienes, servicios y tiempo de cuidado por tramo de edad.",
+    unit: "Pesos corrientes",
+    frequency: "Mensual",
+    coverage: "Gran Buenos Aires",
+    service: "Canasta de crianza",
+    apiId: "canasta-crianza",
+    periodKey: "Periodo",
+    valueKey: "tot_men1",
+    valueLabel: "Total mensual · menores de 1 año (ARS)",
+    contextKey: "Periodo",
+  },
+  {
+    id: "ipi-manufacturero",
+    title: "Producción industrial manufacturera",
+    topic: "economia",
+    description: "Evolución de la actividad industrial y sus aperturas.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Nacional",
+    service: "IPI manufacturero",
+    apiId: "ipi-manufacturero",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "sipm",
+    title: "Precios mayoristas",
+    topic: "economia",
+    description: "Índices de precios internos mayoristas y del productor.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Nacional",
+    service: "SIPM",
+    apiId: "sipm",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "costo-construccion",
+    title: "Costo de la construcción",
+    topic: "economia",
+    description: "Evolución de los costos de construcción.",
+    unit: "Índice / variación porcentual",
+    frequency: "Mensual",
+    coverage: "Gran Buenos Aires",
+    service: "ICC",
+    apiId: "costo-construccion",
+    periodKey: "periodo",
+    valueKey: "valor",
+    valueLabel: "Valor publicado",
+    contextKey: "descripcion",
+  },
+  {
+    id: "poblacion-jurisdiccion",
+    title: "Población por jurisdicción",
+    topic: "demografia",
+    description: "Proyecciones por jurisdicción, sexo y grupos de edad.",
+    unit: "Personas",
+    frequency: "Anual",
+    coverage: "Jurisdicciones argentinas",
+    service: "Proyecciones de población por jurisdicción",
+    apiId: "poblacion-jurisdiccion",
+    periodKey: "fecha",
+    valueKey: "poblacion",
+    valueLabel: "Población proyectada",
+    contextKey: "jurisdiccion_nom",
   },
 ];
 
