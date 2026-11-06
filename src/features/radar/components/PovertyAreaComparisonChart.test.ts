@@ -32,6 +32,20 @@ describe("buildLatestAreaComparison", () => {
     });
   });
 
+  it("flags duplicate area rows rather than plotting ambiguous comparisons", () => {
+    const result = buildLatestAreaComparison(
+      [
+        { periodo: "2025-S2", area: "Área A", valor: 35 },
+        { periodo: "2025-S2", area: "Área A", valor: 40 },
+        { periodo: "2025-S2", area: "Área B", valor: 45 },
+      ],
+      "periodo",
+      "valor",
+      "area",
+    );
+    expect(result.duplicateAreas).toEqual(["Área A"]);
+  });
+
   it("returns an empty comparison when there is no period or no numeric value", () => {
     expect(buildLatestAreaComparison([], "periodo", "valor", "area")).toEqual({
       period: null,
