@@ -390,6 +390,8 @@ function RadarEstadisticoArgentina() {
     const params = new URLSearchParams({ limit: "1000", offset: "0" });
     if (fromYear !== null) params.set("from", String(fromYear));
     if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+    if (selected.id === "sipm") params.set("region", "Total del país");
+    if (selected.id === "costo-construccion") params.set("region", "GBA");
     if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
     if (economicClassification.trim()) params.set("classification", economicClassification.trim());
     if (economicLevel.trim()) params.set("level", economicLevel.trim());
@@ -445,7 +447,7 @@ function RadarEstadisticoArgentina() {
     setChartContext("");
     setSelectedMetric("");
     setEconomicMetric("default");
-    setEconomicIndicator("");
+    setEconomicIndicator(first?.id === "sipm" ? "IPIB" : first?.id === "costo-construccion" ? "ICC" : "");
     setEconomicClassification("");
     setEconomicLevel("");
     setEconomicOpeningCode("");
@@ -598,7 +600,7 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicIndicator(""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
                     className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
