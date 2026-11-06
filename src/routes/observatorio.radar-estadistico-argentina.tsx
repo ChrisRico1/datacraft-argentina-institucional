@@ -293,8 +293,8 @@ function RadarEstadisticoArgentina() {
       ),
     [activeTopic, search],
   );
-  const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0];
-  const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0];
+  const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0]!;
+  const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = totalRows && /^\d+$/.test(totalRows)
     ? offset + 20 < Number(totalRows)
@@ -583,7 +583,7 @@ function RadarEstadisticoArgentina() {
                         </thead>
                         <tbody>
                           {apiRows.map((row, index) => {
-                            const periodValue = row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+                            const periodValue = row[selected.periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
                             const contextValue = selected.contextKey ? row[selected.contextKey] : null;
                             const rawValue = row[selected.valueKey];
                             const displayValue =
@@ -592,7 +592,7 @@ function RadarEstadisticoArgentina() {
                                 : rawValue === null || rawValue === undefined
                                   ? "—"
                                   : String(rawValue);
-                            const notes = row.observaciones;
+                            const notes = row["observaciones"];
                             return (
                               <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
                                 <td className="whitespace-nowrap px-3 py-3 font-medium">{periodValue === null || periodValue === undefined ? "—" : String(periodValue)}</td>

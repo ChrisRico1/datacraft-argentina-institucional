@@ -32,7 +32,7 @@ export interface Work {
   cutoff: string | null;
   sourceId: string;
   territorialScope: "Cuenca" | "Partido completo" | "Jurisdicción informada";
-  sourceWorkId?: string | null;
+  sourceWorkId?: string | null | undefined;
 }
 export interface Metric {
   id: string;

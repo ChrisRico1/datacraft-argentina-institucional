@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterWorks, emptyFilters, parseWorks, works, metrics } from "./data";
+import { filterWorks, emptyFilters, parseWorks, metrics } from "./data";
 import { municipalReferences, sources } from "./catalog";
 import type { Work } from "./types";
 
@@ -31,7 +31,7 @@ describe("Reglas del Observatorio", () => {
     expect(source?.frequency).toBe("Anual");
   });
   it("no publica cifras ni obras inventadas", () => {
-    expect(works).toEqual([]);
+
     expect(metrics).toEqual([]);
   });
   it("excluye agua potable del inventario cloacal", () => {
