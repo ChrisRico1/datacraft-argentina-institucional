@@ -247,7 +247,7 @@ export async function getIndecIndicator(
     throw new IndecServiceError("Este indicador no admite filtro por período.", 400);
   }
   if (from && config.periodField) {
-    if (!/^\\d{4}$/.test(from)) {
+    if (!/^\d{4}$/.test(from)) {
       throw new IndecServiceError("El parámetro from debe contener un año de cuatro dígitos.", 400);
     }
     params.set(config.periodField, `gte.${from}`);
