@@ -180,7 +180,7 @@ const indicators: Indicator[] = [
 
   {
     id: "canasta-crianza",
-    title: "Canasta de crianza",
+    title: "Canasta de crianza · menores de 1 año",
     topic: "sociedad",
     description: "Costo de bienes, servicios y tiempo de cuidado por tramo de edad.",
     unit: "Pesos corrientes",
@@ -191,7 +191,6 @@ const indicators: Indicator[] = [
     periodKey: "Periodo",
     valueKey: "tot_men1",
     valueLabel: "Total mensual · menores de 1 año (ARS)",
-    contextKey: "Periodo",
   },
   {
     id: "ipi-manufacturero",
@@ -558,7 +557,7 @@ function RadarEstadisticoArgentina() {
                     <p className="text-sm font-medium text-red-200">No fue posible cargar este indicador.</p>
                     <p className="mt-2 text-sm text-ink-muted">{apiError}</p>
                     <p className="mt-3 text-xs text-ink-muted">
-                      Verificá que el secreto INDEC_API_TOKEN esté configurado en el entorno servidor del sitio.
+                      La conexión con la fuente oficial no está disponible en este momento. Si administrás el sitio, revisá la configuración del servidor.
                     </p>
                   </div>
                 ) : apiRows.length === 0 ? (
