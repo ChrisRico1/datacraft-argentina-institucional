@@ -38,6 +38,15 @@ export function formatEphPeriodLabel(value: string): string {
     : `${period}.º trimestre ${year}`;
 }
 
+function areConsecutiveEphPeriods(previous: string, latest: string): boolean {
+  const previousMatch = /^(\\d{4})([1-4])([ST])$/.exec(previous);
+  const latestMatch = /^(\\d{4})([1-4])([ST])$/.exec(latest);
+  if (!previousMatch || !latestMatch || previousMatch[3] !== latestMatch[3]) return false;
+  const previousIndex = Number(previousMatch[1]) * (previousMatch[3] === "S" ? 2 : 4) + Number(previousMatch[2]);
+  const latestIndex = Number(latestMatch[1]) * (latestMatch[3] === "S" ? 2 : 4) + Number(latestMatch[2]);
+  return latestIndex - previousIndex === 1;
+}
+
 export function buildLatestMetricSummary(
   rows: Record<string, unknown>[],
   periodKey: string,
@@ -81,7 +90,8 @@ export function buildLatestMetricSummary(
   }
 
   const previous = observations.length > 1 ? observations[observations.length - 2]! : null;
-  const previousValue = previous?.value ?? null;
+  const consecutive = previous ? areConsecutiveEphPeriods(previous.period, latest.period) : false;
+  const previousValue = consecutive ? previous?.value ?? null : null;
   const note = latest.note;
   return {
     status: "ready",
