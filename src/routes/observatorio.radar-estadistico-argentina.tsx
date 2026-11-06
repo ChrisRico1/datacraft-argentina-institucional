@@ -22,6 +22,7 @@ import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSum
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
+type EconomicMetricOption = { value: string; label: string };
 
 type Indicator = {
   id: string;
@@ -37,6 +38,7 @@ type Indicator = {
   valueKey: string;
   valueLabel: string;
   contextKey?: string;
+  available?: boolean;
 };
 
 const topics: {
@@ -210,6 +212,7 @@ const indicators: Indicator[] = [
     valueKey: "valor",
     valueLabel: "Valor publicado",
     contextKey: "descripcion",
+    available: false,
   },
   {
     id: "sipm",
@@ -278,6 +281,31 @@ const metricOptions: Record<string, MetricOption[]> = {
   ],
 };
 
+const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
+  emae: [
+    { value: "Var % interanual serie original", label: "Variación interanual · serie original (%)" },
+    { value: "Var % mensual serie desestacionalizada", label: "Variación mensual · desestacionalizada (%)" },
+    { value: "Var % mensual serie tendencia-ciclo", label: "Variación mensual · tendencia-ciclo (%)" },
+    { value: "Índice serie desestacionalizada", label: "Índice · serie desestacionalizada" },
+    { value: "Índice serie original", label: "Índice · serie original" },
+    { value: "Índice serie tendencia-ciclo", label: "Índice · tendencia-ciclo" },
+  ],
+  sipm: [
+    { value: "v_ia", label: "Variación interanual (%)" },
+    { value: "v_m", label: "Variación mensual (%)" },
+    { value: "v_acum", label: "Variación acumulada (%)" },
+    { value: "incidencia", label: "Incidencia en la variación (puntos porcentuales)" },
+    { value: "Indice", label: "Índice" },
+  ],
+  "costo-construccion": [
+    { value: "v_ia", label: "Variación interanual (%)" },
+    { value: "v_m", label: "Variación mensual (%)" },
+    { value: "v_acum", label: "Variación acumulada (%)" },
+    { value: "incidencia", label: "Incidencia en la variación (puntos porcentuales)" },
+    { value: "Indice", label: "Índice" },
+  ],
+};
+
 function formatEphPeriod(value: unknown): string {
   if (typeof value !== "string") return value == null ? "—" : String(value);
   const match = /^(\d{4})([1-4])([ST])$/.exec(value);
@@ -318,6 +346,12 @@ function RadarEstadisticoArgentina() {
   const [offset, setOffset] = useState(0);
   const [chartContext, setChartContext] = useState("");
   const [selectedMetric, setSelectedMetric] = useState("");
+  const [economicMetric, setEconomicMetric] = useState("default");
+  const [economicIndicator, setEconomicIndicator] = useState("");
+  const [economicClassification, setEconomicClassification] = useState("");
+  const [economicLevel, setEconomicLevel] = useState("");
+  const [economicOpeningCode, setEconomicOpeningCode] = useState("");
+  const [economicCategory, setEconomicCategory] = useState("");
 
   const visibleIndicators = useMemo(
     () =>
@@ -332,7 +366,15 @@ function RadarEstadisticoArgentina() {
   const availableMetrics = metricOptions[selected.id] ?? [];
   const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
   const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
-  const selectedValueLabel = activeMetric?.label ?? selected.valueLabel;
+  const selectedEconomicMetrics = economicMetricOptions[selected.id] ?? [];
+  const activeEconomicMetric = selectedEconomicMetrics.find((metric) => metric.value === economicMetric) ?? selectedEconomicMetrics[0];
+  const selectedValueLabel = activeMetric?.label ?? activeEconomicMetric?.label ?? selected.valueLabel;
+  const selectedUnit =
+    selected.id === "emae"
+      ? activeEconomicMetric?.value.startsWith("Índice") ? "Índice" : "Porcentaje"
+      : (selected.id === "sipm" || selected.id === "costo-construccion")
+        ? activeEconomicMetric?.value === "Indice" ? "Índice" : activeEconomicMetric?.value === "incidencia" ? "Puntos porcentuales" : "Porcentaje"
+        : selected.unit;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = offset + 20 < apiRows.length;
@@ -355,6 +397,14 @@ function RadarEstadisticoArgentina() {
       null;
     const params = new URLSearchParams({ limit: "1000", offset: "0" });
     if (fromYear !== null) params.set("from", String(fromYear));
+    if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+    if (selected.id === "sipm") params.set("region", "Total del país");
+    if (selected.id === "costo-construccion") params.set("region", "GBA");
+    if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
+    if (economicClassification.trim()) params.set("classification", economicClassification.trim());
+    if (economicLevel.trim()) params.set("level", economicLevel.trim());
+    if (economicOpeningCode.trim()) params.set("openingCode", economicOpeningCode.trim());
+    if (economicCategory.trim()) params.set("category", economicCategory.trim());
 
     setApiLoading(true);
     setApiError(null);
@@ -395,7 +445,7 @@ function RadarEstadisticoArgentina() {
       });
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey]);
+  }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory]);
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
@@ -404,6 +454,12 @@ function RadarEstadisticoArgentina() {
     setOffset(0);
     setChartContext("");
     setSelectedMetric("");
+    setEconomicMetric("default");
+    setEconomicIndicator(first?.id === "sipm" ? "IPIB" : first?.id === "costo-construccion" ? "ICC" : "");
+    setEconomicClassification("");
+    setEconomicLevel("");
+    setEconomicOpeningCode("");
+    setEconomicCategory("");
     setSearch("");
   };
 
@@ -552,11 +608,12 @@ function RadarEstadisticoArgentina() {
                   <button
                     key={indicator.id}
                     type="button"
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); }}
-                    className={`w-full rounded-lg border p-3 text-left transition ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
+                    disabled={indicator.available === false}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
+                    className={`w-full rounded-lg border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
-                    <span className="mt-1 block text-xs text-ink-muted">{indicator.frequency} · {indicator.unit}</span>
+                    <span className="mt-1 block text-xs text-ink-muted">{indicator.available === false ? "Consulta no habilitada por API-INDEC" : `${indicator.frequency} · ${indicator.unit}`}</span>
                   </button>
                 )) : (
                   <p className="rounded-lg border border-dashed border-ink-foreground/15 p-4 text-sm text-ink-muted">
@@ -582,6 +639,43 @@ function RadarEstadisticoArgentina() {
                 <Metadata label="Cobertura a verificar" value={selected.coverage} icon={MapPinned} />
                 <Metadata label="Servicio INDEC" value={selected.service} icon={Database} />
               </div>
+
+              {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion") ? (
+                <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/50 p-4 sm:p-5">
+                  <div className="mb-3">
+                    <h4 className="font-semibold">Configurar serie económica</h4>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">Elegí una única métrica y, cuando corresponda, acotá la clasificación para evitar mezclar series distintas.</p>
+                  </div>
+                  {selectedEconomicMetrics.length > 0 ? (
+                    <label className="block text-xs text-ink-muted">
+                      Métrica
+                      <select value={activeEconomicMetric?.value ?? ""} onChange={(event) => { setEconomicMetric(event.target.value); setOffset(0); setChartContext(""); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
+                        {selectedEconomicMetrics.map((metric) => <option key={metric.value} value={metric.value}>{metric.label}</option>)}
+                      </select>
+                    </label>
+                  ) : null}
+                  {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <label className="text-xs text-ink-muted">Indicador
+                        <input value={economicIndicator} onChange={(event) => { setEconomicIndicator(event.target.value); setOffset(0); setChartContext(""); }} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                      </label>
+                      <label className="text-xs text-ink-muted">Clasificador
+                        <input value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. CIIU3" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                      </label>
+                      <label className="text-xs text-ink-muted">Nivel
+                        <input value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Código de nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                      </label>
+                      <label className="text-xs text-ink-muted">Código de apertura
+                        <input value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                      </label>
+                      <label className="text-xs text-ink-muted sm:col-span-2">Categoría o descripción exacta
+                        <input value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Filtrar por descripción publicada" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                      </label>
+                    </div>
+                  ) : null}
+                  {selected.id === "emae" ? <p className="mt-3 text-xs leading-relaxed text-ink-muted">Las variaciones y los índices se consultan por separado. No se combinan escalas ni tipos de serie en un mismo gráfico.</p> : null}
+                </div>
+              ) : null}
 
               <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/60 p-4 sm:p-5">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -653,7 +747,7 @@ function RadarEstadisticoArgentina() {
                         periodKey={selected.periodKey}
                         valueKey={selectedValueKey}
                         valueLabel={selectedValueLabel}
-                        unit={selected.unit}
+                        unit={selectedUnit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
                       />
@@ -664,7 +758,7 @@ function RadarEstadisticoArgentina() {
                         periodKey={selected.periodKey}
                         valueKey={selectedValueKey}
                         valueLabel={selectedValueLabel}
-                        unit={selected.unit}
+                        unit={selectedUnit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
                       />
@@ -735,6 +829,7 @@ function RadarEstadisticoArgentina() {
                 )}
               </div>
 
+              {selected.id === "costo-construccion" ? <p className="mt-3 text-xs text-ink-muted">Cobertura geográfica: Gran Buenos Aires (GBA). Los resultados no representan el costo de construcción de todo el país.</p> : null}
               <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
                 <label className="text-xs text-ink-muted">
                   Período

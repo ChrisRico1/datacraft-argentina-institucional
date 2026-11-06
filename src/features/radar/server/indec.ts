@@ -30,6 +30,11 @@ type IndicatorConfig = {
   seriesField?: string | undefined;
   indicatorTypeField?: string | undefined;
   categoryField?: string | undefined;
+  indicatorField?: string | undefined;
+  classificationField?: string | undefined;
+  levelField?: string | undefined;
+  openingCodeField?: string | undefined;
+  metricField?: string | undefined;
 };
 
 const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
@@ -55,6 +60,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     order: "tipo_de_indicador_descripcion,anio,mes,periodo,tipo_de_indicador",
     periodField: "periodo",
     indicatorTypeField: "tipo_de_indicador",
+    metricField: "tipo_de_indicador_descripcion",
   },
   pobreza: {
     endpoint: "pobreza_eph",
@@ -131,6 +137,11 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    indicatorField: "indicador",
+    classificationField: "clasificador",
+    levelField: "nivel",
+    openingCodeField: "codigo_apertura",
+    metricField: "tipo_de_indicador",
   },
   "costo-construccion": {
     endpoint: "icc_precios_construccion",
@@ -140,6 +151,11 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    indicatorField: "indicador",
+    classificationField: "clasificador",
+    levelField: "nivel",
+    openingCodeField: "codigo_apertura",
+    metricField: "tipo_de_indicador",
   },
 };
 
@@ -156,6 +172,11 @@ export type IndecQuery = {
   series?: string | undefined;
   indicatorType?: string | undefined;
   category?: string | undefined;
+  indicator?: string | undefined;
+  classification?: string | undefined;
+  level?: string | undefined;
+  openingCode?: string | undefined;
+  metric?: string | undefined;
   limit?: string | undefined;
   offset?: string | undefined;
 };
@@ -240,6 +261,11 @@ export async function getIndecIndicator(
   const series = cleanFilter(query.series, "series");
   const indicatorType = cleanFilter(query.indicatorType, "indicatorType");
   const category = cleanFilter(query.category, "category");
+  const indicator = cleanFilter(query.indicator, "indicator");
+  const classification = cleanFilter(query.classification, "classification");
+  const level = cleanFilter(query.level, "level");
+  const openingCode = cleanFilter(query.openingCode, "openingCode");
+  const metric = cleanFilter(query.metric, "metric");
 
   if (period && from) {
     throw new IndecServiceError("Usá un período exacto o un año desde, no ambos.", 400);
@@ -276,6 +302,17 @@ export async function getIndecIndicator(
     params.set(config.categoryField, `eq.${category}`);
   } else if (category) {
     throw new IndecServiceError("Este indicador no admite filtro por categoría.", 400);
+  }
+  const dimensionFilters = [
+    [indicator, config.indicatorField, "indicador"],
+    [classification, config.classificationField, "clasificador"],
+    [level, config.levelField, "nivel"],
+    [openingCode, config.openingCodeField, "código de apertura"],
+    [metric, config.metricField, "métrica"],
+  ] as const;
+  for (const [value, field, label] of dimensionFilters) {
+    if (value && field) params.set(field, `eq.${value}`);
+    else if (value) throw new IndecServiceError(`Este indicador no admite filtro por ${label}.`, 400);
   }
 
   let upstream: Response;

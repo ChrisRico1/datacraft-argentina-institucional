@@ -166,14 +166,14 @@ export function IndicatorTimeSeriesChart({
               tick={{ fill: "currentColor", fontSize: 11 }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value: number) => `${new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(value)}${unit.toLowerCase().includes("porcentaje") ? "%" : ""}`}
+              tickFormatter={(value: number) => `${new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(value)}${unit.toLowerCase().includes("porcent") ? (unit.toLowerCase().includes("puntos") ? " pp" : "%") : ""}`}
               domain={["auto", "auto"]}
             />
             <Tooltip
               contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
               labelStyle={{ color: "#c5d0c7" }}
               labelFormatter={(label) => formatChartPeriod(String(label))}
-              formatter={(value) => [`${new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(Number(value))}${unit.toLowerCase().includes("porcentaje") ? "%" : ""}`, valueLabel]}
+              formatter={(value) => [`${new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(Number(value))}${unit.toLowerCase().includes("porcent") ? (unit.toLowerCase().includes("puntos") ? " pp" : "%") : ""}`, valueLabel]}
             />
             <Line
               type="monotone"

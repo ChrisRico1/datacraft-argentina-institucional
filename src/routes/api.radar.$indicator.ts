@@ -14,6 +14,11 @@ export const Route = createFileRoute("/api/radar/$indicator")({
             series: url.searchParams.get("series") ?? undefined,
             indicatorType: url.searchParams.get("indicatorType") ?? undefined,
             category: url.searchParams.get("category") ?? undefined,
+            indicator: url.searchParams.get("indicator") ?? undefined,
+            classification: url.searchParams.get("classification") ?? undefined,
+            level: url.searchParams.get("level") ?? undefined,
+            openingCode: url.searchParams.get("openingCode") ?? undefined,
+            metric: url.searchParams.get("metric") ?? undefined,
             limit: url.searchParams.get("limit") ?? undefined,
             offset: url.searchParams.get("offset") ?? undefined,
           });
