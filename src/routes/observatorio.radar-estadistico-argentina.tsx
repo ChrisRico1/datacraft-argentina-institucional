@@ -573,6 +573,15 @@ function RadarEstadisticoArgentina() {
                       <span>{apiRows.length} observaciones cargadas · {selected.valueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
                     </div>
+                    {chartContexts.length > 1 ? (
+                      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
+                        <label htmlFor="radar-chart-context" className="text-xs text-ink-muted">Desagregación para visualizar</label>
+                        <select id="radar-chart-context" value={chartContext} onChange={(event) => setChartContext(event.target.value)} className="max-w-full rounded-md border border-ink-foreground/15 bg-ink px-3 py-2 text-sm text-ink-foreground">
+                          <option value="">Seleccionar una serie</option>
+                          {chartContexts.map((context) => <option key={context} value={context}>{context}</option>)}
+                        </select>
+                      </div>
+                    ) : null}
                     <div className="mb-5">
                       <IndicatorTimeSeriesChart
                         rows={apiRows}
@@ -580,6 +589,8 @@ function RadarEstadisticoArgentina() {
                         valueKey={selected.valueKey}
                         valueLabel={selected.valueLabel}
                         unit={selected.unit}
+                        contextKey={selected.contextKey}
+                        contextValue={chartContext}
                       />
                     </div>
                     <div className="overflow-x-auto">
