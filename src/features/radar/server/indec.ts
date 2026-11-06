@@ -151,6 +151,7 @@ const REQUEST_TIMEOUT_MS = 15_000;
 
 export type IndecQuery = {
   period?: string;
+  from?: string;
   region?: string;
   series?: string;
   indicatorType?: string;
@@ -223,12 +224,18 @@ export async function getIndecIndicator(
   const limit = parseInteger(query.limit, DEFAULT_LIMIT, 1, MAX_LIMIT, "limit");
   const offset = parseInteger(query.offset, 0, 0, MAX_OFFSET, "offset");
   const params = new URLSearchParams({
-    order: config.order,
+    order: config.periodField
+      ? [
+          `${config.periodField}.desc`,
+          ...config.order.split(",").filter((field) => field !== config.periodField),
+        ].join(",")
+      : config.order,
     limit: String(limit),
     offset: String(offset),
   });
 
   const period = cleanFilter(query.period, "period");
+  const from = cleanFilter(query.from, "from");
   const region = cleanFilter(query.region, "region");
   const series = cleanFilter(query.series, "series");
   const indicatorType = cleanFilter(query.indicatorType, "indicatorType");
@@ -238,6 +245,14 @@ export async function getIndecIndicator(
     params.set(config.periodField, `eq.${period}`);
   } else if (period) {
     throw new IndecServiceError("Este indicador no admite filtro por período.", 400);
+  }
+  if (from && config.periodField) {
+    if (!/^\\d{4}$/.test(from)) {
+      throw new IndecServiceError("El parámetro from debe contener un año de cuatro dígitos.", 400);
+    }
+    params.set(config.periodField, `gte.${from}`);
+  } else if (from) {
+    throw new IndecServiceError("Este indicador no admite filtro por año.", 400);
   }
   if (region && config.regionField) {
     params.set(config.regionField, `eq.${region}`);
