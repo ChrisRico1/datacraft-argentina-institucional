@@ -282,6 +282,7 @@ function RadarEstadisticoArgentina() {
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [contentRange, setContentRange] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const visibleIndicators = useMemo(
     () =>
@@ -344,7 +345,7 @@ function RadarEstadisticoArgentina() {
       });
 
     return () => controller.abort();
-  }, [selected.apiId, period]);
+  }, [selected.apiId, period, refreshKey]);
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
@@ -409,7 +410,7 @@ function RadarEstadisticoArgentina() {
               </div>
               <p className="mt-5 flex items-center gap-2 text-xs text-mint">
                 <span className="h-2 w-2 rounded-full bg-lime" />
-                Diseño funcional en construcción · Datos aún no conectados
+                Conexión servidor con API-INDEC · Token protegido
               </p>
             </div>
           </div>
@@ -620,14 +621,12 @@ function RadarEstadisticoArgentina() {
                     <option value="1y">Último año</option>
                   </select>
                 </label>
-                <label className="text-xs text-ink-muted">
-                  Desagregación
-                  <select disabled className="mt-2 h-10 w-full rounded-lg border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-muted opacity-60">
-                    <option>Según disponibilidad del servicio</option>
-                  </select>
-                </label>
-                <Button className="self-end" variant="lab" disabled>
-                  Consultar <ArrowRight />
+                <div className="flex flex-col justify-end pb-2 text-xs text-ink-muted">
+                  <span className="font-semibold uppercase tracking-wider">Fuente</span>
+                  <span className="mt-2">INDEC · Catálogo API v1</span>
+                </div>
+                <Button className="self-end" variant="lab" disabled={apiLoading} onClick={() => setRefreshKey((value) => value + 1)}>
+                  Actualizar datos <ArrowRight />
                 </Button>
               </div>
               <p className="mt-3 text-right text-[11px] text-ink-muted">Filtro seleccionado: {period === "all" ? "Todo el período" : period === "5y" ? "Últimos 5 años" : period === "2y" ? "Últimos 2 años" : "Último año"}</p>
