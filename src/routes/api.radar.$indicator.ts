@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/radar/$indicator")({
           const url = new URL(request.url);
           const result = await getIndecIndicator(params.indicator, {
             period: url.searchParams.get("period") ?? undefined,
+            from: url.searchParams.get("from") ?? undefined,
             region: url.searchParams.get("region") ?? undefined,
             series: url.searchParams.get("series") ?? undefined,
             indicatorType: url.searchParams.get("indicatorType") ?? undefined,
