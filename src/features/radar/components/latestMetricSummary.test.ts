@@ -18,9 +18,9 @@ describe("buildLatestMetricSummary", () => {
       latestValue: 7.9,
       previousPeriod: "20261T",
       previousValue: 7.8,
-      change: 0.10000000000000053,
       provisional: true,
     });
+    if (result.status === "ready") expect(result.change).toBeCloseTo(0.1, 10);
   });
 
   it("does not mix multiple geographic contexts when none is selected", () => {
