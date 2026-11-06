@@ -10,7 +10,7 @@ El navegador consulta únicamente `/api/radar/:indicator`. La ruta servidor vali
 - Paginación: `limit` máximo 1000 y `offset`; orden estable por la clave primaria completa.
 - Conteo: `Prefer: count=exact`; se conserva `Content-Range` y el estado 206 cuando la respuesta es parcial.
 - Filtros: solo se aceptan parámetros permitidos para cada servicio. No se permite elegir una URL, tabla, columna u orden arbitrario desde el navegador.
-- Cache-Control público de la respuesta de estadísticas: 60 segundos en cliente y 15 minutos en CDN, con stale-while-revalidate de una hora.
+- La ruta envía directivas Cache-Control para 60 segundos en cliente y 15 minutos en caché compartida, con stale-while-revalidate de una hora. La caché efectiva del CDN depende de la configuración del proveedor; todavía no se implementó almacenamiento persistente propio.
 
 ## Configuración del secreto
 
