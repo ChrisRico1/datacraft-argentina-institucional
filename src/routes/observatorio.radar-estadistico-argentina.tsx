@@ -654,7 +654,7 @@ function RadarEstadisticoArgentina() {
                     </div>
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                       <p className="text-[11px] leading-relaxed text-ink-muted">
-                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1}{totalRows && /^\d+$/.test(totalRows) ? ` · ${totalRows} registros en total` : ""}
+                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1} · {apiRows.length} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${totalRows} disponibles` : ""}
                       </p>
                       <div className="flex items-center gap-2">
                         <button
