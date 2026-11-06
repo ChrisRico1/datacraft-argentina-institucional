@@ -52,30 +52,6 @@ function ObservatoryIndex() {
           <p className="text-sm text-ink-muted">Soluciones demostrativas · desarrollos a medida</p>
         </div>
         <div className="grid items-stretch gap-5 md:grid-cols-2">
-          {observatories.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-          <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
-            <div className="flex items-start justify-between gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
-                <Building2 className="h-6 w-6 text-lime" />
-              </span>
-              <span className="eyebrow rounded-full bg-ink-foreground/10 px-3 py-1.5">
-                Propuesta conceptual
-              </span>
-            </div>
-            <h2 className="mt-6 text-2xl font-semibold">Municipio en Obra</h2>
-            <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-              Una propuesta de gestión inteligente para organizar proyectos de infraestructura
-              pública y mejorar su seguimiento y trazabilidad.
-            </p>
-            <Link
-              to="/municipio-en-obra"
-              className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime hover:gap-3"
-            >
-              Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </article>
           <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
@@ -100,6 +76,30 @@ function ObservatoryIndex() {
               className="mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-lime hover:gap-3"
             >
               Explorar proyecto <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </article>
+          {observatories.map((project) => (
+            <ProjectCard key={project.slug} project={project} />
+          ))}
+          <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
+            <div className="flex items-start justify-between gap-3">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
+                <Building2 className="h-6 w-6 text-lime" />
+              </span>
+              <span className="eyebrow rounded-full bg-ink-foreground/10 px-3 py-1.5">
+                Propuesta conceptual
+              </span>
+            </div>
+            <h2 className="mt-6 text-2xl font-semibold">Municipio en Obra</h2>
+            <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+              Una propuesta de gestión inteligente para organizar proyectos de infraestructura
+              pública y mejorar su seguimiento y trazabilidad.
+            </p>
+            <Link
+              to="/municipio-en-obra"
+              className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime hover:gap-3"
+            >
+              Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
             </Link>
           </article>
         </div>
