@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, Building2 } from "lucide-react";
+import { ArrowUpRight, BarChart3, Building2 } from "lucide-react";
 import { observatories } from "@/features/observatorio/catalog";
 import { ProjectCard } from "@/features/observatorio/components";
 
@@ -74,6 +74,32 @@ function ObservatoryIndex() {
               className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime hover:gap-3"
             >
               Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </article>
+          <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
+            <div className="flex items-start justify-between gap-3">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
+                <BarChart3 className="h-6 w-6 text-lime" />
+              </span>
+              <span className="eyebrow rounded-full bg-ink-foreground/10 px-3 py-1.5">
+                En desarrollo
+              </span>
+            </div>
+            <p className="mt-6 text-xs text-lime">Datos e inteligencia</p>
+            <h2 className="mt-2 text-2xl font-semibold">Radar Estadístico Argentina</h2>
+            <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+              Una plataforma para explorar estadísticas oficiales de economía, sociedad,
+              comercio exterior y demografía, con información del INDEC.
+            </p>
+            <ul className="my-6 space-y-2 text-sm text-ink-muted">
+              <li>Indicadores oficiales y trazabilidad</li>
+              <li>Exploración temática y visualización de datos</li>
+            </ul>
+            <Link
+              to="/observatorio/radar-estadistico-argentina"
+              className="mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-lime hover:gap-3"
+            >
+              Explorar proyecto <ArrowUpRight className="h-4 w-4" />
             </Link>
           </article>
         </div>
