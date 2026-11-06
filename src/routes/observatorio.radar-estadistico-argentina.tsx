@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
+import { PovertyAreaComparisonChart } from "@/features/radar/components/PovertyAreaComparisonChart";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type Indicator = {
@@ -584,6 +585,17 @@ function RadarEstadisticoArgentina() {
                           <option value="">Seleccionar una serie</option>
                           {chartContexts.map((context) => <option key={context} value={context}>{context}</option>)}
                         </select>
+                      </div>
+                    ) : null}
+                    {selected.id === "pobreza" && selected.contextKey ? (
+                      <div className="mb-5">
+                        <PovertyAreaComparisonChart
+                          rows={apiRows}
+                          periodKey={selected.periodKey}
+                          valueKey={selected.valueKey}
+                          areaKey={selected.contextKey}
+                          valueLabel={selected.valueLabel}
+                        />
                       </div>
                     ) : null}
                     <div className="mb-5">
