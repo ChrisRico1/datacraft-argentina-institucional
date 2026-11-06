@@ -27,6 +27,35 @@ function numericValue(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+export function buildTimeSeriesPoints(
+  rows: Record<string, unknown>[],
+  periodKey: string,
+  valueKey: string,
+) {
+  const points = rows
+    .map((row) => {
+      const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+      if (period === null || period === undefined || String(period).trim() === "") return null;
+      return { period: String(period), value: numericValue(row[valueKey]) };
+    })
+    .filter((point): point is { period: string; value: number | null } => point !== null)
+    .sort((a, b) => a.period.localeCompare(b.period, "es", { numeric: true }));
+
+  const periodCounts = new Map<string, number>();
+  for (const point of points) {
+    periodCounts.set(point.period, (periodCounts.get(point.period) ?? 0) + 1);
+  }
+
+  return {
+    points,
+    duplicatePeriods: [...periodCounts.entries()]
+      .filter(([, count]) => count > 1)
+      .map(([period]) => period),
+    numericCount: points.filter((point) => point.value !== null).length,
+    skippedCount: points.filter((point) => point.value === null).length,
+  };
+}
+
 export function IndicatorTimeSeriesChart({
   rows,
   periodKey,
@@ -49,26 +78,12 @@ export function IndicatorTimeSeriesChart({
       : []
     : rows;
 
-  const pointsWithMissing = selectedRows
-    .map((row) => {
-      const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
-      if (period === null || period === undefined || String(period).trim() === "") return null;
-      return { period: String(period), value: numericValue(row[valueKey]) };
-    })
-    .filter((point): point is { period: string; value: number | null } => point !== null)
-    .sort((a, b) => a.period.localeCompare(b.period, "es", { numeric: true }));
-
-  const periodCounts = new Map<string, number>();
-  for (const point of pointsWithMissing) {
-    periodCounts.set(point.period, (periodCounts.get(point.period) ?? 0) + 1);
-  }
-  const duplicatePeriods = [...periodCounts.entries()]
-    .filter(([, count]) => count > 1)
-    .map(([period]) => period);
-  const numericPoints = pointsWithMissing.filter(
-    (point): point is { period: string; value: number } => point.value !== null,
-  );
-  const skipped = pointsWithMissing.length - numericPoints.length;
+  const {
+    points: pointsWithMissing,
+    duplicatePeriods,
+    numericCount,
+    skippedCount: skipped,
+  } = buildTimeSeriesPoints(selectedRows, periodKey, valueKey);
 
   if (requiresContext && !contextValue) {
     return (
@@ -92,7 +107,7 @@ export function IndicatorTimeSeriesChart({
     );
   }
 
-  if (numericPoints.length < 2) {
+  if (numericCount < 2) {
     return (
       <div className="rounded-xl border border-dashed border-ink-foreground/15 bg-ink-2/30 px-5 py-8 text-center">
         <p className="text-sm font-medium">Todavía no hay observaciones suficientes para graficar.</p>
@@ -111,9 +126,9 @@ export function IndicatorTimeSeriesChart({
           <h4 className="mt-1 text-base font-semibold">Evolución del indicador</h4>
           <p className="mt-1 text-xs text-ink-muted">{valueLabel} · {unit}{contextValue ? ` · ${contextValue}` : ""}</p>
         </div>
-        <span className="text-xs text-ink-muted">{numericPoints.length} observaciones graficadas</span>
+        <span className="text-xs text-ink-muted">{numericCount} observaciones graficadas</span>
       </div>
-      <div className="h-[280px] w-full" role="img" aria-label={`Gráfico de líneas de ${valueLabel} a lo largo de ${points.length} períodos`}>
+      <div className="h-[280px] w-full" role="img" aria-label={`Gráfico de líneas de ${valueLabel} a lo largo de ${numericCount} períodos`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={pointsWithMissing} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
             <CartesianGrid stroke="currentColor" opacity={0.12} vertical={false} />
@@ -152,7 +167,7 @@ export function IndicatorTimeSeriesChart({
       </div>
       {skipped > 0 ? (
         <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
-          {skipped} observaciones no se incluyeron en el gráfico porque no contienen un valor numérico interpretable. Se mantienen en la tabla original.
+          {skipped} observaciones no tienen un valor numérico interpretable. Se conservan como interrupciones de la línea y permanecen en la tabla original.
         </p>
       ) : null}
     </section>
