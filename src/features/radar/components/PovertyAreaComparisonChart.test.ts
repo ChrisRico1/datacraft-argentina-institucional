@@ -38,7 +38,7 @@ describe("buildLatestAreaComparison", () => {
     const result = buildLatestAreaComparison(
       [
         { periodo: "2025-S2", area: "Área A", valor: 35 },
-        { periodo: "2025-S2", area: "Área A", valor: 40 },
+        { periodo: "2025-S2", area: "Área A", valor: "s" },
         { periodo: "2025-S2", area: "Área B", valor: 45 },
       ],
       "periodo",
