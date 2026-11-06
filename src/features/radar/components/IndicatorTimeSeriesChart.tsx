@@ -22,8 +22,12 @@ function numericValue(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
   const normalized = value.trim();
-  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) return null;
-  const parsed = Number(normalized);
+  const validLocalized = /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(normalized);
+  const validDecimal = /^-?\d+(?:\.\d+)?$/.test(normalized);
+  if (!validLocalized && !validDecimal) return null;
+  const parsed = normalized.includes(",")
+    ? Number(normalized.replace(/\./g, "").replace(",", "."))
+    : Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
