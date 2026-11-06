@@ -25,7 +25,7 @@ No usar `VITE_INDEC_API_TOKEN`: cualquier variable con prefijo VITE puede termin
 
 ### Producción en Cloudflare Workers
 
-El proyecto usa el preset Nitro para Cloudflare. En Cloudflare Dashboard → Workers & Pages → Worker del sitio → Settings → Variables and Secrets → Add, crear `INDEC_API_TOKEN) con tipo **Secret** y desplegar una nueva versión. También se puede cargar con Wrangler mediante `npx wrangler secret put INDEC_API_TOKEN`.
+El proyecto usa el preset Nitro para Cloudflare. En Cloudflare Dashboard → Workers & Pages → Worker del sitio → Settings → Variables and Secrets → Add, crear `INDEC_API_TOKEN` con tipo **Secret** y desplegar una nueva versión. También se puede cargar con Wrangler mediante `npx wrangler secret put INDEC_API_TOKEN`.
 
 La implementación lee el secreto desde `process.env.INDEC_API_TOKEN`. En Cloudflare, esto requiere Node.js compatibility y la disponibilidad de variables en `process.env`: verificar que la fecha de compatibilidad del Worker sea 2026-08-04 o posterior, o que tenga habilitadas las flags `nodejs_compat` y `nodejs_compat_populate_process_env`. Si el proyecto se despliega en otro runtime, configurar la misma variable como secreto de servidor en ese proveedor.
 
