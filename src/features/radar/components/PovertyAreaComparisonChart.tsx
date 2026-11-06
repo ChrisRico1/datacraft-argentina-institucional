@@ -20,8 +20,14 @@ function parsePublishedNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
   const raw = value.trim();
-  if (!/^-?\d+(?:[.,]\d+)?$/.test(raw)) return null;
-  const parsed = Number(raw.replace(",", "."));
+  const validLocalized = /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(raw);
+  const validDecimal = /^-?\d+(?:\.\d+)?$/.test(raw);
+  if (!validLocalized && !validDecimal) return null;
+  const parsed = raw.includes(",")
+    ? Number(raw.replace(/\./g, "").replace(",", "."))
+    : /^-?\d{1,3}(?:\.\d{3})+$/.test(raw)
+      ? Number(raw.replace(/\./g, ""))
+      : Number(raw);
   return Number.isFinite(parsed) ? parsed : null;
 }
 

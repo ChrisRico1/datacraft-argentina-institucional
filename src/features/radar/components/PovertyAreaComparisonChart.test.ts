@@ -34,6 +34,22 @@ describe("buildLatestAreaComparison", () => {
     });
   });
 
+  it("parses Spanish thousands and decimal separators", () => {
+    const result = buildLatestAreaComparison(
+      [
+        { periodo: "2025-S2", area: "Área A", valor: "1.234,5" },
+        { periodo: "2025-S2", area: "Área B", valor: "2.500" },
+      ],
+      "periodo",
+      "valor",
+      "area",
+    );
+    expect(result.data).toEqual([
+      { area: "Área B", value: 2500 },
+      { area: "Área A", value: 1234.5 },
+    ]);
+  });
+
   it("flags duplicate area rows rather than plotting ambiguous comparisons", () => {
     const result = buildLatestAreaComparison(
       [

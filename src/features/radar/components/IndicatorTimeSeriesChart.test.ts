@@ -41,6 +41,21 @@ describe("buildTimeSeriesPoints", () => {
     expect(result.skippedCount).toBe(2);
   });
 
+  it("parses Spanish thousands and decimal separators", () => {
+    const result = buildTimeSeriesPoints(
+      [
+        { periodo: "2025-01", valor: "1.234,5" },
+        { periodo: "2025-02", valor: "2.500" },
+      ],
+      "periodo",
+      "valor",
+    );
+    expect(result.points).toEqual([
+      { period: "2025-01", value: 1234.5 },
+      { period: "2025-02", value: 2500 },
+    ]);
+  });
+
   it("flags repeated periods instead of combining different observations", () => {
     const result = buildTimeSeriesPoints(
       [
