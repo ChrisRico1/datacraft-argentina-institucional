@@ -211,12 +211,12 @@ export async function getIndecIndicator(
   indicatorId: string,
   query: IndecQuery,
 ): Promise<{ result: IndecResult; status: number }> {
-  if (!(indicatorId in INDICATORS)) {
+  if (!Object.prototype.hasOwnProperty.call(INDICATORS, indicatorId)) {
     throw new IndecServiceError("El indicador solicitado no está habilitado.", 404);
   }
 
   const config = INDICATORS[indicatorId as IndecIndicatorId];
-  const token = process.env.INDEC_API_TOKEN?.trim();
+  const token = typeof process !== "undefined" ? process.env?.INDEC_API_TOKEN?.trim() : undefined;
   if (!token) {
     throw new IndecServiceError("El servicio estadístico no está configurado.", 503);
   }
@@ -241,6 +241,9 @@ export async function getIndecIndicator(
   const indicatorType = cleanFilter(query.indicatorType, "indicatorType");
   const category = cleanFilter(query.category, "category");
 
+  if (period && from) {
+    throw new IndecServiceError("Usá un período exacto o un año desde, no ambos.", 400);
+  }
   if (period && config.periodField) {
     params.set(config.periodField, `eq.${period}`);
   } else if (period) {
