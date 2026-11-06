@@ -1,4 +1,3 @@
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { buildLatestMetricSummary, formatEphPeriodLabel } from "./latestMetricSummary";
 
 type LatestMetricSummaryProps = {
@@ -49,14 +48,7 @@ export function LatestMetricSummary({
     );
   }
 
-  const changeTone = summary.change === null
-    ? "text-ink-muted"
-    : summary.change > 0
-      ? "text-amber-200"
-      : summary.change < 0
-        ? "text-mint"
-        : "text-ink-muted";
-  const ChangeIcon = summary.change === null ? Minus : summary.change > 0 ? ArrowUpRight : summary.change < 0 ? ArrowDownRight : Minus;
+
 
   return (
     <section aria-label={`Resumen del indicador: ${valueLabel}`} className="mb-5">
@@ -89,20 +81,18 @@ export function LatestMetricSummary({
           )}
         </article>
         <article className="rounded-xl border border-ink-foreground/10 bg-ink-2/35 p-4">
-          <p className="text-xs text-ink-muted">Diferencia respecto del período anterior</p>
+          <p className="text-xs text-ink-muted">Cambio absoluto respecto del período anterior</p>
           {summary.change === null ? (
             <p className="mt-3 text-sm text-ink-muted">No disponible</p>
           ) : (
             <>
-              <div className={`mt-2 flex items-center gap-2 font-display text-3xl font-semibold ${changeTone}`}>
-                <ChangeIcon className="h-6 w-6" />
-                {summary.change > 0 ? "+" : ""}{numberFormat.format(summary.change)}{percentage ? " p.p." : ""}
-              </div>
-              <p className="mt-2 text-xs text-ink-muted">Variación absoluta entre períodos consecutivos</p>
+              <p className="mt-2 font-display text-3xl font-semibold">{summary.change > 0 ? "+" : ""}{numberFormat.format(summary.change)}{percentage ? " p.p." : ""}</p>
+              <p className="mt-2 text-xs text-ink-muted">Entre períodos consecutivos</p>
             </>
           )}
         </article>
       </div>
+      <p className="mt-3 text-xs leading-relaxed text-ink-muted">El signo indica la dirección del cambio, no si representa una mejora o un deterioro: eso depende del indicador.</p>
       {summary.note ? (
         <p className="mt-3 text-xs leading-relaxed text-ink-muted">
           Nota del INDEC: {summary.note}. La diferencia se calcula sobre los valores publicados y puede revisarse si el organismo actualiza el dato.
