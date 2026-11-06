@@ -284,6 +284,7 @@ function RadarEstadisticoArgentina() {
   const [contentRange, setContentRange] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [chartContext, setChartContext] = useState("");
 
   const visibleIndicators = useMemo(
     () =>
@@ -308,7 +309,7 @@ function RadarEstadisticoArgentina() {
       period === "2y" ? currentYear - 2 :
       period === "1y" ? currentYear - 1 :
       null;
-    const params = new URLSearchParams({ limit: "20", offset: String(offset) });
+    const params = new URLSearchParams({ limit: "1000", offset: "0" });
     if (fromYear !== null) params.set("from", String(fromYear));
 
     setApiLoading(true);
@@ -350,9 +351,9 @@ function RadarEstadisticoArgentina() {
       });
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey, offset]);
+  }, [selected.apiId, period, refreshKey]);
 
-  const selectTopic = (topic: TopicId) => {
+  useEffect(() => {\n    setChartContext("");\n  }, [selectedIndicator]);\n\n  const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
     const first = indicators.find((indicator) => indicator.topic === topic);
     if (first) setSelectedIndicator(first.id);
@@ -569,7 +570,7 @@ function RadarEstadisticoArgentina() {
                 ) : (
                   <>
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
-                      <span>{apiRows.length} filas recibidas · {selected.valueLabel}</span>
+                      <span>{apiRows.length} observaciones cargadas · {selected.valueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
                     </div>
                     <div className="mb-5">
@@ -592,7 +593,7 @@ function RadarEstadisticoArgentina() {
                           </tr>
                         </thead>
                         <tbody>
-                          {apiRows.map((row, index) => {
+                          {visibleRows.map((row, index) => {
                             const periodValue = row[selected.periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
                             const contextValue = selected.contextKey ? row[selected.contextKey] : null;
                             const rawValue = row[selected.valueKey];
