@@ -12,6 +12,7 @@ describe("buildLatestAreaComparison", () => {
 
     expect(buildLatestAreaComparison(rows, "periodo", "tasa_pobreza_personas", "area_geografica_nom")).toEqual({
       period: "2025-S2",
+      duplicateAreas: [],
       data: [
         { area: "Área B", value: 45 },
         { area: "Área A", value: 35 },
@@ -28,6 +29,7 @@ describe("buildLatestAreaComparison", () => {
 
     expect(buildLatestAreaComparison(rows, "periodo", "tasa_pobreza_personas", "area_geografica_nom")).toEqual({
       period: "2025-S2",
+      duplicateAreas: [],
       data: [{ area: "Área A", value: 35.4 }],
     });
   });
@@ -50,12 +52,13 @@ describe("buildLatestAreaComparison", () => {
     expect(buildLatestAreaComparison([], "periodo", "valor", "area")).toEqual({
       period: null,
       data: [],
+      duplicateAreas: [],
     });
     expect(buildLatestAreaComparison(
       [{ periodo: "2025-S2", area: "Área A", valor: "..." }],
       "periodo",
       "valor",
       "area",
-    )).toEqual({ period: "2025-S2", data: [] });
+    )).toEqual({ period: "2025-S2", data: [], duplicateAreas: [] });
   });
 });
