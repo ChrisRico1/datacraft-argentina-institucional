@@ -19,7 +19,13 @@ type IndicatorTimeSeriesChartProps = {
 };
 
 function formatChartPeriod(value: string): string {
-  const eph = /^(\\d{4})([1-4])([ST])$/.exec(value);
+  const month = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
+  if (month) {
+    const [, year, monthNumber] = month;
+    return new Intl.DateTimeFormat("es-AR", { month: "short", year: "numeric" })
+      .format(new Date(Number(year), Number(monthNumber) - 1, 1));
+  }
+  const eph = /^(\d{4})([1-4])([ST])$/.exec(value);
   if (eph) {
     const [, year, period, kind] = eph;
     return kind === "S"
@@ -28,7 +34,6 @@ function formatChartPeriod(value: string): string {
   }
   return value;
 }
-
 function formatContext(value: string): string {
   return value === "T_31_A" ? "Total de los 31 aglomerados urbanos" : value;
 }
