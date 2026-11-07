@@ -91,7 +91,14 @@ export function EconomicCategoryComparison({
   }
 
   const periodRows = rows.filter((row) => String(row.periodo ?? row.Periodo ?? "") === period);
-  if (periodRows.length === 0) return null;
+  if (periodRows.length === 0) {
+    return (
+      <section className="mb-5 rounded-xl border border-ink-foreground/10 bg-ink-2/35 p-5">
+        <p className="eyebrow text-lime">COMPARACIÓN DE APERTURAS</p>
+        <p className="mt-2 text-sm text-ink-muted">La consulta del último período no devolvió categorías para esta combinación de filtros.</p>
+      </section>
+    );
+  }
 
   const levels = new Set(periodRows.map((row) => String(row.nivel ?? "")).filter(Boolean));
   if (levels.size !== 1) {
