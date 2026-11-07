@@ -46,6 +46,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    metricField: "tipo_de_indicador",
   },
   salarios: {
     endpoint: "indice_salarios",
@@ -54,6 +55,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     periodField: "periodo",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    metricField: "tipo_de_indicador",
   },
   emae: {
     endpoint: "estimador-mensual-de-actividad-economica-nivel-general",
