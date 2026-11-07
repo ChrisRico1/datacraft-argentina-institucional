@@ -307,6 +307,15 @@ const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
   ],
 };
 
+function getUniqueFilterValues(rows: Record<string, unknown>[], field: string): string[] {
+  return [...new Set(
+    rows
+      .map((row) => row[field])
+      .filter((value) => value !== null && value !== undefined && String(value).trim() !== "")
+      .map((value) => String(value).trim()),
+  )].sort((a, b) => a.localeCompare(b, "es", { numeric: true }));
+}
+
 function formatEphPeriod(value: unknown): string {
   if (typeof value !== "string") return value == null ? "—" : String(value);
   const month = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
@@ -374,6 +383,13 @@ function RadarEstadisticoArgentina() {
     [activeTopic, search],
   );
   const selected = indicators.find((indicator) => indicator.id === selectedIndicator) ?? indicators[0]!;
+  const economicFilterSuggestions = useMemo(() => ({
+    indicators: getUniqueFilterValues(apiRows, "indicador"),
+    classifications: getUniqueFilterValues(apiRows, "clasificador"),
+    levels: getUniqueFilterValues(apiRows, "nivel"),
+    openingCodes: getUniqueFilterValues(apiRows, "codigo_apertura"),
+    categories: getUniqueFilterValues(apiRows, "descripcion"),
+  }), [apiRows]);
   const availableMetrics = metricOptions[selected.id] ?? [];
   const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
   const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
@@ -779,20 +795,26 @@ function RadarEstadisticoArgentina() {
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       <label className="text-xs text-ink-muted">Indicador
-                        <input value={economicIndicator} onChange={(event) => { setEconomicIndicator(event.target.value); setOffset(0); setChartContext(""); }} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input list="radar-economic-indicators" value={economicIndicator} onChange={(event) => { setEconomicIndicator(event.target.value); setOffset(0); setChartContext(""); }} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <datalist id="radar-economic-indicators">{economicFilterSuggestions.indicators.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
                       <label className="text-xs text-ink-muted">Clasificador
-                        <input value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. CIIU3" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input list="radar-economic-classifications" value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un clasificador" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <datalist id="radar-economic-classifications">{economicFilterSuggestions.classifications.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
                       <label className="text-xs text-ink-muted">Nivel
-                        <input value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Código de nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input list="radar-economic-levels" value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <datalist id="radar-economic-levels">{economicFilterSuggestions.levels.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
                       <label className="text-xs text-ink-muted">Código de apertura
-                        <input value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input list="radar-economic-opening-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <datalist id="radar-economic-opening-codes">{economicFilterSuggestions.openingCodes.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
                       <label className="text-xs text-ink-muted sm:col-span-2">Categoría o descripción exacta
-                        <input value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Filtrar por descripción publicada" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <input list="radar-economic-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí una descripción" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                        <datalist id="radar-economic-categories">{economicFilterSuggestions.categories.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
+                      <p className="text-[11px] leading-relaxed text-ink-muted sm:col-span-2">Las sugerencias se obtienen de las observaciones cargadas. También podés escribir un valor publicado por INDEC.</p>
                     </div>
                   ) : null}
                   {selected.id === "emae" ? <p className="mt-3 text-xs leading-relaxed text-ink-muted">Las variaciones y los índices se consultan por separado. No se combinan escalas ni tipos de serie en un mismo gráfico.</p> : null}
