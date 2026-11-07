@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
+import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -358,6 +359,10 @@ function RadarEstadisticoArgentina() {
   const [economicLevel, setEconomicLevel] = useState("");
   const [economicOpeningCode, setEconomicOpeningCode] = useState("");
   const [economicCategory, setEconomicCategory] = useState("");
+  const [comparisonRows, setComparisonRows] = useState<Record<string, unknown>[]>([]);
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+  const [comparisonError, setComparisonError] = useState<string | null>(null);
+  const [comparisonIncomplete, setComparisonIncomplete] = useState(false);
 
   const visibleIndicators = useMemo(
     () =>
@@ -381,6 +386,21 @@ function RadarEstadisticoArgentina() {
       : (selected.id === "sipm" || selected.id === "costo-construccion")
         ? activeEconomicMetric?.value === "Indice" ? "Índice" : activeEconomicMetric?.value === "incidencia" ? "Puntos porcentuales" : "Porcentaje"
         : selected.unit;
+  const latestEconomicPeriod = useMemo(() => {
+    if (selected.id !== "sipm" && selected.id !== "costo-construccion") return "";
+    return apiRows.reduce((latest, row) => {
+      const value = String(row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? "");
+      return /^\d{6}$/.test(value) && value > latest ? value : latest;
+    }, "");
+  }, [apiRows, selected.id, selected.periodKey]);
+  const comparisonPrerequisiteMessage =
+    selected.id !== "sipm" && selected.id !== "costo-construccion"
+      ? null
+      : !economicClassification.trim() || !economicLevel.trim()
+        ? "Para comparar aperturas, indicá el clasificador y el nivel estadístico. Así evitamos mezclar categorías de jerarquías distintas."
+        : economicOpeningCode.trim() || economicCategory.trim()
+          ? "Quitá los filtros de código de apertura y descripción para comparar todas las categorías del mismo nivel."
+          : null;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
   const hasNextPage = offset + 20 < apiRows.length;
@@ -452,6 +472,102 @@ function RadarEstadisticoArgentina() {
 
     return () => controller.abort();
   }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory]);
+
+
+  useEffect(() => {
+    const isComparableSource = selected.id === "sipm" || selected.id === "costo-construccion";
+    if (!isComparableSource || comparisonPrerequisiteMessage || apiLoading || !latestEconomicPeriod) {
+      setComparisonRows([]);
+      setComparisonLoading(false);
+      setComparisonIncomplete(false);
+      setComparisonError(
+        isComparableSource && !comparisonPrerequisiteMessage && !apiLoading && !latestEconomicPeriod
+          ? "No se pudo identificar el último período disponible en la consulta."
+          : null,
+      );
+      return;
+    }
+
+    const controller = new AbortController();
+    const loadSnapshot = async () => {
+      setComparisonLoading(true);
+      setComparisonError(null);
+      setComparisonIncomplete(false);
+      setComparisonRows([]);
+      const collected: Record<string, unknown>[] = [];
+      let expectedTotal: number | null = null;
+      const pageSize = 1000;
+      const maxRows = 10000;
+
+      try {
+        for (let pageOffset = 0; pageOffset < maxRows; pageOffset += pageSize) {
+          const params = new URLSearchParams({
+            period: latestEconomicPeriod,
+            limit: String(pageSize),
+            offset: String(pageOffset),
+          });
+          if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+          if (selected.id === "sipm") params.set("region", "Total del país");
+          if (selected.id === "costo-construccion") params.set("region", "GBA");
+          if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
+          if (economicClassification.trim()) params.set("classification", economicClassification.trim());
+          if (economicLevel.trim()) params.set("level", economicLevel.trim());
+
+          const response = await fetch(`/api/radar/${selected.apiId}?${params.toString()}`, {
+            signal: controller.signal,
+          });
+          const payload = (await response.json()) as {
+            data?: unknown;
+            contentRange?: string | null;
+            error?: string;
+          };
+          if (!response.ok) throw new Error(payload.error ?? "No se pudo consultar la comparación de categorías.");
+
+          const pageRows = Array.isArray(payload.data)
+            ? payload.data.filter(
+                (row): row is Record<string, unknown> =>
+                  typeof row === "object" && row !== null && !Array.isArray(row),
+              )
+            : [];
+          collected.push(...pageRows);
+
+          const totalMatch = /\/(\d+)$/.exec(payload.contentRange ?? "");
+          if (totalMatch) expectedTotal = Number(totalMatch[1]);
+          if (pageRows.length < pageSize || (expectedTotal !== null && collected.length >= expectedTotal)) break;
+        }
+
+        if (controller.signal.aborted) return;
+        setComparisonRows(collected);
+        setComparisonIncomplete(
+          expectedTotal !== null
+            ? collected.length < expectedTotal
+            : collected.length >= maxRows,
+        );
+      } catch (error) {
+        if (error instanceof Error && error.name === "AbortError") return;
+        setComparisonError(
+          error instanceof Error ? error.message : "No se pudo consultar la comparación de categorías.",
+        );
+      } finally {
+        if (!controller.signal.aborted) setComparisonLoading(false);
+      }
+    };
+
+    void loadSnapshot();
+    return () => controller.abort();
+  }, [
+    selected.id,
+    selected.apiId,
+    apiLoading,
+    latestEconomicPeriod,
+    activeEconomicMetric?.value,
+    economicIndicator,
+    economicClassification,
+    economicLevel,
+    economicOpeningCode,
+    economicCategory,
+    comparisonPrerequisiteMessage,
+  ]);
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
@@ -756,6 +872,17 @@ function RadarEstadisticoArgentina() {
                         unit={selectedUnit}
                         contextKey={selected.contextKey}
                         contextValue={chartContext}
+                      />
+                    ) : null}
+                    {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
+                      <EconomicCategoryComparison
+                        rows={comparisonRows}
+                        period={latestEconomicPeriod}
+                        metricLabel={activeEconomicMetric?.label ?? selectedValueLabel}
+                        unit={selectedUnit}
+                        loading={comparisonLoading}
+                        error={comparisonPrerequisiteMessage ?? comparisonError}
+                        incomplete={comparisonIncomplete}
                       />
                     ) : null}
                     <div className="mb-5">
