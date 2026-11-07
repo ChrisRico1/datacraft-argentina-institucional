@@ -291,6 +291,15 @@ const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
     { value: "Índice serie original", label: "Índice · serie original" },
     { value: "Índice serie tendencia-ciclo", label: "Índice · tendencia-ciclo" },
   ],
+  ipc: [
+    { value: "Incidencia_acum", label: "Incidencia acumulada desde diciembre (puntos porcentuales)" },
+  ],
+  salarios: [
+    { value: "Indice", label: "Índice · base octubre 2016=100" },
+    { value: "v_m", label: "Variación mensual (%)" },
+    { value: "v_ia", label: "Variación interanual (%)" },
+    { value: "v_acum", label: "Variación acumulada desde diciembre (%)" },
+  ],
   sipm: [
     { value: "v_ia", label: "Variación interanual (%)" },
     { value: "v_m", label: "Variación mensual (%)" },
@@ -369,6 +378,7 @@ function RadarEstadisticoArgentina() {
   const [economicLevel, setEconomicLevel] = useState("");
   const [economicOpeningCode, setEconomicOpeningCode] = useState("");
   const [economicCategory, setEconomicCategory] = useState("");
+  const [economicRegion, setEconomicRegion] = useState("GBA");
   const [comparisonRows, setComparisonRows] = useState<Record<string, unknown>[]>([]);
   const [comparisonLoading, setComparisonLoading] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
@@ -400,9 +410,13 @@ function RadarEstadisticoArgentina() {
   const selectedUnit =
     selected.id === "emae"
       ? activeEconomicMetric?.value.startsWith("Índice") ? "Índice" : "Porcentaje"
-      : (selected.id === "sipm" || selected.id === "costo-construccion")
-        ? activeEconomicMetric?.value === "Indice" ? "Índice" : activeEconomicMetric?.value === "incidencia" ? "Puntos porcentuales" : "Porcentaje"
-        : selected.unit;
+      : selected.id === "ipc"
+        ? "Puntos porcentuales"
+        : selected.id === "salarios"
+          ? activeEconomicMetric?.value === "Indice" ? "Índice · base octubre 2016=100" : "Porcentaje"
+          : (selected.id === "sipm" || selected.id === "costo-construccion")
+            ? activeEconomicMetric?.value === "Indice" ? "Índice" : activeEconomicMetric?.value === "incidencia" ? "Puntos porcentuales" : "Porcentaje"
+            : selected.unit;
   const latestEconomicPeriod = useMemo(() => {
     if (selected.id !== "sipm" && selected.id !== "costo-construccion") return "";
     return apiRows.reduce((latest, row) => {
@@ -441,6 +455,7 @@ function RadarEstadisticoArgentina() {
     const params = new URLSearchParams({ limit: "1000", offset: "0" });
     if (fromYear !== null) params.set("from", String(fromYear));
     if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+    if (selected.id === "ipc") params.set("region", economicRegion || "GBA");
     if (selected.id === "sipm") params.set("region", "Total del país");
     if (selected.id === "costo-construccion") params.set("region", "GBA");
     if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
@@ -530,7 +545,7 @@ function RadarEstadisticoArgentina() {
     void loadIndicatorPages();
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory]);
+  }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory, economicRegion]);
 
 
   useEffect(() => {
@@ -636,6 +651,7 @@ function RadarEstadisticoArgentina() {
     setChartContext("");
     setSelectedMetric("");
     setEconomicMetric("default");
+    setEconomicRegion("GBA");
     setEconomicIndicator(first?.id === "sipm" ? "IPIB" : first?.id === "costo-construccion" ? "ICC" : "");
     setEconomicClassification("");
     setEconomicLevel("");
@@ -790,7 +806,7 @@ function RadarEstadisticoArgentina() {
                     key={indicator.id}
                     type="button"
                     disabled={indicator.available === false}
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicRegion("GBA"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
                     className={`w-full rounded-lg border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -834,6 +850,16 @@ function RadarEstadisticoArgentina() {
                         {selectedEconomicMetrics.map((metric) => <option key={metric.value} value={metric.value}>{metric.label}</option>)}
                       </select>
                     </label>
+                  ) : null}
+                  {selected.id === "ipc" ? (
+                    <div className="mt-3">
+                      <label className="block text-xs text-ink-muted">Región
+                        <select value={economicRegion} onChange={(event) => { setEconomicRegion(event.target.value); setOffset(0); setChartContext(""); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
+                          {["GBA", "Nacional", "Pampeana", "Noreste", "Noroeste", "Cuyo", "Patagonia"].map((region) => <option key={region} value={region}>{region}</option>)}
+                        </select>
+                      </label>
+                      <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">La métrica disponible en esta configuración es la incidencia acumulada. Algunas combinaciones de región y apertura pueden estar marcadas por INDEC como no aplicables (///) o sin dato.</p>
+                    </div>
                   ) : null}
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -935,7 +961,7 @@ function RadarEstadisticoArgentina() {
                         </select>
                       </div>
                     ) : null}
-                    {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "sipm" || selected.id === "costo-construccion" ? (
+                    {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "ipc" || selected.id === "salarios" || selected.id === "sipm" || selected.id === "costo-construccion" ? (
                       <LatestMetricSummary
                         rows={apiRows}
                         periodKey={selected.periodKey}
