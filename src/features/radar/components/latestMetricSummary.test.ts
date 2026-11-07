@@ -122,5 +122,4 @@ describe("buildLatestMetricSummary", () => {
       change: 2,
     });
   });
-
 });
