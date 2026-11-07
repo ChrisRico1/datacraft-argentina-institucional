@@ -1030,7 +1030,8 @@ function RadarEstadisticoArgentina() {
                             <th className="px-3 py-3 font-medium">Período</th>
                             <th className="px-3 py-3 font-medium">Desagregación</th>
                             <th className="px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
-                            <th className="px-3 py-3 font-medium">Notas</th>
+                            <th className="px-3 py-3 font-medium">Marca INDEC</th>
+                            <th className="px-3 py-3 font-medium">Observaciones</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1044,6 +1045,8 @@ function RadarEstadisticoArgentina() {
                                 : rawValue === null || rawValue === undefined
                                   ? "—"
                                   : String(rawValue);
+                            const rawMarker = row["valor_null"];
+                            const markerText = rawMarker === null || rawMarker === undefined ? "" : String(rawMarker).trim();
                             const notes = row["observaciones"];
                             const noteText = notes === null || notes === undefined || notes === "" ? "" : String(notes);
                             const isProvisional = /provisorio|preliminar|estimado/i.test(noteText);
@@ -1052,6 +1055,7 @@ function RadarEstadisticoArgentina() {
                                 <td className="whitespace-nowrap px-3 py-3 font-medium">{formatEphPeriod(periodValue)}</td>
                                 <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
+                                <td className="whitespace-nowrap px-3 py-3 text-xs font-medium text-amber-200">{markerText || <span className="text-ink-muted">—</span>}</td>
                                 <td className="max-w-[180px] px-3 py-3 text-xs">{noteText ? <span className={isProvisional ? "inline-flex rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-amber-200" : "text-ink-muted"}>{noteText}</span> : <span className="text-ink-muted">—</span>}</td>
                               </tr>
                             );
@@ -1059,6 +1063,9 @@ function RadarEstadisticoArgentina() {
                         </tbody>
                       </table>
                     </div>
+                    <p className="mb-4 text-[11px] leading-relaxed text-ink-muted">
+                      Marcas de INDEC: <strong>s</strong> confidencial · <strong>*</strong> provisorio · <strong>**</strong> preliminar · <strong>e</strong> estimado · <strong>i</strong> imputado · <strong>u</strong> baja calidad · <strong>-</strong> cero absoluto · <strong>.</strong> no registrado · <strong>...</strong> no disponible · <strong>///</strong> no aplicable. La marca se muestra separada del valor y de las observaciones.
+                    </p>
                     <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                       <p className="text-[11px] leading-relaxed text-ink-muted">
                         Fuente: INDEC · Página {Math.floor(offset / 20) + 1} · {apiRows.length} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${totalRows} disponibles` : ""}
