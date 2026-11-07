@@ -38,7 +38,7 @@ export function LatestMetricSummary({
   if (summary.status === "duplicate-period") {
     return (
       <div className="mb-5 rounded-xl border border-dashed border-amber-300/25 bg-amber-300/5 p-4 text-sm text-ink-muted">
-        No se calcula un resumen: hay más de una observación para el período más reciente ({formatEphPeriodLabel(summary.period)}).
+        No se calcula un resumen: la serie contiene más de una observación para el mismo período ({formatEphPeriodLabel(summary.period)}).
       </div>
     );
   }
