@@ -23,7 +23,9 @@ export function LatestMetricSummary({
 }: LatestMetricSummaryProps) {
   const summary = buildLatestMetricSummary(rows, periodKey, valueKey, contextKey, contextValue);
   const percentage = /porcentaje|%/i.test(unit);
-  const formatValue = (value: number) => `${numberFormat.format(value)}${percentage ? "%" : ""}`;
+  const percentagePoints = /puntos/i.test(unit);
+  const formatValue = (value: number) => `${numberFormat.format(value)}${percentage ? "%" : percentagePoints ? " pp" : ""}`;
+  const changeSuffix = percentage || percentagePoints ? " p.p." : /índice/i.test(unit) ? " pts. índice" : "";
 
   if (summary.status === "select-context") {
     return (
@@ -86,7 +88,7 @@ export function LatestMetricSummary({
             <p className="mt-3 text-sm text-ink-muted">No disponible</p>
           ) : (
             <>
-              <p className="mt-2 font-display text-3xl font-semibold">{summary.change > 0 ? "+" : ""}{numberFormat.format(summary.change)}{percentage ? " p.p." : ""}</p>
+              <p className="mt-2 font-display text-3xl font-semibold">{summary.change > 0 ? "+" : ""}{numberFormat.format(summary.change)}{changeSuffix}</p>
               <p className="mt-2 text-xs text-ink-muted">Entre períodos consecutivos</p>
             </>
           )}
