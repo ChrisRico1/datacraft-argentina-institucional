@@ -390,7 +390,7 @@ function RadarEstadisticoArgentina() {
     if (selected.id !== "sipm" && selected.id !== "costo-construccion") return "";
     return apiRows.reduce((latest, row) => {
       const value = String(row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? "");
-      return /^\\d{6}$/.test(value) && value > latest ? value : latest;
+      return /^\d{6}$/.test(value) && value > latest ? value : latest;
     }, "");
   }, [apiRows, selected.id, selected.periodKey]);
   const comparisonPrerequisiteMessage =
@@ -531,7 +531,7 @@ function RadarEstadisticoArgentina() {
             : [];
           collected.push(...pageRows);
 
-          const totalMatch = /\\/(\\d+)$/.exec(payload.contentRange ?? "");
+          const totalMatch = /\/(\d+)$/.exec(payload.contentRange ?? "");
           if (totalMatch) expectedTotal = Number(totalMatch[1]);
           if (pageRows.length < pageSize || (expectedTotal !== null && collected.length >= expectedTotal)) break;
         }
