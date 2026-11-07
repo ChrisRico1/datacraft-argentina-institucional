@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -372,6 +372,9 @@ function RadarEstadisticoArgentina() {
   const [comparisonLoading, setComparisonLoading] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
   const [comparisonIncomplete, setComparisonIncomplete] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
+  const loadMoreController = useRef<AbortController | null>(null);
 
   const visibleIndicators = useMemo(
     () =>
@@ -419,6 +422,7 @@ function RadarEstadisticoArgentina() {
           : null;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
+  const hasMoreRows = Boolean(totalRows && /^\d+$/.test(totalRows) && apiRows.length < Number(totalRows));
   const hasNextPage = offset + 20 < apiRows.length;
   const visibleRows = apiRows.slice(offset, offset + 20);
   const chartContexts = selected.contextKey
@@ -448,6 +452,10 @@ function RadarEstadisticoArgentina() {
     if (economicOpeningCode.trim()) params.set("openingCode", economicOpeningCode.trim());
     if (economicCategory.trim()) params.set("category", economicCategory.trim());
 
+    loadMoreController.current?.abort();
+    loadMoreController.current = null;
+    setLoadingMore(false);
+    setLoadMoreError(null);
     setApiLoading(true);
     setApiError(null);
     setApiRows([]);
@@ -486,7 +494,10 @@ function RadarEstadisticoArgentina() {
         if (!controller.signal.aborted) setApiLoading(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      loadMoreController.current?.abort();
+    };
   }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory]);
 
 
@@ -584,6 +595,55 @@ function RadarEstadisticoArgentina() {
     economicCategory,
     comparisonPrerequisiteMessage,
   ]);
+
+  const loadMoreRows = async () => {
+    if (!hasMoreRows || loadingMore) return;
+    const controller = new AbortController();
+    loadMoreController.current = controller;
+    setLoadingMore(true);
+    setLoadMoreError(null);
+
+    const currentYear = new Date().getFullYear();
+    const fromYear =
+      period === "5y" ? currentYear - 5 :
+      period === "2y" ? currentYear - 2 :
+      period === "1y" ? currentYear - 1 :
+      null;
+    const params = new URLSearchParams({ limit: "1000", offset: String(apiRows.length) });
+    if (fromYear !== null) params.set("from", String(fromYear));
+    if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+    if (selected.id === "sipm") params.set("region", "Total del país");
+    if (selected.id === "costo-construccion") params.set("region", "GBA");
+    if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
+    if (economicClassification.trim()) params.set("classification", economicClassification.trim());
+    if (economicLevel.trim()) params.set("level", economicLevel.trim());
+    if (economicOpeningCode.trim()) params.set("openingCode", economicOpeningCode.trim());
+    if (economicCategory.trim()) params.set("category", economicCategory.trim());
+
+    try {
+      const response = await fetch(`/api/radar/${selected.apiId}?${params.toString()}`, { signal: controller.signal });
+      const payload = (await response.json()) as { data?: unknown; contentRange?: string | null; error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "No se pudieron cargar más registros.");
+      const rows = Array.isArray(payload.data)
+        ? payload.data.filter((row): row is Record<string, unknown> => typeof row === "object" && row !== null && !Array.isArray(row))
+        : [];
+      if (controller.signal.aborted) return;
+      if (rows.length === 0) {
+        setLoadMoreError("INDEC no devolvió registros adicionales, aunque el total informado indica que existen más observaciones.");
+        return;
+      }
+      setApiRows((current) => [...current, ...rows]);
+      setContentRange(payload.contentRange ?? contentRange);
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setLoadMoreError(error instanceof Error ? error.message : "No se pudieron cargar más registros.");
+    } finally {
+      if (loadMoreController.current === controller) {
+        loadMoreController.current = null;
+        setLoadingMore(false);
+      }
+    }
+  };
 
   const selectTopic = (topic: TopicId) => {
     setActiveTopic(topic);
@@ -871,6 +931,11 @@ function RadarEstadisticoArgentina() {
                       <span>{apiRows.length} filas recibidas · {selectedValueLabel}</span>
                       {contentRange ? <span>Rango informado: {contentRange}</span> : null}
                     </div>
+                    {hasMoreRows ? (
+                      <p className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                        La API informa {new Intl.NumberFormat("es-AR").format(Number(totalRows))} registros. Se cargaron {new Intl.NumberFormat("es-AR").format(apiRows.length)}; la tabla y las visualizaciones usan únicamente los registros cargados.
+                      </p>
+                    ) : null}
                     {chartContexts.length > 1 ? (
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
                         <label htmlFor="radar-chart-context" className="text-xs text-ink-muted">Desagregación para visualizar</label>
@@ -977,6 +1042,20 @@ function RadarEstadisticoArgentina() {
                         </button>
                       </div>
                     </div>
+                    {hasMoreRows ? (
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                        <p className="text-xs text-ink-muted">Hay más observaciones disponibles en INDEC.</p>
+                        <button
+                          type="button"
+                          disabled={loadingMore || apiLoading || apiRows.length >= 1_000_000}
+                          onClick={() => void loadMoreRows()}
+                          className="rounded-full border border-lime/40 px-4 py-2 text-xs font-semibold text-lime transition hover:bg-lime/10 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {loadingMore ? "Cargando registros..." : apiRows.length >= 1_000_000 ? "Límite de consulta alcanzado" : "Cargar siguientes 1.000 registros"}
+                        </button>
+                      </div>
+                    ) : null}
+                    {loadMoreError ? <p role="alert" className="mt-3 text-xs text-red-300">{loadMoreError}</p> : null}
                     <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
                       Se conservan los valores y observaciones recibidos del INDEC, incluidas sus marcas estadísticas.
                     </p>
