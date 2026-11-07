@@ -405,6 +405,7 @@ function RadarEstadisticoArgentina() {
     classifications: getUniqueFilterValues(apiRows, "clasificador"),
     levels: getUniqueFilterValues(apiRows, "nivel"),
     openingCodes: getUniqueFilterValues(apiRows, "codigo_apertura"),
+    ipcCodes: getUniqueFilterValues(apiRows, "codigo"),
     categories: getUniqueFilterValues(apiRows, "descripcion"),
   }), [apiRows]);
   const availableMetrics = metricOptions[selected.id] ?? [];
@@ -868,7 +869,25 @@ function RadarEstadisticoArgentina() {
                           {["GBA", "Nacional", "Pampeana", "Noreste", "Noroeste", "Cuyo", "Patagonia"].map((region) => <option key={region} value={region}>{region}</option>)}
                         </select>
                       </label>
-                      <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">El IPC publica índices, variaciones porcentuales e incidencias en puntos porcentuales. Son medidas distintas y se consultan por separado. Algunas combinaciones de región y apertura pueden estar marcadas por INDEC como no aplicables (///) o sin dato.</p>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                        <label className="text-xs text-ink-muted">Clasificador
+                          <input list="radar-ipc-classifications" value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un clasificador" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                          <datalist id="radar-ipc-classifications">{economicFilterSuggestions.classifications.map((value) => <option key={value} value={value} />)}</datalist>
+                        </label>
+                        <label className="text-xs text-ink-muted">Nivel estadístico
+                          <input list="radar-ipc-levels" value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                          <datalist id="radar-ipc-levels">{economicFilterSuggestions.levels.map((value) => <option key={value} value={value} />)}</datalist>
+                        </label>
+                        <label className="text-xs text-ink-muted">Código de apertura
+                          <input list="radar-ipc-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Código publicado por INDEC" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                          <datalist id="radar-ipc-codes">{economicFilterSuggestions.ipcCodes.map((value) => <option key={value} value={value} />)}</datalist>
+                        </label>
+                        <label className="text-xs text-ink-muted">Descripción exacta
+                          <input list="radar-ipc-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="División, grupo, clase o subclase" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
+                          <datalist id="radar-ipc-categories">{economicFilterSuggestions.categories.map((value) => <option key={value} value={value} />)}</datalist>
+                        </label>
+                      </div>
+                      <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">El IPC publica índices, variaciones porcentuales e incidencias en puntos porcentuales. Son medidas distintas y se consultan por separado. Usá clasificador y nivel para mantener comparaciones entre aperturas equivalentes; las combinaciones sin dato o no aplicables (///) se conservan según INDEC.</p>
                     </div>
                   ) : null}
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
