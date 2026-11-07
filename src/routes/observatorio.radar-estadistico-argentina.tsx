@@ -355,6 +355,7 @@ function RadarEstadisticoArgentina() {
   const [period, setPeriod] = useState("all");
   const [search, setSearch] = useState("");
   const [apiRows, setApiRows] = useState<Record<string, unknown>[]>([]);
+  const [apiIncomplete, setApiIncomplete] = useState(false);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [contentRange, setContentRange] = useState<string | null>(null);
@@ -451,40 +452,82 @@ function RadarEstadisticoArgentina() {
     setApiLoading(true);
     setApiError(null);
     setApiRows([]);
+    setApiIncomplete(false);
     setContentRange(null);
 
-    fetch(`/api/radar/${selected.apiId}?${params.toString()}`, {
-      signal: controller.signal,
-    })
-      .then(async (response) => {
-        const payload = (await response.json()) as {
-          data?: unknown;
-          contentRange?: string | null;
-          error?: string;
-        };
-        if (!response.ok) {
-          throw new Error(payload.error ?? "No se pudo consultar el servicio estadístico.");
+    const loadIndicatorPages = async () => {
+      const pageSize = 1000;
+      const maxRows = 10000;
+      const isEconomicBreakdown = selected.id === "sipm" || selected.id === "costo-construccion";
+      const hasSingleOpening = Boolean(economicOpeningCode.trim() || economicCategory.trim());
+      // SIPM e ICC pueden devolver cientos de miles de aperturas. Sin una apertura
+      // concreta solo se necesita una muestra para identificar el período y comparar
+      // categorías; al elegir una apertura sí se carga su serie histórica completa.
+      const loadAllPages = !isEconomicBreakdown || hasSingleOpening;
+      const collected: Record<string, unknown>[] = [];
+      let expectedTotal: number | null = null;
+
+      try {
+        for (let pageOffset = 0; pageOffset < maxRows; pageOffset += pageSize) {
+          const pageParams = new URLSearchParams(params);
+          pageParams.set("limit", String(pageSize));
+          pageParams.set("offset", String(pageOffset));
+          const response = await fetch(`/api/radar/${selected.apiId}?${pageParams.toString()}`, {
+            signal: controller.signal,
+          });
+          const payload = (await response.json()) as {
+            data?: unknown;
+            contentRange?: string | null;
+            error?: string;
+          };
+          if (!response.ok) {
+            throw new Error(payload.error ?? "No se pudo consultar el servicio estadístico.");
+          }
+
+          const pageRows = Array.isArray(payload.data)
+            ? payload.data.filter(
+                (row): row is Record<string, unknown> =>
+                  typeof row === "object" && row !== null && !Array.isArray(row),
+              )
+            : [];
+          collected.push(...pageRows);
+
+          const totalMatch = /\/(\d+)$/.exec(payload.contentRange ?? "");
+          if (totalMatch) expectedTotal = Number(totalMatch[1]);
+          if (
+            !loadAllPages ||
+            pageRows.length < pageSize ||
+            (expectedTotal !== null && collected.length >= expectedTotal)
+          ) {
+            break;
+          }
         }
-        const rows = Array.isArray(payload.data)
-          ? payload.data.filter(
-              (row): row is Record<string, unknown> =>
-                typeof row === "object" && row !== null && !Array.isArray(row),
-            )
-          : [];
-        setApiRows(rows);
-        setContentRange(payload.contentRange ?? null);
-      })
-      .catch((error: unknown) => {
+
+        if (controller.signal.aborted) return;
+        setApiRows(collected);
+        const incomplete =
+          expectedTotal !== null
+            ? collected.length < expectedTotal
+            : collected.length >= maxRows;
+        setApiIncomplete(incomplete);
+        setContentRange(
+          collected.length > 0
+            ? `0-${collected.length - 1}/${expectedTotal ?? "*"}`
+            : payloadRangeFallback(expectedTotal),
+        );
+      } catch (error) {
         if (error instanceof Error && error.name === "AbortError") return;
         setApiError(
           error instanceof Error
             ? error.message
             : "No se pudo consultar el servicio estadístico.",
         );
-      })
-      .finally(() => {
+      } finally {
         if (!controller.signal.aborted) setApiLoading(false);
-      });
+      }
+    };
+
+    void loadIndicatorPages();
 
     return () => controller.abort();
   }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory]);
@@ -869,8 +912,13 @@ function RadarEstadisticoArgentina() {
                     ) : null}
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-ink-muted">
                       <span>{apiRows.length} filas recibidas · {selectedValueLabel}</span>
-                      {contentRange ? <span>Rango informado: {contentRange}</span> : null}
+                      {contentRange ? <span>Rango cargado: {contentRange}</span> : null}
                     </div>
+                    {apiIncomplete ? (
+                      <p className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                        La consulta contiene más registros de los cargados. En SIPM e ICC, seleccioná un código de apertura o una categoría para recuperar su serie histórica sin mezclar aperturas. En los demás indicadores se limita la carga inicial a 10.000 registros para proteger el servicio.
+                      </p>
+                    ) : null}
                     {chartContexts.length > 1 ? (
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
                         <label htmlFor="radar-chart-context" className="text-xs text-ink-muted">Desagregación para visualizar</label>
