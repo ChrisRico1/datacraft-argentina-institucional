@@ -513,7 +513,7 @@ function RadarEstadisticoArgentina() {
         setContentRange(
           collected.length > 0
             ? `0-${collected.length - 1}/${expectedTotal ?? "*"}`
-            : payloadRangeFallback(expectedTotal),
+            : null,
         );
       } catch (error) {
         if (error instanceof Error && error.name === "AbortError") return;
