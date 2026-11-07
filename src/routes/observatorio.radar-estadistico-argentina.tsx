@@ -147,7 +147,7 @@ const indicators: Indicator[] = [
     description: "Canasta Básica Alimentaria y Canasta Básica Total.",
     unit: "Pesos corrientes",
     frequency: "Mensual",
-    coverage: "Cobertura publicada por INDEC",
+    coverage: "Gran Buenos Aires (GBA)",
     service: "Canastas básicas",
     apiId: "cba-cbt", periodKey: "periodo", valueKey: "valor", valueLabel: "Valor publicado", contextKey: "descripcion",
   },
@@ -222,7 +222,7 @@ const indicators: Indicator[] = [
     description: "Índices de precios internos mayoristas y del productor.",
     unit: "Índice / variación porcentual",
     frequency: "Mensual",
-    coverage: "Nacional",
+    coverage: "Total del país",
     service: "SIPM",
     apiId: "sipm",
     periodKey: "periodo",
@@ -695,7 +695,7 @@ function RadarEstadisticoArgentina() {
               </p>
             </div>
             <span className="rounded-full border border-ink-foreground/15 px-3 py-1.5 text-xs text-ink-muted">
-              Catálogo inicial · En validación
+              Catálogo de indicadores · INDEC
             </span>
           </div>
 
@@ -752,14 +752,14 @@ function RadarEstadisticoArgentina() {
                   <h3 className="mt-3 max-w-xl text-2xl font-semibold">{selected.title}</h3>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-muted">{selected.description}</p>
                 </div>
-                <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-[11px] text-lime">En validación</span>
+                <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-[11px] text-lime">{selected.available === false ? "No disponible vía API" : "Fuente INDEC"}</span>
               </div>
 
               <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                <Metadata label="Unidad de medida" value={selected.unit} icon={BarChart3} />
-                <Metadata label="Frecuencia prevista" value={selected.frequency} icon={CalendarDays} />
-                <Metadata label="Cobertura a verificar" value={selected.coverage} icon={MapPinned} />
-                <Metadata label="Servicio INDEC" value={selected.service} icon={Database} />
+                <Metadata label="Unidad de medida" value={selectedUnit} icon={BarChart3} />
+                <Metadata label="Frecuencia" value={selected.frequency} icon={CalendarDays} />
+                <Metadata label="Cobertura geográfica" value={selected.coverage} icon={MapPinned} />
+                <Metadata label="Serie estadística" value={selected.service} icon={Database} />
               </div>
 
               {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion") ? (
