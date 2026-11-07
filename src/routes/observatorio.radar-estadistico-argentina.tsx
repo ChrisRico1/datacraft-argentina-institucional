@@ -308,6 +308,12 @@ const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
 
 function formatEphPeriod(value: unknown): string {
   if (typeof value !== "string") return value == null ? "—" : String(value);
+  const month = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
+  if (month) {
+    const [, year, monthNumber] = month;
+    return new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" })
+      .format(new Date(Number(year), Number(monthNumber) - 1, 1));
+  }
   const match = /^(\d{4})([1-4])([ST])$/.exec(value);
   if (!match) return value;
   const [, year, quarterOrSemester, kind] = match;
@@ -741,7 +747,7 @@ function RadarEstadisticoArgentina() {
                         </select>
                       </div>
                     ) : null}
-                    {selected.id === "pobreza" || selected.id === "mercado-laboral" ? (
+                    {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "sipm" || selected.id === "costo-construccion" ? (
                       <LatestMetricSummary
                         rows={apiRows}
                         periodKey={selected.periodKey}
