@@ -30,6 +30,12 @@ function parseNumericValue(value: unknown): number | null {
 }
 
 export function formatEphPeriodLabel(value: string): string {
+  const month = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
+  if (month) {
+    const [, year, monthNumber] = month;
+    return new Intl.DateTimeFormat("es-AR", { month: "short", year: "numeric" })
+      .format(new Date(Number(year), Number(monthNumber) - 1, 1));
+  }
   const match = /^(\d{4})([1-4])([ST])$/.exec(value);
   if (!match) return value;
   const [, year, period, kind] = match;
@@ -38,7 +44,14 @@ export function formatEphPeriodLabel(value: string): string {
     : `${period}.º trimestre ${year}`;
 }
 
-function areConsecutiveEphPeriods(previous: string, latest: string): boolean {
+function areConsecutivePeriods(previous: string, latest: string): boolean {
+  const previousMonth = /^(\d{4})(0[1-9]|1[0-2])$/.exec(previous);
+  const latestMonth = /^(\d{4})(0[1-9]|1[0-2])$/.exec(latest);
+  if (previousMonth && latestMonth) {
+    const previousIndex = Number(previousMonth[1]) * 12 + Number(previousMonth[2]);
+    const latestIndex = Number(latestMonth[1]) * 12 + Number(latestMonth[2]);
+    return latestIndex - previousIndex === 1;
+  }
   const previousMatch = /^(\d{4})([1-4])([ST])$/.exec(previous);
   const latestMatch = /^(\d{4})([1-4])([ST])$/.exec(latest);
   if (!previousMatch || !latestMatch || previousMatch[3] !== latestMatch[3]) return false;
@@ -46,7 +59,6 @@ function areConsecutiveEphPeriods(previous: string, latest: string): boolean {
   const latestIndex = Number(latestMatch[1]) * (latestMatch[3] === "S" ? 2 : 4) + Number(latestMatch[2]);
   return latestIndex - previousIndex === 1;
 }
-
 export function buildLatestMetricSummary(
   rows: Record<string, unknown>[],
   periodKey: string,
@@ -90,7 +102,7 @@ export function buildLatestMetricSummary(
   }
 
   const previous = observations.length > 1 ? observations[observations.length - 2]! : null;
-  const consecutive = previous ? areConsecutiveEphPeriods(previous.period, latest.period) : false;
+  const consecutive = previous ? areConsecutivePeriods(previous.period, latest.period) : false;
   const previousValue = consecutive ? previous?.value ?? null : null;
   const note = latest.note;
   return {
