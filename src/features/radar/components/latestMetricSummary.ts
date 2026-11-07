@@ -95,8 +95,8 @@ export function buildLatestMetricSummary(
   if (observations.length === 0) return { status: "no-period" };
 
   const latest = observations[observations.length - 1]!;
-  const duplicates = observations.filter((item) => item.period === latest.period);
-  if (duplicates.length > 1) return { status: "duplicate-period", period: latest.period };
+  const duplicate = observations.find((item, index) => index > 0 && item.period === observations[index - 1]!.period);
+  if (duplicate) return { status: "duplicate-period", period: duplicate.period };
   if (latest.value === null) {
     return { status: "latest-unavailable", period: latest.period, note: latest.note };
   }
