@@ -405,6 +405,7 @@ function RadarEstadisticoArgentina() {
     classifications: getUniqueFilterValues(apiRows, "clasificador"),
     levels: getUniqueFilterValues(apiRows, "nivel"),
     openingCodes: getUniqueFilterValues(apiRows, "codigo_apertura"),
+    ipcCodes: getUniqueFilterValues(apiRows, "codigo"),
     categories: getUniqueFilterValues(apiRows, "descripcion"),
   }), [apiRows]);
   const availableMetrics = metricOptions[selected.id] ?? [];
@@ -879,7 +880,7 @@ function RadarEstadisticoArgentina() {
                         </label>
                         <label className="text-xs text-ink-muted">Código de apertura
                           <input list="radar-ipc-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Código publicado por INDEC" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
-                          <datalist id="radar-ipc-codes">{economicFilterSuggestions.openingCodes.map((value) => <option key={value} value={value} />)}</datalist>
+                          <datalist id="radar-ipc-codes">{economicFilterSuggestions.ipcCodes.map((value) => <option key={value} value={value} />)}</datalist>
                         </label>
                         <label className="text-xs text-ink-muted">Descripción exacta
                           <input list="radar-ipc-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="División, grupo, clase o subclase" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
