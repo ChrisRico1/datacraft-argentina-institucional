@@ -916,7 +916,9 @@ function RadarEstadisticoArgentina() {
                     </div>
                     {apiIncomplete ? (
                       <p className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-ink-muted">
-                        La consulta contiene más registros de los cargados. En SIPM e ICC, seleccioná un código de apertura o una categoría para recuperar su serie histórica sin mezclar aperturas. En los demás indicadores se limita la carga inicial a 10.000 registros para proteger el servicio.
+                        {(selected.id === "sipm" || selected.id === "costo-construccion") && !economicOpeningCode.trim() && !economicCategory.trim()
+                          ? "La consulta contiene más registros de los cargados. Seleccioná un código de apertura o una categoría para recuperar su serie histórica sin mezclar aperturas."
+                          : "La consulta supera el límite de seguridad de 10.000 registros. Refiná los filtros para reducir el conjunto y consultar una serie completa."}
                       </p>
                     ) : null}
                     {chartContexts.length > 1 ? (
