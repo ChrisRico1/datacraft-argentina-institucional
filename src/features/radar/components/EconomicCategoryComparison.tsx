@@ -31,19 +31,19 @@ function numericValue(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value !== "string") return null;
   const normalized = value.trim();
-  const localized = /^-?(?:\\d+|\\d{1,3}(?:\\.\\d{3})+)(?:,\\d+)?$/.test(normalized);
-  const decimal = /^-?\\d+(?:\\.\\d+)?$/.test(normalized);
+  const localized = /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(normalized);
+  const decimal = /^-?\d+(?:\.\d+)?$/.test(normalized);
   if (!localized && !decimal) return null;
   const parsed = normalized.includes(",")
-    ? Number(normalized.replace(/\\./g, "").replace(",", "."))
-    : /^-?\\d{1,3}(?:\\.\\d{3})+$/.test(normalized)
-      ? Number(normalized.replace(/\\./g, ""))
+    ? Number(normalized.replace(/\./g, "").replace(",", "."))
+    : /^-?\d{1,3}(?:\.\d{3})+$/.test(normalized)
+      ? Number(normalized.replace(/\./g, ""))
       : Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
 
 function formatPeriod(value: string): string {
-  const match = /^(\\d{4})(0[1-9]|1[0-2])$/.exec(value);
+  const match = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
   if (!match) return value;
   return new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" })
     .format(new Date(Number(match[1]), Number(match[2]) - 1, 1));
