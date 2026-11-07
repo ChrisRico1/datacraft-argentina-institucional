@@ -92,4 +92,34 @@ describe("buildLatestMetricSummary", () => {
     expect(formatEphPeriodLabel("20262T")).toBe("2.º trimestre 2026");
     expect(formatEphPeriodLabel("20254T")).toBe("4.º trimestre 2025");
   });
+  it("blocks the summary when a historical period is duplicated, even if the latest period is unique", () => {
+    const result = buildLatestMetricSummary(
+      [
+        { periodo: "202601", valor: 10 },
+        { periodo: "202601", valor: 11 },
+        { periodo: "202602", valor: 12 },
+      ],
+      "periodo",
+      "valor",
+    );
+    expect(result).toEqual({ status: "duplicate-period", period: "202601" });
+  });
+
+  it("calculates monthly changes only for adjacent calendar months", () => {
+    const result = buildLatestMetricSummary(
+      [
+        { periodo: "202601", valor: 10 },
+        { periodo: "202602", valor: 12 },
+      ],
+      "periodo",
+      "valor",
+    );
+    expect(result).toMatchObject({
+      status: "ready",
+      latestPeriod: "202602",
+      previousPeriod: "202601",
+      previousValue: 10,
+      change: 2,
+    });
+  });
 });
