@@ -292,6 +292,12 @@ const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
     { value: "Índice serie tendencia-ciclo", label: "Índice · tendencia-ciclo" },
   ],
   ipc: [
+    { value: "Indice", label: "Índice · base diciembre 2016=100" },
+    { value: "v_m", label: "Variación mensual (%)" },
+    { value: "v_ia", label: "Variación interanual (%)" },
+    { value: "v_acum", label: "Variación acumulada desde diciembre (%)" },
+    { value: "Incidencia_m", label: "Incidencia mensual (puntos porcentuales)" },
+    { value: "Incidencia_ia", label: "Incidencia interanual (puntos porcentuales)" },
     { value: "Incidencia_acum", label: "Incidencia acumulada desde diciembre (puntos porcentuales)" },
   ],
   salarios: [
@@ -411,7 +417,11 @@ function RadarEstadisticoArgentina() {
     selected.id === "emae"
       ? activeEconomicMetric?.value.startsWith("Índice") ? "Índice" : "Porcentaje"
       : selected.id === "ipc"
-        ? "Puntos porcentuales"
+        ? activeEconomicMetric?.value === "Indice"
+          ? "Índice · base diciembre 2016=100"
+          : activeEconomicMetric?.value.startsWith("Incidencia")
+            ? "Puntos porcentuales"
+            : "Porcentaje"
         : selected.id === "salarios"
           ? activeEconomicMetric?.value === "Indice" ? "Índice · base octubre 2016=100" : "Porcentaje"
           : (selected.id === "sipm" || selected.id === "costo-construccion")
@@ -858,7 +868,7 @@ function RadarEstadisticoArgentina() {
                           {["GBA", "Nacional", "Pampeana", "Noreste", "Noroeste", "Cuyo", "Patagonia"].map((region) => <option key={region} value={region}>{region}</option>)}
                         </select>
                       </label>
-                      <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">La métrica disponible en esta configuración es la incidencia acumulada. Algunas combinaciones de región y apertura pueden estar marcadas por INDEC como no aplicables (///) o sin dato.</p>
+                      <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">El IPC publica índices, variaciones porcentuales e incidencias en puntos porcentuales. Son medidas distintas y se consultan por separado. Algunas combinaciones de región y apertura pueden estar marcadas por INDEC como no aplicables (///) o sin dato.</p>
                     </div>
                   ) : null}
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
