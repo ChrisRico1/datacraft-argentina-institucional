@@ -431,7 +431,7 @@ function RadarEstadisticoArgentina() {
   const latestEconomicPeriod = useMemo(() => {
     if (selected.id !== "sipm" && selected.id !== "costo-construccion") return "";
     return apiRows.reduce((latest, row) => {
-      const value = String(row[selected.periodKey] ?? row.periodo ?? row.Periodo ?? "");
+      const value = String(row[selected.periodKey] ?? row["periodo"] ?? row["Periodo"] ?? "");
       return /^\d{6}$/.test(value) && value > latest ? value : latest;
     }, "");
   }, [apiRows, selected.id, selected.periodKey]);
