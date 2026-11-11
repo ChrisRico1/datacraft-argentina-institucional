@@ -90,7 +90,7 @@ export function EconomicCategoryComparison({
     );
   }
 
-  const periodRows = rows.filter((row) => String(row.periodo ?? row.Periodo ?? "") === period);
+  const periodRows = rows.filter((row) => String(row["periodo"] ?? row["Periodo"] ?? "") === period);
   if (periodRows.length === 0) {
     return (
       <section className="mb-5 rounded-xl border border-ink-foreground/10 bg-ink-2/35 p-5">
@@ -100,7 +100,7 @@ export function EconomicCategoryComparison({
     );
   }
 
-  const levels = new Set(periodRows.map((row) => String(row.nivel ?? "")).filter(Boolean));
+  const levels = new Set(periodRows.map((row) => String(row["nivel"] ?? "")).filter(Boolean));
   if (levels.size !== 1) {
     return (
       <section className="mb-5 rounded-xl border border-ink-foreground/10 bg-ink-2/35 p-5">
@@ -115,21 +115,21 @@ export function EconomicCategoryComparison({
   let hasDuplicates = false;
 
   for (const row of periodRows) {
-    const code = String(row.codigo_apertura ?? "").trim();
-    const label = String(row.descripcion ?? "").trim();
+    const code = String(row["codigo_apertura"] ?? "").trim();
+    const label = String(row["descripcion"] ?? "").trim();
     const key = code || label;
     if (!key || seen.has(key)) {
       hasDuplicates = true;
       break;
     }
     seen.add(key);
-    const value = numericValue(row.valor);
+    const value = numericValue(row["valor"]);
     if (value === null) continue;
     comparisonRows.push({
       code,
       label: label || code,
       value,
-      note: row.observaciones == null ? "" : String(row.observaciones),
+      note: row["observaciones"] == null ? "" : String(row["observaciones"]),
     });
   }
 

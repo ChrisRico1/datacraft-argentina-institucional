@@ -81,12 +81,12 @@ export function buildLatestMetricSummary(
     : rows;
   const observations = selectedRows
     .map((row) => {
-      const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+      const period = row[periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
       if (period === null || period === undefined || String(period).trim() === "") return null;
       return {
         period: String(period),
         value: parseNumericValue(row[valueKey]),
-        note: row.observaciones == null ? "" : String(row.observaciones),
+        note: row["observaciones"] == null ? "" : String(row["observaciones"]),
       };
     })
     .filter((item): item is { period: string; value: number | null; note: string } => item !== null)

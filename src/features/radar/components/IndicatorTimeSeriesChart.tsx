@@ -14,7 +14,7 @@ type IndicatorTimeSeriesChartProps = {
   valueKey: string;
   valueLabel: string;
   unit: string;
-  contextKey?: string;
+  contextKey?: string | undefined;
   contextValue?: string;
 };
 
@@ -60,7 +60,7 @@ export function buildTimeSeriesPoints(
 ) {
   const points = rows
     .map((row) => {
-      const period = row[periodKey] ?? row.periodo ?? row.Periodo ?? row.fecha ?? row.anio;
+      const period = row[periodKey] ?? row["periodo"] ?? row["Periodo"] ?? row["fecha"] ?? row["anio"];
       if (period === null || period === undefined || String(period).trim() === "") return null;
       return { period: String(period), value: numericValue(row[valueKey]) };
     })
