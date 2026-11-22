@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as LeafletMap, LayerGroup } from "leaflet";
 import { municipalReferences } from "./catalog";
+import { acumarSubbasinsWms } from "./geo-layers";
 import { Button } from "@/components/ui/button";
 import { LocateFixed } from "lucide-react";
 
@@ -11,6 +12,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [tileFailed, setTileFailed] = useState(false);
+  const [subbasinsFailed, setSubbasinsFailed] = useState(false);
   useEffect(() => {
     let cancelled = false;
     void import("leaflet")
@@ -31,6 +33,22 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           })
           .addTo(map);
         layers.current = L.layerGroup().addTo(map);
+        const subbasins = L.tileLayer.wms(acumarSubbasinsWms.endpoint, {
+          layers: acumarSubbasinsWms.layer,
+          format: "image/png",
+          transparent: true,
+          version: "1.1.1",
+          opacity: 0.62,
+          attribution: acumarSubbasinsWms.attribution,
+        }).addTo(map);
+        L.control.layers(
+          null,
+          { "Subcuencas ACUMAR · IGN": subbasins },
+          { collapsed: false, position: "bottomleft" },
+        ).addTo(map);
+        subbasins.on("tileerror", () => {
+          if (!cancelled) setSubbasinsFailed(true);
+        });
         const observer = new ResizeObserver(() => map.invalidateSize());
         observer.observe(container.current);
         map.on("unload", () => observer.disconnect());
@@ -90,7 +108,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
       <div
         ref={container}
         role="region"
-        aria-label="Mapa navegable de centros urbanos aproximados para orientación municipal"
+        aria-label="Mapa de referencias urbanas y subcuencas ACUMAR del IGN"
         className="observatory-map h-[420px] w-full bg-ink-2 sm:h-[510px]"
       />
       {!ready && (
@@ -101,6 +119,15 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           {failed
             ? "La carga del mapa requiere un nuevo intento. Podés consultar la cartografía oficial en Monitor PISA."
             : "Cargando mapa de referencias…"}
+        </p>
+      )}
+      {subbasinsFailed && (
+        <p
+          role="status"
+          className="absolute bottom-8 left-3 right-3 z-[450] rounded-md bg-ink p-3 text-sm text-ink-foreground"
+        >
+          La capa de subcuencas del IGN no está disponible en este momento. Podés desactivarla
+          desde el control de capas.
         </p>
       )}
       {tileFailed && (
