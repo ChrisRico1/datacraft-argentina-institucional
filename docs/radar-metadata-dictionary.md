@@ -71,7 +71,7 @@ Las tasas no comparten necesariamente denominador y no deben sumarse como si fue
 - Subocupación demandante y no demandante: cada subconjunto / población económicamente activa.
 - Informalidad: población con empleo informal / población ocupada.
 
-La definición de cada tasa se muestra debajo de su selector; el servicio EPH utilizado por Radar devuelve actualmente el agregado `T_31_A`, no una desagregación individual por ciudad.
+La definición de cada tasa se muestra debajo de su selector; el servicio EPH utilizado por Radar devuelve actualmente el agregado `T_31_A`, no una desagregación individual por ciudad. En la muestra de Production del 22/11/2026, las tasas de empleo formal e informal tienen valores desde 2023T4; los 30 períodos anteriores de la serie llegan nulos. No deben interpretarse como cero.
 
 ## Marcas estadísticas y valores faltantes
 
@@ -88,7 +88,7 @@ La definición de cada tasa se muestra debajo de su selector; el servicio EPH ut
 | `...` | Dato no disponible a la fecha de presentación. |
 | `///` | Dato que no corresponde presentar. |
 
-Una celda vacía, un valor nulo y una marca estadística no son equivalentes. No sustituirlos por cero. Se debe conservar el valor original, la marca y las observaciones de INDEC.
+Una celda vacía, un valor nulo y una marca estadística no son equivalentes. No sustituirlos por cero. Se debe conservar el valor original, la marca y las observaciones de INDEC. En la muestra de exportaciones de 202610 se observaron 521 valores nulos de 1.000 en `valor_FOB` y `Peso_Neto`, sin campos separados `valor_null` u `observaciones` que expliquen esas filas; no se infiere una causa.
 
 ## Fuentes metodológicas oficiales
 
