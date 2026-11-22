@@ -261,6 +261,21 @@ const indicators: Indicator[] = [
     valueLabel: "Población proyectada",
     contextKey: "jurisdiccion_nom",
   },
+  {
+    id: "poblacion-nacional",
+    title: "Población nacional",
+    topic: "demografia",
+    description: "Proyecciones de población total por edad y sexo para el conjunto del país.",
+    unit: "Personas",
+    frequency: "Anual",
+    coverage: "Total nacional",
+    service: "Proyecciones de población nacional",
+    apiId: "poblacion-nacional",
+    periodKey: "fecha",
+    valueKey: "poblacion",
+    valueLabel: "Población proyectada",
+    contextKey: "sexo_nom",
+  },
 ];
 
 const metricOptions: Record<string, MetricOption[]> = {

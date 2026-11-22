@@ -94,4 +94,30 @@ describe("getIndecIndicator", () => {
       status: 400,
     });
   });
+  
+  it.each([
+    ["ipc", "ipc_nacional"],
+    ["salarios", "indice_salarios"],
+    ["emae", "estimador-mensual-de-actividad-economica-nivel-general"],
+    ["pobreza", "pobreza_eph"],
+    ["mercado-laboral", "mercado_trabajo_eph"],
+    ["cba-cbt", "valorizacion_canastas_cba_cbt"],
+    ["canasta-crianza", "canasta-crianza"],
+    ["exportaciones", "comercio_exterior_exportacion_bienes"],
+    ["importaciones", "comercio_exterior_importacion_bienes"],
+    ["poblacion-departamento", "estimaciones_poblacion_departamento_2022_2035"],
+    ["poblacion-jurisdiccion", "proyecciones_poblacion_jurisdiccion_2022_2040"],
+    ["poblacion-nacional", "proyecciones_poblacion_nacional_2022_2040"],
+    ["ipi-manufacturero", "ipi_manufacturero"],
+    ["sipm", "sipm_precios_mayoristas"],
+    ["costo-construccion", "icc_precios_construccion"],
+  ])("mantiene registrado %s en el endpoint oficial %s", async (indicator, endpoint) => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+    const fetchMock = vi.fn().mockResolvedValue(new Response("[]", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getIndecIndicator(indicator, {});
+    const [requestUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(new URL(requestUrl).pathname).toBe(`/v1/${endpoint}`);
+  });
 });
