@@ -1,63 +1,105 @@
-# Datacraft Argentina Institucional
+# Datacraft Argentina — sitio institucional
 
-Creá una landing institucional de UNA SOLA PÁGINA para Datacraft Argentina. No publicar ni desplegar; dejar editable y con preview.
+Sitio institucional y laboratorio de demostraciones de Datacraft Argentina. El proyecto reúne la presentación comercial, las soluciones y una selección de desarrollos demostrativos.
 
-MARCA Y POSICIONAMIENTO
-Datacraft Argentina es una consultora tecnológica integral argentina. Posicionamiento: transformar información, procesos y datos en soluciones para organizaciones públicas y privadas. Mensaje propuesto: “Transformamos información en soluciones. Tecnología en resultados.” No reducir la marca a Excel, planillas, diseño web, bots ni BI. Tono profesional, claro, estratégico y cercano; español rioplatense con voseo. Público prioritario: sector público, empresas y pymes, comercios. Modelo: soluciones propias y desarrollos a medida. Mercado: Argentina.
+**Repositorio de referencia:** https://github.com/ChrisRico1/datacraft-argentina-institucional  
+**Sitio publicado:** https://datacraft-argentina.lovable.app
 
-SERVICIOS (6 UNIDADES)
-1) Transformación digital: digitalización de operaciones, sistematización de procesos, herramientas de gestión e integración de sistemas.
-2) Datos e inteligencia de negocios: BI, tableros ejecutivos, procesamiento y organización de datos, indicadores, análisis territorial y observatorios.
-3) Automatización e inteligencia artificial: automatización de tareas y flujos, bots conversacionales, integraciones API, asistentes/agentes de IA y automatización de atención.
-4) Sistemas y gestión empresarial: herramientas personalizadas, seguimiento comercial/clientes, gestión administrativa, financiera e inventarios, portales y sistemas a medida.
-5) Ciberseguridad y gestión de información: solo diagnóstico, auditoría, evaluación de prácticas, gestión de accesos, respaldo y asesoramiento. No afirmar monitoreo 24/7, respuesta a incidentes, certificaciones, pentesting ni SOC.
-6) Soluciones para sector público: relevamientos digitales, sistematización de datos institucionales, tableros de gestión, indicadores, observatorios y análisis territorial/políticas públicas.
+## Criterios del proyecto
 
-EXPERIENCIA PARA PRESENTAR CON PRUDENCIA
-Se trabajó con Google Sheets, Apps Script, formularios, automatizaciones, Python, APIs, JavaScript, HTML/CSS, dashboards y visualización de datos; un tablero ejecutivo para información territorial; integración de captación de consultas por WhatsApp Cloud API hacia Google Sheets; herramientas de gestión con Apps Script; prototipo de gestión/financiación de celulares; landing pages y capacitaciones. Diferenciar claramente experiencia, desarrollos y prototipos. No inventar clientes, resultados, métricas, premios, certificaciones ni testimonios. No identificar organismos ni publicar capturas confidenciales.
+- El código de GitHub es la fuente de verdad.
+- Los cambios se desarrollan en ramas y se entregan mediante Pull Requests.
+- No integrar cambios en `main` sin autorización explícita.
+- Lovable se utiliza para visualizar/sincronizar el proyecto, no como editor principal.
+- Antes de modificar una funcionalidad, revisar su implementación actual y sus pruebas.
+- No inventar clientes, datos, testimonios, fuentes, métricas, certificaciones ni resultados.
+- Mantener la identidad visual, accesibilidad, responsive y consistencia entre secciones.
+- Los proyectos publicados son demostraciones de capacidades; no deben presentarse como sistemas productivos si no lo son.
 
-DATOS CONFIRMADOS
-Nombre: Datacraft Argentina.
-Instagram https://www.instagram.com/datacraftargentina/
-Facebook https://www.facebook.com/DatacraftArgentina
-YouTube https://www.youtube.com/@DatacraftArgentina
-No tenemos todavía teléfono, WhatsApp comercial, correo, dirección, horarios, reseñas ni valoración. No inventar nada. CTA principal “Hablemos de tu proyecto” y dirigirlo a Instagram mientras no haya WhatsApp confirmado. Contactos faltantes deben quedar vacíos en configuración central y ocultos de la interfaz. No crear formularios que aparenten enviar si no hay backend.
+## Estructura funcional
 
-DISEÑO
-Estética híbrida institucional premium + tecnología disruptiva. Paleta verde bosque oscuro, verde lima/amarillo ácido, carbón, blanco cálido y verdes secundarios. Tokens CSS en oklch. Inter para cuerpo y Sora para títulos. Tomar como referencias visuales el banner verde oscuro/lima y el isotipo de ojo en marco de escaneo compartidos en el contexto; si no están adjuntos, no inventar logo, crear wordmark tipográfico limpio. Contraste accesible, diseño limpio, jerarquía editorial, espacios amplios, microinteracciones sutiles, responsive excelente. Módulos tipo bento, líneas y visualizaciones abstractas de datos. Evitar plantilla SaaS genérica y exceso de gradientes.
+| Ruta | Contenido |
+|---|---|
+| `/` | Sitio institucional y presentación de Datacraft |
+| `/observatorio` | Catálogo de proyectos y demostraciones |
+| `/observatorio/radar-estadistico-argentina` | Explorador de indicadores del INDEC |
+| `/observatorio/infraestructura-cloacal` | Demostración territorial de infraestructura cloacal |
+| `/municipio-en-obra` | Demostración conceptual de seguimiento de obras |
+| `/api/radar/:indicator` | Proxy servidor validado para el Catálogo API-INDEC |
 
-ESTRUCTURA
-Header fijo con marca, anclas Inicio, Soluciones, Sectores, Experiencia, Metodología, Contacto y CTA.
-Hero con titular fuerte, bajada, CTA “Hablemos de tu proyecto” (Instagram real) y CTA secundario “Conocé nuestras soluciones”.
-Bloque “Qué hacemos”.
-Seis unidades de servicio con iconos consistentes, beneficios concretos y anclas.
-Sectores: sector público, empresas/pymes, comercios con necesidades específicas.
-Experiencia/capacidades: ejemplos honestos, sin datos confidenciales ni testimonios ficticios.
-Metodología: diagnóstico, diseño, desarrollo e integración, implementación, mejora continua.
-CTA final.
-Contacto con redes confirmadas; teléfono, WhatsApp, correo y dirección ocultos hasta completar.
-Footer © año actual automático y redes.
+La ruta `/observatorio` se conserva por compatibilidad. El nombre visible de la sección es **Proyectos**.
 
-REQUISITOS
-Landing one-page con navegación por anclas, estados hover/focus visibles, accesibilidad y mobile-first. TODO texto visible, metadatos, errores y 404 en español rioplatense. 404: “No encontramos esta página” + “Volver al inicio”. SEO title: “Datacraft Argentina | Transformación digital, datos y automatización”. Meta description: “Consultora tecnológica en Argentina. Transformación digital, inteligencia de negocios, automatización, inteligencia artificial y soluciones de gestión para organizaciones públicas y privadas.” No precios, horarios, domicilio, contactos, clientes, reseñas ni certificaciones no confirmados. No Supabase, pagos ni integraciones externas innecesarias. No publicar. Centralizar los datos editables para completar contactos luego. Revisar responsive, enlaces y accesibilidad.
+## Proyectos demostrativos
 
-This project was built with [Lovable](https://lovable.dev).
+1. **Radar Estadístico Argentina:** consulta y visualización de indicadores oficiales del INDEC. La integración utiliza una ruta servidor para proteger el token.
+2. **Infraestructura Cloacal:** lectura territorial de información pública relacionada con ACUMAR y la Cuenca Matanza-Riachuelo. Las referencias geográficas aproximadas no representan la ubicación exacta de obras ni límites oficiales.
+3. **Municipio en Obra:** demostración conceptual de seguimiento de obras. Los ejemplos ficticios deben identificarse como tales; no implica conexión con un municipio ni con una base operativa real.
 
-## Build with Lovable
+## Arquitectura y tecnologías
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ffcc73bd-9ded-4e0f-87fe-1c664b3f9af1).
+- React 19 y TypeScript.
+- TanStack Start y TanStack Router (rutas basadas en archivos).
+- Vite 8, Tailwind CSS 4 y configuración de build de Lovable.
+- Recharts para visualizaciones y Leaflet para mapas.
+- Zod para validaciones; Vitest y Testing Library para pruebas.
+- Nitro con destino Cloudflare Workers.
+- Los datos públicos del Observatorio se mantienen en archivos locales validados.
+- La integración INDEC se implementa en servidor; el navegador no debe recibir ni enviar el secreto upstream.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+La configuración de marca, redes y datos de contacto se centraliza en `src/config/site.ts`. Los campos de contacto no confirmados deben permanecer vacíos y ocultos.
 
-## Development
+## Desarrollo local
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requisitos: Bun compatible con el lockfile del repositorio y Node.js compatible con Vite/Nitro.
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```bash
+git clone https://github.com/ChrisRico1/datacraft-argentina-institucional.git
+cd datacraft-argentina-institucional
+bun install --frozen-lockfile
+bun run dev
 ```
+
+Comandos de validación:
+
+```bash
+bun run lint
+bun test
+bun run build
+```
+
+Los comandos deben ejecutarse desde la raíz. No declarar una validación como aprobada si no se ejecutó realmente.
+
+## Variables de entorno
+
+Copiar `.env.example` a `.env.local` para desarrollo y cargar el secreto:
+
+```env
+INDEC_API_TOKEN=
+```
+
+En producción, configurar `INDEC_API_TOKEN` como **Secret** en el entorno de Cloudflare Workers. Nunca usar el prefijo `VITE_`, subir el token al repositorio ni incluirlo en logs, issues o PRs.
+
+La arquitectura, endpoints registrados, filtros, paginación y notas estadísticas de la integración están documentados en [docs/radar-indec-integration.md](docs/radar-indec-integration.md).
+
+## Flujo de trabajo GitHub
+
+1. Consultar el HEAD de `main`, ramas y PR abiertos antes de comenzar.
+2. Crear una rama nueva desde el `main` actualizado.
+3. Limitar cada PR a un objetivo coherente y acotado.
+4. Ejecutar lint, pruebas y build cuando el entorno lo permita; informar claramente cualquier validación pendiente.
+5. Revisar diferencias, efectos secundarios, rutas, accesibilidad y documentación.
+6. Abrir un PR hacia `main` con objetivo, alcance, archivos, pruebas, riesgos y pendientes.
+7. Esperar autorización explícita antes de hacer merge.
+
+No reescribir historial publicado ni borrar ramas/PR antiguos sin evaluar primero sus referencias y su utilidad.
+
+## Documentación
+
+- [Integración API-INDEC](docs/radar-indec-integration.md): arquitectura, configuración, endpoints y consideraciones estadísticas.
+- [Carga de datos del Observatorio](src/features/observatorio/README.md): formato, validación y límites de los datos territoriales.
+- [Convenciones de rutas](src/routes/README.md): enrutamiento basado en archivos.
+- [Hoja de ruta](roadmap.md): prioridades técnicas y funcionales.
+
+## Estado de validación
+
+El repositorio incluye scripts de lint, pruebas y build. La existencia de esos scripts no implica que la versión publicada o cada rama estén validadas. Consultar los checks del PR y el registro de ejecución antes de aprobar una integración.
