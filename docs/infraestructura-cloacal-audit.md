@@ -186,6 +186,7 @@ Se contrastaron dos publicaciones institucionales disponibles para la cartograf�
 
 - **Datos Abiertos de la Provincia de Buenos Aires:** el recurso «Radios censales del Censo 2022» está atribuido a INDEC, se publica como archivo ZIP y su ficha declara formato Shapefile en EPSG:4326 (WGS 84). La ficha indica creación el 10/06/2024 y última modificación el 11/06/2024. También existe una distribución GeoJSON ZIP con el mismo CRS declarado.
 - **GeoNode de INDEC:** la capa «Radios censales» está publicada y aprobada; sus metadatos describen la unidad radio urbano, rural o mixto y explican que la cobertura nacional integra cartografía de las Direcciones Provinciales de Estadística ajustada a límites provinciales IGN. La ficha declara EPSG:3857, publicación 20/03/2026 y licencia «Not Specified». El servicio ofrece WFS y exportaciones, pero la descarga GeoJSON consultada no respondió dentro del tiempo disponible.
+- **CABA — IDEEC/IDECBA:** el organismo estadístico de la Ciudad publica la capa «Radio censal_CNPHyV2022» en formato Shapefile, geometría poligonal, UTF-8 y EPSG:4326. La ficha técnica fija fecha de referencia 04/2022 y licencia CC-BY-2.5-AR; documenta campos `PROV`, `DPTO`, `NCOM`, `NFRACC`, `NRAD`, `CRO`, `TRO` y `SAG`. El campo `TRO` distingue urbano (1), rural (2) y mixto (3). IDEEC ofrece un WFS público en https://ideec.estadisticaciudad.gob.ar/geoserver/ows?request=GetCapabilities&service=wfs y un catálogo de geoservicios/descargas. La página advierte que el uso es responsabilidad del usuario, prohíbe la comercialización de la información obtenida y exige citar la fuente; revisar estas condiciones antes de redistribuir datos.
 
 ### Implicancias técnicas y metodológicas
 
@@ -199,4 +200,4 @@ Se contrastaron dos publicaciones institucionales disponibles para la cartograf�
 
 ### Estado
 
-Metadatos y diferencias de publicación verificadas. No se descargó ni validó el contenido geométrico de los archivos; siguen pendientes la inspección de ZIP, CRS real, campos, cobertura, validez topológica y comparación entre distribuciones. No se incorpora todavía ninguna capa al mapa público.
+Metadatos de PBA, CABA e INDEC comparados. PBA y CABA declaran EPSG:4326; GeoNode INDEC declara EPSG:3857 y licencia no especificada. Se identificó el WFS de IDEEC para CABA y las URL directas de descarga PBA, pero no se descargó ni validó el contenido geométrico de esos recursos. Siguen pendientes la inspección de archivos, CRS real, campos, cobertura, validez topológica y comparación entre distribuciones. No se incorpora todavía ninguna capa al mapa público.
