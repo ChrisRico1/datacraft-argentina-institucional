@@ -12,6 +12,24 @@ describe("Radar metadata dictionary", () => {
     }
   });
 
+  it("covers the catalogue aliases used by the interface", () => {
+    expect(getRadarIndicatorMetadata("canastas")?.description).toContain("Canasta Básica");
+    expect(getRadarIndicatorMetadata("poblacion")?.description).toContain("departamento");
+    expect(getRadarFieldMetadata("canastas", "indicador", "CBA")?.interpretation).toContain("línea de indigencia");
+  });
+
+  it("defines selected statistical codes instead of repeating raw codes", () => {
+    expect(getRadarFieldMetadata("sipm", "indicador", "IPIM")?.interpretation).toContain("incluidos IVA");
+    expect(getRadarFieldMetadata("ipc", "tipo_de_indicador", "Incidencia_m")?.interpretation).toContain("puntos porcentuales");
+    expect(getRadarFieldMetadata("emae", "serie", "Serie desestacionalizada")?.interpretation).toContain("patrones estacionales");
+  });
+
+  it("uses the EPH economically active population as denominator for demand and underemployment rates", () => {
+    expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_ocupacion_demandante")?.interpretation).toContain("población económicamente activa");
+    expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_subocupacion")?.interpretation).toContain("población económicamente activa");
+    expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_empleo_informal")?.interpretation).toContain("población ocupada");
+  });
+
   it("documents every configured dimension filter", () => {
     for (const [indicatorId, filters] of Object.entries(radarDimensionFilters)) {
       for (const filter of filters) {
