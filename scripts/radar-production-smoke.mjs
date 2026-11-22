@@ -9,7 +9,7 @@ const services = [
   { id: "pobreza", period: "periodo", required: ["tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], filters: { region: "area_geografica_nom" } },
   { id: "mercado-laboral", period: "periodo", required: ["tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion"], filters: { region: "area_geografica_nom" } },
   { id: "cba-cbt", period: "periodo", required: ["valor", "tipo_de_indicador", "region"], filters: { region: "region", indicatorType: "tipo_de_indicador" }, dimensions: ["clasificador", "nivel", "codigo", "indicador"] },
-  { id: "canasta-crianza", period: "Periodo", required: ["bys_men1", "cuid_men1", "tot_men1"] },
+  { id: "canasta-crianza", period: "Periodo", required: ["bys_men1", "cuid_men1", "tot_men1"], seriesFields: ["tot_men1","bys_men1","cuid_men1","tot_1a3","bys_1a3","cuid_1a3","tot_4a5","bys_4a5","cuid_4a5","tot_6a12","bys_6a12","cuid_6a12"] },
   { id: "exportaciones", period: "Periodo", required: ["valor_FOB", "Peso_Neto", "rubro_cod", "subrubro_cod", "pais_cod"], dimensions: ["rubro_cod", "subrubro_cod", "pais_cod"] },
   { id: "importaciones", period: "Periodo", required: ["valor_CIF", "uso_economico_cod", "gce_cod", "pais_cod"], dimensions: ["uso_economico_cod", "gce_cod", "pais_cod"] },
   { id: "poblacion-departamento", period: "fecha", required: ["poblacion", "jurisdiccion_cod", "departamento_cod", "sexo_cod"], dimensions: ["jurisdiccion_nom", "jurisdiccion_cod", "departamento_cod", "sexo_cod", "rmba"] },
@@ -83,6 +83,18 @@ function buildFilterParams(service, row, periodValue) {
   return params;
 }
 
+function buildSingleFilterParams(service, row, periodValue, field) {
+  const params = new URLSearchParams({ limit: "1", period: String(periodValue) });
+  const filterEntry = Object.entries(service.filters ?? {}).find(([, filterField]) => filterField === field);
+  if (filterEntry) params.set(filterEntry[0], String(row[field]));
+  else params.set("dimensions", JSON.stringify({ [field]: String(row[field]) }));
+  return params;
+}
+
+function hasNumericValue(value) {
+  if (value === null || value === undefined || String(value).trim() === "") return false;
+  return Number.isFinite(Number(value));
+}
 console.log(`Radar Production smoke · ${new Date().toISOString()}`);
 console.log(`API: ${API_BASE}`);
 console.log(`Origen CORS esperado: ${ORIGIN}`);
@@ -107,7 +119,32 @@ for (const service of services) {
       throw new Error(`El filtro de período devolvió ${String(filteredRow[service.period] ?? "sin período")} en lugar de ${periodValue}.`);
     }
 
-    console.log(`PASS ${service.id}: HTTP ${initial.status}, Content-Range ${initial.contentRange ?? "no informado"}; filtro de período y dimensiones: HTTP ${filtered.status}, Content-Range ${filtered.contentRange ?? "no informado"}`);
+    const filterFields = [...new Set([
+      ...Object.values(service.filters ?? {}),
+      ...(service.dimensions ?? []),
+    ])];
+    let individualFilterChecks = 0;
+    for (const field of filterFields) {
+      const value = row[field];
+      if (value === null || value === undefined || String(value).trim() === "") continue;
+      await sleep(PAUSE_MS);
+      const individual = await queryService(service.id, buildSingleFilterParams(service, row, periodValue, field));
+      const actual = individual.payload.data[0]?.[field];
+      if (String(actual ?? "") !== String(value)) {
+        throw new Error(`El filtro individual ${field}=${value} devolvió ${String(actual ?? "sin valor")}.`);
+      }
+      individualFilterChecks++;
+    }
+
+    if (service.seriesFields) {
+      const invalidSeries = service.seriesFields.filter((field) => !hasNumericValue(row[field]));
+      if (invalidSeries.length > 0) {
+        throw new Error(`Series de canasta sin valor numérico en la observación de muestra: ${invalidSeries.join(", ")}.`);
+      }
+      console.log(`PASS ${service.id} · ${service.seriesFields.length} series numéricas.`);
+    }
+
+    console.log(`PASS ${service.id}: HTTP ${initial.status}; filtro combinado y período: HTTP ${filtered.status}; ${individualFilterChecks}/${filterFields.length} filtros individuales comprobados.`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     failures.push({ indicator: service.id, error: message });
