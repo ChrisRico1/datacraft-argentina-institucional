@@ -15,7 +15,7 @@ Script: `scripts/radar-production-sample-audit.mjs`
 - **Integridad muestral:** presencia de campos mínimos y duplicados de una clave compuesta explícita por servicio.
 - **Conteo total:** total informado por `Content-Range`, separado del tamaño de muestra descargado.
 
-El workflow publica el perfil en el resumen de GitHub Actions. No escribe ni modifica datos en INDEC ni en el Worker.
+El workflow publica el perfil completo en el resumen de GitHub Actions y en los logs del job para facilitar su revisión y archivo. No escribe ni modifica datos en INDEC ni en el Worker.
 
 ## Alcance y límites
 

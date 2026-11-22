@@ -12,6 +12,7 @@ on:
       - audit/radar-production-sample-profiling
       - ci/radar-sample-audit-configurable-run
       - fix/radar-sample-audit-origin-header
+      - audit/radar-sample-full-report-logs
   workflow_dispatch:
 
 permissions:

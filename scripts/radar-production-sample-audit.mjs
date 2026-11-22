@@ -166,7 +166,7 @@ for (const service of services) {
 lines.push("");
 lines.push(`Resultado: ${services.length - failures.length}/${services.length} servicios con perfil de muestra disponible.`);
 if (failures.length > 0) lines.push(`Errores: ${JSON.stringify(failures)}`);
-console.log(lines.slice(0, 8).join("\n"));
+console.log(lines.join("\n"));
 console.log(`Resultado: ${services.length - failures.length}/${services.length} servicios perfilados.`);
 
 if (process.env.GITHUB_STEP_SUMMARY) {
