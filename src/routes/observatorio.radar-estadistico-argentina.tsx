@@ -10,6 +10,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   Database,
+  FileSpreadsheet,
   Globe2,
   MapPinned,
   Search,
@@ -1424,9 +1425,24 @@ function RadarEstadisticoArgentina() {
                   <span className="font-semibold uppercase tracking-wider">Fuente</span>
                   <span className="mt-2">INDEC · Catálogo API v1</span>
                 </div>
-                <Button className="self-end" variant="outline" title="Exporta únicamente los registros cargados en la consulta actual" disabled={apiRows.length === 0 || apiLoading} onClick={exportLoadedRows}>
-                  Exportar CSV
-                </Button>
+                <div className="flex flex-col items-start justify-end gap-1 sm:items-end">
+                  <Button
+                    className="self-start border border-lime/60 px-5 shadow-[0_8px_24px_rgba(183,227,106,0.12)] sm:self-end"
+                    variant="lab"
+                    aria-label={`Exportar ${apiRows.length.toLocaleString("es-AR")} registros cargados como archivo CSV`}
+                    title={`Exporta únicamente los ${apiRows.length.toLocaleString("es-AR")} registros cargados. ${apiIncomplete ? "La consulta todavía tiene más registros disponibles." : "No quedan registros pendientes de carga."}`}
+                    disabled={apiRows.length === 0 || apiLoading}
+                    onClick={exportLoadedRows}
+                  >
+                    <FileSpreadsheet className="h-4 w-4" aria-hidden="true" />
+                    Exportar
+                    <span className="rounded-md bg-ink/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider">.CSV</span>
+                  </Button>
+                  <span className="text-[10px] text-ink-muted">
+                    {apiRows.length.toLocaleString("es-AR")} registros cargados
+                    {apiIncomplete ? <span className="ml-1 text-amber-200">· consulta parcial</span> : null}
+                  </span>
+                </div>
                 <Button className="self-end" variant="lab" disabled={apiLoading} onClick={() => setRefreshKey((value) => value + 1)}>
                   Actualizar datos <ArrowRight />
                 </Button>

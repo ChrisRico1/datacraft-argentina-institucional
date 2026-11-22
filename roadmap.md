@@ -13,7 +13,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 - [x] Ejecutar instalación con lockfile congelado, lint, pruebas y build mediante GitHub Actions en las PR del repositorio.
 - [ ] Verificar el despliegue real, las rutas públicas y los logs de runtime; distinguir preview, build y producción.
-- [ ] Confirmar la disponibilidad de `INDEC_API_TOKEN` en Cloudflare sin exponer su valor.
+- [ ] Confirmar la disponibilidad y fecha de renovación de `INDEC_API_TOKEN` en Cloudflare sin exponer su valor; el token vence a los 12 meses y regenerarlo invalida el anterior.
 - [ ] Revisar compatibilidad Nitro/Cloudflare y la configuración Wrangler actual.
 - [x] Incorporar CI reproducible para lint, pruebas y build mediante GitHub Actions.
 - [ ] Comprobar navegación, errores, responsive y accesibilidad de las rutas principales.
@@ -22,11 +22,13 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 - [x] Incorporar paginación incremental desde el código vigente de `main`: carga inicial acotada, bloques de 1.000, conservación de filtros, cancelación al cambiar la consulta y límite de offset del servidor.
 - [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones.
+- [ ] Validar en Production el manejo de límites de consulta (`429`), su mensaje visible y el procedimiento de recuperación.
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
 - [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
 - [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
+- [ ] Mejorar la visibilidad del botón CSV e indicar claramente cuántos registros cargados se exportan.
 - [ ] Evaluar comparaciones adicionales solo después de validar los datos y sus dimensiones.
 
 ## P1 — Proyectos demostrativos
@@ -40,7 +42,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 - [ ] Actualizar documentación heredada que describa una landing de una sola página o instrucciones que ya no representan el producto.
 - [ ] Inventariar las ramas antiguas y comparar su contenido con `main` antes de proponer su cierre o eliminación.
-- [ ] Resolver los PR abiertos #11 y #15 mediante revisión individual; la paginación antigua de #33 fue reemplazada por #64 y su PR quedó cerrada.
+- [x] Revisar y cerrar los PR obsoletos #11 (la página actual de Municipio en Obra ya está en `main` y reemplaza su propuesta antigua) y #15 (documento conceptual sustituido por la documentación vigente del Radar); #33 fue reemplazada por #64.
 - [ ] Revisar dependencias, configuración de TypeScript/ESLint/Prettier y consistencia de nombres.
 - [ ] Ampliar cobertura de pruebas de rutas, estados de carga/error, filtros, paginación y componentes de visualización (la exportación CSV ya cuenta con pruebas unitarias).
 - [ ] Revisar accesibilidad por teclado, contraste, etiquetas y preferencias de movimiento reducido.

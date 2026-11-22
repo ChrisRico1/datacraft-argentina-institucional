@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit posterior a la integración de la PR #64  
+**Repositorio revisado:** `main`, commit `6078041ce9f377e5971cac8f810decf5d6a5ee6e`, posterior a la integración de la PR #65  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Criterio de lectura
@@ -59,6 +59,7 @@ La extracción pública de referencia del 2 de noviembre de 2026 enumera 19 tabl
 - Código de servidor y filtros revisados en `main`: `src/features/radar/server/indec.ts` y `src/features/radar/filterConfig.ts`.
 - Matriz de campos: `docs/radar-indec-filter-matrix.md`.
 - El snapshot OpenAPI y la extracción de 19 tablas usados como referencia fueron publicados por un tercero y reflejan una consulta al Catálogo API-INDEC del **2 de noviembre de 2026**. Sirven para contrastar estructura y nombres, pero no sustituyen la documentación oficial en vivo ni la respuesta actual de Production.
-- La documentación oficial del Catálogo API-INDEC es https://api.indec.gob.ar/docs.
+- La documentación oficial del Catálogo API-INDEC es https://api.indec.gob.ar/docs. La página pública actual carga el contenido de documentación de forma dinámica; en la consulta del 22/11/2026 el lector de texto solo mostró el contenedor de carga y no expuso el esquema de los servicios. Por eso esta auditoría no afirma haber validado el OpenAPI completo en vivo.
 - Para Canasta de crianza se contrastó además el informe oficial de octubre de 2026, publicado el 16 de noviembre de 2026: https://www.indec.gob.ar/uploads/informesdeprensa/canasta_crianza_11_26F9D722BE15.pdf.
 - La validación de ejecución de cada indicador, métrica y filtro en Production sigue pendiente de completar y registrar. Las pruebas unitarias validan el comportamiento del código, no la disponibilidad de datos en el servicio remoto.
+- Las preguntas frecuentes oficiales indican que el token vence automáticamente a los 12 meses y que la regeneración invalida inmediatamente el token anterior. También informan que existen límites de uso por cuenta, sin publicar en esa página una cuota numérica universal. La capa servidor ya transforma respuestas upstream `429` en un error controlado `503`; falta verificar en Production la presentación al usuario y documentar el procedimiento de renovación sin exponer el secreto. Referencia: https://api.indec.gob.ar/ayuda/faq.
