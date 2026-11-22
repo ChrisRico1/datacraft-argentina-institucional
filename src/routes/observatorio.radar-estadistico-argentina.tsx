@@ -447,6 +447,7 @@ function RadarEstadisticoArgentina() {
   const serializedDimensionFilters = JSON.stringify(dimensionFilters);
 
   useEffect(() => {
+    if (selected.id !== "exportaciones" && selected.id !== "importaciones") return;
     const controller = new AbortController();
     const loadNomenclatures = async () => {
       setCommerceNomenclaturesLoading(true);
@@ -477,7 +478,7 @@ function RadarEstadisticoArgentina() {
     };
     void loadNomenclatures();
     return () => controller.abort();
-  }, []);
+  }, [selected.id]);
 
   const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
   const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
