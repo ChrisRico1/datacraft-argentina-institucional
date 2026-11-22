@@ -102,7 +102,7 @@ export function PovertyAreaComparisonChart({
     <section aria-label={`Comparación territorial de ${valueLabel}`} className="rounded-xl border border-ink-foreground/10 bg-ink-2/35 p-4 sm:p-5">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="eyebrow text-lime">COMPARACIÓN TERRITORIAL</p>
+          <p className="eyebrow" style={{ color: "var(--brand-terracotta)" }}>COMPARACIÓN TERRITORIAL</p>
           <h4 className="mt-1 text-base font-semibold">Diferencias entre aglomerados</h4>
           <p className="mt-1 text-xs text-ink-muted">{valueLabel} · último período disponible: {comparison.period}</p>
         </div>
@@ -129,11 +129,11 @@ export function PovertyAreaComparisonChart({
               axisLine={false}
             />
             <Tooltip
-              contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
-              labelStyle={{ color: "#c5d0c7" }}
+              contentStyle={{ background: "var(--carbon)", border: "1px solid var(--brand-stone-linen)", borderRadius: 10, color: "var(--background)" }}
+              labelStyle={{ color: "var(--brand-stone-linen)" }}
               formatter={(value) => [`${new Intl.NumberFormat("es-AR", { maximumFractionDigits: 1 }).format(Number(value))}%`, valueLabel]}
             />
-            <Bar dataKey="value" name={valueLabel} fill="#b7e36a" radius={[0, 5, 5, 0]} maxBarSize={18} />
+            <Bar dataKey="value" name={valueLabel} fill="var(--brand-terracotta)" radius={[0, 5, 5, 0]} maxBarSize={18} />
           </BarChart>
         </ResponsiveContainer>
       </div>
