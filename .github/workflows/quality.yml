@@ -10,6 +10,7 @@ on:
       - fix/radar-production-smoke-range-metadata
       - fix/radar-import-smoke-contract
       - audit/radar-production-sample-profiling
+      - ci/radar-sample-audit-configurable-run
   workflow_dispatch:
 
 permissions:
