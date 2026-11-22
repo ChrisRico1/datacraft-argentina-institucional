@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from xml.etree import ElementTree
 
-IGN_WFS = "https://wms.ign.gob.ar/geoserver/ows"
+IGN_WFS = "https://wms.ign.gob.ar/geoserver/ign_riesgo/ows"
 IGN_METADATA = "https://www.ign.gob.ar/capas-sig/metadata/anticipando_crecida_subcuenca_acumar.pdf"
 PBA_RADIOS = ("https://catalogo.datos.gba.gob.ar/dataset/33b080d2-e369-4076-acd4-511db0e9bffb/resource/151d80d2-87c1-4981-9bea-9aab38a82ec9/download/radios-censales-2022-geojson.zip")
 AGENT = "DatacraftArgentina-InfraestructuraCloacalGeoAudit/1.0"
