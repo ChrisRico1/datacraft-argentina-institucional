@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#99  
+**Repositorio revisado:** `main`, commit `9c8d619e7a7281f66a5dd82e12aee1fd7479290c`, posterior a las PR #82–#101  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -47,9 +47,9 @@ Los períodos de la primera página dependen del orden de consulta del Worker. U
 
 ## Smoke automatizado de Production
 
-Se ejecutó el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) el 22/11/2026 contra el Worker público de Production.
+Se ejecutó el workflow [Radar Production smoke #45068591929](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068591929) el 22/11/2026 contra el Worker público de Production.
 
-**Resultado: 15/15 servicios.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado.
+**Resultado: 15/15 servicios y 35/35 opciones de métrica.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado. Las 35 opciones cubren los selectores de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), sin errores.
 
 Conteos informados por `Content-Range` durante la ejecución:
 
@@ -73,7 +73,7 @@ Conteos informados por `Content-Range` durante la ejecución:
 
 El smoke detectó y corrigió una suposición de contrato: la respuesta de importaciones no contiene `Peso_Neto`; no se infiere ni se reemplaza por cero. La primera ejecución también detectó que `Content-Range` no está expuesto uniformemente como encabezado HTTP; el test lee el campo del sobre JSON cuando existe.
 
-**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo y un filtro representativo por servicio. No concilia todos los registros, no valida cada combinación de filtros ni todas las métricas y no valida por sí solo la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
+**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo, un filtro representativo por servicio y todas las opciones de métrica de seis selectores. No concilia todos los registros, no valida cada combinación de filtros, ni sustituye la validación manual de todos los indicadores o la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
 
 ## Criterio de lectura
 
