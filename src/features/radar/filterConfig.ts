@@ -3,6 +3,8 @@ export type RadarDimensionFilter = {
   label: string;
   placeholder: string;
   dependsOn?: string;
+  description?: string;
+  suggestion?: string;
 };
 
 export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
@@ -11,14 +13,6 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
     { field: "nivel", label: "Nivel estadístico", placeholder: "Nivel publicado por INDEC", dependsOn: "clasificador" },
     { field: "codigo", label: "Código de apertura", placeholder: "Código de la categoría", dependsOn: "nivel" },
     { field: "indicador", label: "Indicador", placeholder: "Indicador publicado" },
-  ],
-  pobreza: [
-    { field: "area_geografica_nom", label: "Aglomerado / área geográfica", placeholder: "Nombre publicado por INDEC" },
-    { field: "area_geografica_cod", label: "Código de aglomerado EPH", placeholder: "Código numérico", dependsOn: "area_geografica_nom" },
-  ],
-  "mercado-laboral": [
-    { field: "area_geografica_nom", label: "Aglomerado / área geográfica", placeholder: "Nombre publicado por INDEC" },
-    { field: "area_geografica_cod", label: "Código de aglomerado EPH", placeholder: "Código numérico", dependsOn: "area_geografica_nom" },
   ],
   "cba-cbt": [
     { field: "region", label: "Región", placeholder: "Región publicada por INDEC" },
@@ -29,14 +23,14 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
     { field: "tipo_de_indicador", label: "Tipo de indicador", placeholder: "Índice, variación o incidencia" },
   ],
   exportaciones: [
-    { field: "rubro_cod", label: "Rubro", placeholder: "Código del rubro" },
-    { field: "subrubro_cod", label: "Subrubro", placeholder: "Código del subrubro", dependsOn: "rubro_cod" },
-    { field: "pais_cod", label: "País de destino", placeholder: "Código de país" },
+    { field: "rubro_cod", label: "Rubro", placeholder: "Seleccioná un rubro", description: "Clasificación principal de los bienes exportados.", suggestion: "Podés elegir un rubro sin seleccionar país; el subrubro se habilita después." },
+    { field: "subrubro_cod", label: "Subrubro", placeholder: "Seleccioná un subrubro", dependsOn: "rubro_cod", description: "Apertura más específica dentro del rubro elegido." },
+    { field: "pais_cod", label: "País de destino", placeholder: "Seleccioná un país", description: "Destino de las exportaciones. Es independiente del rubro y del subrubro.", suggestion: "Podés filtrar solo por país para analizar el intercambio con ese destino." },
   ],
   importaciones: [
-    { field: "uso_economico_cod", label: "Uso económico", placeholder: "Código de uso económico" },
-    { field: "gce_cod", label: "Grandes categorías económicas", placeholder: "Código GCE", dependsOn: "uso_economico_cod" },
-    { field: "pais_cod", label: "País de origen", placeholder: "Código de país" },
+    { field: "uso_economico_cod", label: "Uso económico", placeholder: "Seleccioná un uso económico", description: "Clasifica los bienes importados según su destino económico." },
+    { field: "gce_cod", label: "Grandes categorías económicas", placeholder: "Seleccioná una categoría GCE", dependsOn: "uso_economico_cod", description: "Apertura de la clasificación por uso económico." },
+    { field: "pais_cod", label: "País de origen", placeholder: "Seleccioná un país", description: "Origen de las importaciones. Es independiente del uso económico y de la GCE.", suggestion: "Podés filtrar solo por país para analizar las compras desde ese origen." },
   ],
   "poblacion-departamento": [
     { field: "jurisdiccion_nom", label: "Jurisdicción", placeholder: "Nombre de jurisdicción" },

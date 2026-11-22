@@ -71,6 +71,19 @@ describe("getIndecIndicator", () => {
     expect(requestUrl).toContain("pais_cod=eq.032");
   });
 
+  it.each([
+    ["exportaciones", { pais_cod: "032" }],
+    ["importaciones", { pais_cod: "032" }],
+  ])("allows country-only filtering for %s", async (indicator, dimensions) => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+    const fetchMock = vi.fn().mockResolvedValue(new Response("[]", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getIndecIndicator(indicator, { dimensions: JSON.stringify(dimensions) });
+    const [requestUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(new URL(requestUrl).searchParams.get("pais_cod")).toBe("eq.032");
+  });
+
   it("rejects dimensions that are not registered for an indicator", async () => {
     process.env["INDEC_API_TOKEN"] = "test-secret-token";
 
@@ -132,6 +145,7 @@ describe("getIndecIndicator", () => {
     ["canasta-crianza", "canasta-crianza"],
     ["exportaciones", "comercio_exterior_exportacion_bienes"],
     ["importaciones", "comercio_exterior_importacion_bienes"],
+    ["comercio-nomenclaturas", "comercio_exterior_nomenclaturas"],
     ["poblacion-departamento", "estimaciones_poblacion_departamento_2022_2035"],
     ["poblacion-jurisdiccion", "proyecciones_poblacion_jurisdiccion_2022_2040"],
     ["poblacion-nacional", "proyecciones_poblacion_nacional_2022_2040"],

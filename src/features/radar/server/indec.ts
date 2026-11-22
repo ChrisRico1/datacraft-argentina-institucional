@@ -15,6 +15,7 @@ export type IndecIndicatorId =
   | "canasta-crianza"
   | "exportaciones"
   | "importaciones"
+  | "comercio-nomenclaturas"
   | "poblacion-departamento"
   | "poblacion-jurisdiccion"
   | "poblacion-nacional"
@@ -111,6 +112,11 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     periodField: "Periodo",
     categoryField: "uso_economico_cod",
     dimensionFields: ["uso_economico_cod", "gce_cod", "pais_cod"],
+  },
+  "comercio-nomenclaturas": {
+    endpoint: "comercio_exterior_nomenclaturas",
+    order: "nombre_columna,codigo",
+    dimensionFields: ["nombre_columna"],
   },
   "poblacion-departamento": {
     endpoint: "estimaciones_poblacion_departamento_2022_2035",

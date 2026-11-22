@@ -13,8 +13,8 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 | IPC | `region`, `clasificador`, `nivel`, `codigo`, `descripcion`, `indicador`, `tipo_de_indicador` | Región y apertura COICOP; índice, variaciones e incidencias se consultan por separado. |
 | Salarios | `clasificador`, `nivel`, `codigo`, `indicador`, `tipo_de_indicador` | Apertura jerárquica y métrica seleccionada. |
 | EMAE nivel general | `tipo_de_indicador_descripcion`, `tipo_de_indicador` | Serie original, desestacionalizada o tendencia-ciclo; índice y variaciones no se mezclan. |
-| Pobreza EPH | `area_geografica_nom`, `area_geografica_cod` | Nombre/código de área; cobertura de 31 aglomerados urbanos. |
-| Mercado de trabajo EPH | `area_geografica_nom`, `area_geografica_cod` | Nombre/código de área; tasas con denominadores diferentes. |
+| Pobreza EPH | Especificación: `area_geografica_nom`, `area_geografica_cod` | La respuesta observada publica `T_31_A` (total de 31 aglomerados), no una lista seleccionable de aglomerados individuales. No ofrecer filtros territoriales hasta que el endpoint entregue valores desagregados. |
+| Mercado de trabajo EPH | Especificación: `area_geografica_nom`, `area_geografica_cod` | La respuesta observada publica `T_31_A` (total de 31 aglomerados), no una lista seleccionable de aglomerados individuales. Mantener separadas las tasas por sus distintos denominadores. |
 | CBA/CBT | `region`, `clasificador`, `nivel`, `codigo`, `indicador`, `tipo_de_indicador` | Región y apertura estadística; mantener separados índice, variación e incidencia. |
 | Canasta de crianza | `Periodo` y 12 métricas: `bys_*`, `cuid_*`, `tot_*` | No tiene una dimensión de edad común: cada tramo publica bienes/servicios, cuidado y total como campos independientes. |
 | Exportaciones | `rubro_cod`, `subrubro_cod`, `pais_cod` | Subrubro depende del rubro; país es una dimensión independiente. Usar nomenclaturas oficiales. |
@@ -32,7 +32,8 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 - Los nombres visibles deben explicar qué representa cada dimensión; los códigos deben conservar el formato original.
 - Las dependencias solo se aplican cuando existe jerarquía real en la nomenclatura. El país no depende del subrubro ni de la GCE.
 - Las sugerencias de autocompletado derivadas de una página parcial no equivalen a un catálogo completo.
-- Para comercio exterior, el INDEC publica `comercio_exterior_nomenclaturas` con `nombre_columna`, `codigo` y `codigo_descripcion`; una futura mejora debe usarlo como diccionario, no inferir nombres desde una muestra de operaciones.
+- Para comercio exterior, el INDEC publica `comercio_exterior_nomenclaturas` con `nombre_columna`, `codigo` y `codigo_descripcion`. Radar debe usarlo como diccionario oficial para país, rubros y aperturas; no inferir nombres ni opciones completas desde una muestra de operaciones.
+- La consulta de nomenclaturas se realiza por el endpoint interno `comercio-nomenclaturas`, que reutiliza el servidor seguro de INDEC y no aparece como indicador visible del catálogo.
 - El IPI manufacturero permanece deshabilitado hasta comprobar campos y filtros con una consulta real del endpoint.
 
 ## Estrategia de visualización por naturaleza del dato
