@@ -8,6 +8,10 @@ on:
     paths:
       - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
       - 'scripts/infraestructura-cloacal-geo-audit.py'
+  pull_request:
+    paths:
+      - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
+      - 'scripts/infraestructura-cloacal-geo-audit.py'
 
 permissions:
   contents: read
