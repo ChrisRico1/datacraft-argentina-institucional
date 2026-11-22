@@ -89,7 +89,7 @@ function CloacalStudy() {
           to="/observatorio"
           className="dc-nav-link inline-flex items-center gap-2 text-sm text-ink-muted hover:text-lime"
         >
-          <ArrowLeft className="h-4 w-4" /> Todos los observatorios
+          <ArrowLeft className="h-4 w-4" /> Todos los proyectos
         </Link>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <p className="eyebrow text-lime">DATACRAFT LAB / INFRAESTRUCTURA Y TERRITORIO</p>
