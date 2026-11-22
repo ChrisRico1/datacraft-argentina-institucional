@@ -4,6 +4,7 @@ import {
   Line,
   LineChart,
   ResponsiveContainer,
+  ReferenceLine,
   Tooltip,
   XAxis,
   YAxis,
@@ -18,6 +19,10 @@ type IndicatorTimeSeriesChartProps = {
   contextKey?: string | undefined;
   contextValue?: string;
 };
+
+export function shouldUseZeroBaseline(unit: string): boolean {
+  return /porcentaje|puntos porcentuales/i.test(unit);
+}
 
 function formatChartPeriod(value: string): string {
   const month = /^(\d{4})(0[1-9]|1[0-2])$/.exec(value);
@@ -173,7 +178,9 @@ export function IndicatorTimeSeriesChart({
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => formatMetricValue(value, unit, valueLabel, { compact: true })}
-              domain={["auto", "auto"]}
+              domain={shouldUseZeroBaseline(unit)
+                ? [(dataMin: number) => Math.min(0, dataMin), (dataMax: number) => Math.max(0, dataMax)]
+                : ["auto", "auto"]}
             />
             <Tooltip
               contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
@@ -181,6 +188,7 @@ export function IndicatorTimeSeriesChart({
               labelFormatter={(label) => formatChartPeriod(String(label))}
               formatter={(value) => [formatMetricValue(Number(value), unit, valueLabel), valueLabel]}
             />
+            {shouldUseZeroBaseline(unit) ? <ReferenceLine y={0} stroke="currentColor" strokeDasharray="4 4" opacity={0.45} /> : null}
             <Line
               type="monotone"
               dataKey="value"

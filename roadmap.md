@@ -27,6 +27,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
   - [x] Incorporar guías contextuales para IPC, salarios, EMAE, pobreza, mercado de trabajo y SIPM: distinguir índices, variaciones e incidencias; explicar bases, períodos de comparación, universos y denominadores. No se habilitan indicadores pendientes.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
+  - [x] Incorporar una referencia en cero y una escala que incluya el cero en series porcentuales y de puntos porcentuales, sin truncar valores negativos; conservar escalas automáticas para índices, monedas y cantidades.
 - [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
 - [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
 - [x] Mejorar la visibilidad del botón CSV e indicar claramente cuántos registros cargados se exportan.

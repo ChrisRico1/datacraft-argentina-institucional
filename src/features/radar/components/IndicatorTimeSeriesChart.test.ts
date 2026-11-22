@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildTimeSeriesPoints } from "./IndicatorTimeSeriesChart";
+import { buildTimeSeriesPoints, shouldUseZeroBaseline } from "./IndicatorTimeSeriesChart";
 
 describe("buildTimeSeriesPoints", () => {
   it("sorts observations chronologically without changing their values", () => {
@@ -80,5 +80,12 @@ describe("buildTimeSeriesPoints", () => {
       "valor",
     );
     expect(result.points).toEqual([{ period: "2025-01", value: 30 }]);
+  });
+
+  it("uses a zero reference for rates and percentage-point series, including negative values", () => {
+    expect(shouldUseZeroBaseline("Porcentaje")).toBe(true);
+    expect(shouldUseZeroBaseline("Puntos porcentuales")).toBe(true);
+    expect(shouldUseZeroBaseline("Índice · base diciembre 2016=100")).toBe(false);
+    expect(shouldUseZeroBaseline("Pesos corrientes")).toBe(false);
   });
 });
