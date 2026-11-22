@@ -51,16 +51,16 @@ function profileNumeric(rows, field, periodField) {
   let nulls = 0;
   let markers = 0;
   let nonNumeric = 0;
-  const nullPeriods = new Set();
+  const missingOrMarkedPeriods = new Set();
   const numericPeriods = new Set();
   for (const row of rows) {
     const value = row[field];
     if (value === null || value === undefined || value === "") {
       nulls++;
-      if (row[periodField] !== null && row[periodField] !== undefined) nullPeriods.add(String(row[periodField]));
+      if (row[periodField] !== null && row[periodField] !== undefined) missingOrMarkedPeriods.add(String(row[periodField]));
     } else if (typeof value === "string" && MARKERS.has(value.trim())) {
       markers++;
-      if (row[periodField] !== null && row[periodField] !== undefined) nullPeriods.add(String(row[periodField]));
+      if (row[periodField] !== null && row[periodField] !== undefined) missingOrMarkedPeriods.add(String(row[periodField]));
     } else if (Number.isFinite(typeof value === "number" ? value : Number(String(value).replace(",", ".")))) {
       numeric++;
       if (row[periodField] !== null && row[periodField] !== undefined) numericPeriods.add(String(row[periodField]));
@@ -68,7 +68,7 @@ function profileNumeric(rows, field, periodField) {
       nonNumeric++;
     }
   }
-  return { numeric, nulls, markers, nonNumeric, nullPeriods: [...nullPeriods].sort(), numericPeriods: [...numericPeriods].sort() };
+  return { numeric, nulls, markers, nonNumeric, missingOrMarkedPeriods: [...missingOrMarkedPeriods].sort(), numericPeriods: [...numericPeriods].sort() };
 }
 
 function duplicateCount(rows, fields) {
