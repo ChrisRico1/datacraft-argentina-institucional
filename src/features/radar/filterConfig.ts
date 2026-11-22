@@ -34,14 +34,14 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
   ],
   "poblacion-departamento": [
     { field: "jurisdiccion_nom", label: "Jurisdicción", placeholder: "Nombre de jurisdicción" },
-    { field: "jurisdiccion_cod", label: "Código de jurisdicción", placeholder: "Código de dos posiciones" },
+    { field: "jurisdiccion_cod", label: "Código de jurisdicción", placeholder: "Código de dos posiciones", dependsOn: "jurisdiccion_nom" },
     { field: "departamento_cod", label: "Código de departamento", placeholder: "Código de cinco posiciones", dependsOn: "jurisdiccion_cod" },
     { field: "sexo_cod", label: "Sexo", placeholder: "Código de sexo" },
     { field: "rmba", label: "Región Metropolitana de Buenos Aires", placeholder: "Valor publicado por INDEC" },
   ],
   "poblacion-jurisdiccion": [
     { field: "jurisdiccion_nom", label: "Jurisdicción", placeholder: "Nombre de jurisdicción" },
-    { field: "jurisdiccion_cod", label: "Código de jurisdicción", placeholder: "Código de jurisdicción" },
+    { field: "jurisdiccion_cod", label: "Código de jurisdicción", placeholder: "Código de jurisdicción", dependsOn: "jurisdiccion_nom" },
     { field: "sexo_cod", label: "Sexo", placeholder: "Código de sexo" },
     { field: "edad_cod", label: "Edad", placeholder: "Código o grupo de edad" },
   ],

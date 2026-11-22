@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
+import { PopulationPyramidChart } from "@/features/radar/components/PopulationPyramidChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
@@ -954,35 +955,50 @@ function RadarEstadisticoArgentina() {
                         const listId = `radar-dimension-${selected.id}-${filter.field}`;
                         const commerceCatalogFields = ["rubro_cod", "subrubro_cod", "uso_economico_cod", "gce_cod", "pais_cod"];
                         const usesCommerceCatalog = commerceCatalogFields.includes(filter.field);
-                        const catalogOptions = commerceNomenclatures
-                          .filter((row) => String(row["nombre_columna"] ?? "") === filter.field)
-                          .sort((a, b) => String(a["codigo_descripcion"] ?? a["codigo"] ?? "").localeCompare(String(b["codigo_descripcion"] ?? b["codigo"] ?? ""), "es"));
+                        const catalogRows = commerceNomenclatures.filter((row) => String(row["nombre_columna"] ?? "") === filter.field);
+                        const catalogOptions = catalogRows.sort((a, b) => String(a["codigo_descripcion"] ?? a["codigo"] ?? "").localeCompare(String(b["codigo_descripcion"] ?? b["codigo"] ?? ""), "es"));
+                        const dependentValues = filter.dependsOn ? getUniqueFilterValues(apiRows, filter.field) : [];
+                        const dependentOptions = usesCommerceCatalog && filter.dependsOn
+                          ? catalogOptions.filter((option) => dependentValues.includes(String(option["codigo"] ?? "")))
+                          : [];
+                        const dependentLabels = new Map(dependentOptions.map((option) => [String(option["codigo"]), String(option["codigo_descripcion"] ?? option["codigo"])]));
+                        const clearDescendants = (next: Record<string, string>, parentField: string) => {
+                          for (const child of selectedDimensionFilters.filter((candidate) => candidate.dependsOn === parentField)) {
+                            delete next[child.field];
+                            clearDescendants(next, child.field);
+                          }
+                        };
                         const updateValue = (value: string) => {
                           setDimensionFilters((current) => {
                             const next = { ...current, [filter.field]: value };
-                            for (const child of selectedDimensionFilters) {
-                              if (child.dependsOn === filter.field) delete next[child.field];
-                            }
+                            clearDescendants(next, filter.field);
                             return next;
                           });
                           setOffset(0);
                           setChartContext("");
                         };
+                        const showSelect = usesCommerceCatalog || Boolean(filter.dependsOn);
+                        const selectOptions = filter.dependsOn
+                          ? usesCommerceCatalog
+                            ? dependentOptions.map((option) => ({ value: String(option["codigo"]), label: dependentLabels.get(String(option["codigo"])) ?? String(option["codigo"]) }))
+                            : dependentValues.map((value) => ({ value, label: value }))
+                          : catalogOptions.map((option) => ({ value: String(option["codigo"]), label: String(option["codigo_descripcion"] ?? option["codigo"]) }));
+                        const noOptions = filter.dependsOn && selectOptions.length === 0;
                         return (
                           <label key={filter.field} className="text-xs text-ink-muted">
                             {filter.label}
-                            {usesCommerceCatalog ? (
+                            {showSelect ? (
                               <select
                                 value={dimensionFilters[filter.field] ?? ""}
-                                disabled={blocked || commerceNomenclaturesLoading || catalogOptions.length === 0}
+                                disabled={blocked || (usesCommerceCatalog ? commerceNomenclaturesLoading : apiLoading) || Boolean(noOptions)}
                                 onChange={(event) => updateValue(event.target.value)}
                                 className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
                               >
-                                <option value="">{commerceNomenclaturesLoading ? "Cargando nomenclatura oficial…" : catalogOptions.length ? "Todas las opciones" : "Nomenclatura no disponible"}</option>
-                                {catalogOptions.map((option) => (
-                                  <option key={String(option["codigo"])} value={String(option["codigo"])}>
-                                    {String(option["codigo_descripcion"] ?? option["codigo"])}
-                                  </option>
+                                <option value="">
+                                  {blocked ? "Seleccioná primero el filtro anterior" : usesCommerceCatalog && commerceNomenclaturesLoading ? "Cargando nomenclatura oficial…" : apiLoading && filter.dependsOn ? "Actualizando opciones…" : noOptions ? "Sin opciones para esta selección" : "Seleccioná una opción"}
+                                </option>
+                                {selectOptions.map((option) => (
+                                  <option key={option.value} value={option.value}>{option.label}</option>
                                 ))}
                               </select>
                             ) : (
@@ -990,10 +1006,9 @@ function RadarEstadisticoArgentina() {
                                 <input
                                   list={listId}
                                   value={dimensionFilters[filter.field] ?? ""}
-                                  disabled={blocked}
                                   onChange={(event) => updateValue(event.target.value)}
-                                  placeholder={blocked ? "Primero seleccioná el filtro anterior" : filter.placeholder}
-                                  className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                                  placeholder={filter.placeholder}
+                                  className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground"
                                 />
                                 <datalist id={listId}>
                                   {getUniqueFilterValues(apiRows, filter.field).map((value) => <option key={value} value={value} />)}
@@ -1170,15 +1185,24 @@ function RadarEstadisticoArgentina() {
                             incomplete={comparisonIncomplete}
                           />
                         ) : null}
-                        <IndicatorTimeSeriesChart
-                          rows={apiRows}
-                          periodKey={selected.periodKey}
-                          valueKey={selectedValueKey}
-                          valueLabel={selectedValueLabel}
-                          unit={selectedUnit}
-                          contextKey={selected.contextKey}
-                          contextValue={chartContext}
-                        />
+                        {selected.id === "poblacion-nacional" && !dimensionFilters["edad"] && !dimensionFilters["sexo_cod"] ? (
+                          <PopulationPyramidChart
+                            rows={apiRows}
+                            periodKey={selected.periodKey}
+                            valueKey={selectedValueKey}
+                          />
+                        ) : null}
+                        {selected.id !== "poblacion-nacional" || dimensionFilters["edad"] || dimensionFilters["sexo_cod"] ? (
+                          <IndicatorTimeSeriesChart
+                            rows={apiRows}
+                            periodKey={selected.periodKey}
+                            valueKey={selectedValueKey}
+                            valueLabel={selectedValueLabel}
+                            unit={selectedUnit}
+                            contextKey={selected.contextKey}
+                            contextValue={chartContext}
+                          />
+                        ) : null}
                       </div>
                       <div className="min-w-0">
                         <div
