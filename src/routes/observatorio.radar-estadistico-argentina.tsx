@@ -27,6 +27,7 @@ import { EconomicCategoryComparison } from "@/features/radar/components/Economic
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
 import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
 import { createRadarCsv } from "@/features/radar/utils/radarExport";
+import { getRadarErrorGuidance } from "@/features/radar/utils/radarErrorGuidance";
 import { ChildcareCostBreakdownChart } from "@/features/radar/components/ChildcareCostBreakdownChart";
 import { childcareMetricOptions } from "@/features/radar/components/childcareCostBreakdown";
 
@@ -1231,7 +1232,7 @@ function RadarEstadisticoArgentina() {
                     <p className="text-sm font-medium text-red-200">No fue posible cargar este indicador.</p>
                     <p className="mt-2 text-sm text-ink-muted">{apiError}</p>
                     <p className="mt-3 text-xs text-ink-muted">
-                      La conexión con la fuente oficial no está disponible en este momento. Si administrás el sitio, revisá la configuración del servidor.
+                      {getRadarErrorGuidance(apiError)}
                     </p>
                   </div>
                 ) : apiRows.length === 0 ? (
