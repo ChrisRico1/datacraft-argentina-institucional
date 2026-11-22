@@ -411,7 +411,7 @@ function Index() {
               <li>
                 <Link
                   to="/observatorio"
-                  className="rounded-full px-2 py-2 text-sm text-ink-muted transition hover:text-lime xl:px-3"
+                  className="dc-nav-link rounded-full px-2 py-2 text-sm text-ink-muted xl:px-3"
                 >
                   Proyectos
                 </Link>
@@ -458,7 +458,7 @@ function Index() {
                 <Link
                   to="/observatorio"
                   onClick={() => setOpen(false)}
-                  className="block py-3 text-ink-foreground hover:text-lime"
+                  className="dc-nav-link block rounded-lg px-3 py-3 text-ink-foreground hover:text-lime"
                 >
                   Proyectos
                 </Link>
