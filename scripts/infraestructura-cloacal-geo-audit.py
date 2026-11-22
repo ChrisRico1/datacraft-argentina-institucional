@@ -83,7 +83,7 @@ def inspect_geojson(path, metadata_crs):
 
 def discover_ign_type():
     url = IGN_WFS + "?" + urllib.parse.urlencode(
-        {"service":"WFS","version":"2.0.0","request":"GetCapabilities"})
+        {"service":"WFS","version":"1.1.0","request":"GetCapabilities"})
     root = ElementTree.fromstring(fetch(url))
     candidates = []
     for element in root.iter():
@@ -105,10 +105,10 @@ def audit_ign(output_dir):
         result["candidate_feature_types"] = candidates
         if len(candidates) != 1:
             result.update(status="not_downloaded",
-                          reason="El WFS no expone un único feature type Subcuencas ACUMAR identificable; no se inventó un endpoint.")
+                          reason="El WFS 1.1.0 oficial del IGN no expone un único feature type Subcuencas ACUMAR identificable; no se inventó un endpoint.")
             return result
-        params = urllib.parse.urlencode({"service":"WFS","version":"2.0.0",
-            "request":"GetFeature","typeNames":candidates[0],"outputFormat":"application/json"})
+        params = urllib.parse.urlencode({"service":"WFS","version":"1.1.0",
+            "request":"GetFeature","typeName":candidates[0],"outputFormat":"application/json"})
         url = IGN_WFS + "?" + params
         target = output_dir / "sources" / "ign-subcuencas-acumar.geojson"
         download = save_download(url, target)
