@@ -12,7 +12,7 @@ const services = [
   { id: "salarios", period: "periodo", required: ["periodo", "valor", "tipo_de_indicador"], profile: ["tipo_de_indicador", "tipo_de_indicador_descripcion", "indicador", "clasificador", "nivel"], values: ["valor"], key: ["periodo", "clasificador", "nivel", "codigo", "indicador", "tipo_de_indicador"] },
   { id: "emae", period: "periodo", required: ["periodo", "valor", "tipo_de_indicador_descripcion"], profile: ["tipo_de_indicador", "tipo_de_indicador_descripcion"], values: ["valor"], key: ["periodo", "tipo_de_indicador_descripcion"] },
   { id: "pobreza", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], key: ["periodo", "area_geografica_nom"] },
-  { id: "mercado-laboral", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], key: ["periodo", "area_geografica_nom", "area_geografica_cod"] },
+  { id: "mercado-laboral", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], key: ["periodo", "area_geografica_nom"] },
   { id: "cba-cbt", period: "periodo", required: ["periodo", "region", "indicador", "tipo_de_indicador", "valor"], profile: ["region", "indicador", "tipo_de_indicador", "tipo_de_indicador_descripcion", "unidad_de_medida", "clasificador", "nivel"], values: ["valor"], key: ["periodo", "region", "clasificador", "nivel", "codigo", "indicador", "tipo_de_indicador"] },
   { id: "canasta-crianza", period: "Periodo", required: ["Periodo", "tot_men1", "bys_men1", "cuid_men1"], profile: [], values: ["tot_men1", "bys_men1", "cuid_men1", "tot_1a3", "bys_1a3", "cuid_1a3", "tot_4a5", "bys_4a5", "cuid_4a5", "tot_6a12", "bys_6a12", "cuid_6a12"], key: ["Periodo"] },
   { id: "exportaciones", period: "Periodo", required: ["Periodo", "valor_FOB", "Peso_Neto", "rubro_cod", "subrubro_cod", "pais_cod"], profile: ["rubro_cod", "subrubro_cod", "pais_cod", "valor_null", "observaciones"], values: ["valor_FOB", "Peso_Neto"], key: ["Periodo", "rubro_cod", "subrubro_cod", "pais_cod"] },
@@ -36,14 +36,23 @@ function rangeTotal(contentRange) {
 }
 
 function distinctValues(rows, field, max = 10) {
-  const values = new Set();
+  const frequencies = new Map();
   let missing = 0;
   for (const row of rows) {
     const value = row[field];
     if (value === null || value === undefined || String(value).trim() === "") missing++;
-    else values.add(String(value));
+    else {
+      const key = String(value);
+      frequencies.set(key, (frequencies.get(key) ?? 0) + 1);
+    }
   }
-  return { count: values.size, values: [...values].slice(0, max), missing, truncated: values.size > max };
+  const ordered = [...frequencies.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  return {
+    count: frequencies.size,
+    values: ordered.slice(0, max).map(([value, count]) => ({ value, count })),
+    missing,
+    truncated: frequencies.size > max,
+  };
 }
 
 function profileNumeric(rows, field, periodField) {
