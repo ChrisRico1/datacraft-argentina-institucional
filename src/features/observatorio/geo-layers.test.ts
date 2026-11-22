@@ -11,6 +11,7 @@ describe("Cartografía temática de Infraestructura Cloacal", () => {
     );
     expect(acumarSubbasinsWms.attribution).toContain("IGN y ACUMAR");
     expect(acumarSubbasinsWms.label).toBe("Subcuencas ACUMAR (IGN)");
+    expect("sldBody" in acumarSubbasinsWms).toBe(false);
   });
 
   it("usa WFS GeoJSON para aplicar la paleta institucional en el navegador", () => {
