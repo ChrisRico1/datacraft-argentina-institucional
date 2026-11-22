@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
       - 'scripts/infraestructura-cloacal-geo-audit.py'
+      - 'scripts/infraestructura-cloacal-service-discovery.py'
   pull_request:
     paths:
       - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
@@ -36,6 +37,10 @@ jobs:
         run: python -m pip install "shapely>=2,<3"
       - name: Validate audit script syntax
         run: python -m py_compile scripts/infraestructura-cloacal-geo-audit.py
+      - name: Validate public service discovery script syntax
+        run: python -m py_compile scripts/infraestructura-cloacal-service-discovery.py
+      - name: Discover public GIS download and map services
+        run: python scripts/infraestructura-cloacal-service-discovery.py
       - name: Download and audit official sources
         run: python scripts/infraestructura-cloacal-geo-audit.py
       - name: Upload audit report and source files
@@ -43,6 +48,8 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: infraestructura-cloacal-geo-audit-${{ github.run_number }}
-          path: artifacts/infraestructura-cloacal-geo-audit/
+          path: |
+            artifacts/infraestructura-cloacal-geo-audit/
+            artifacts/infraestructura-cloacal-service-discovery/
           if-no-files-found: warn
           retention-days: 14
