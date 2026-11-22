@@ -50,15 +50,19 @@ export function buildPopulationPyramid(
   if (!period) return null;
 
   const byAge = new Map<string, { female: number; male: number }>();
+  const seenDimensions = new Set<string>();
   for (const row of rows) {
     if (String(row[periodKey] ?? row["fecha"] ?? "").trim() !== period) continue;
     const age = String(row["edad"] ?? "").trim();
     const sex = String(row["sexo_cod"] ?? "").trim();
     const value = numberValue(row[valueKey]);
     if (!age || value === null || (sex !== "1" && sex !== "2")) continue;
+    const dimensionKey = `${age}|${sex}`;
+    if (seenDimensions.has(dimensionKey)) return null;
+    seenDimensions.add(dimensionKey);
     const current = byAge.get(age) ?? { female: 0, male: 0 };
-    if (sex === "1") current.female += value;
-    else current.male += value;
+    if (sex === "1") current.female = value;
+    else current.male = value;
     byAge.set(age, current);
   }
 
