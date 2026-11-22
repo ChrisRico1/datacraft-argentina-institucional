@@ -24,8 +24,9 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones. **Avance:** IPC, Índice de salarios, EMAE — nivel general, Pobreza e indigencia y Mercado de trabajo validados manualmente en Production el 22/11/2026 (5/15). IPI manufacturero cuenta con validación parcial de descarga paginada (41.667 registros, 22/11/2026), pero sigue deshabilitado y pendiente de integridad, filtros e interfaz; no se suma al conteo de indicadores validados.
 - [ ] Validar en Production el manejo de límites de consulta (`429`), su mensaje visible y el procedimiento de recuperación.
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
-- [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
+- [x] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
   - [x] Incorporar guías contextuales para IPC, salarios, EMAE, pobreza, mercado de trabajo y SIPM: distinguir índices, variaciones e incidencias; explicar bases, períodos de comparación, universos y denominadores. No se habilitan indicadores pendientes.
+  - [x] Crear un diccionario de metadatos para los 15 servicios y explicar debajo de cada indicador, métrica, filtro, período y desagregación qué representa la variable y cómo interpretar la selección. Incorporar glosario de tabla y marcas estadísticas. Ver `docs/radar-metadata-dictionary.md`.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
   - [x] Incorporar una referencia en cero y una escala que incluya el cero en series porcentuales y de puntos porcentuales, sin truncar valores negativos; conservar escalas automáticas para índices, monedas y cantidades.
 - [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
