@@ -177,3 +177,25 @@ La revisión de fuentes permite establecer un orden de consulta, pero todavía n
 ### Estado de verificación
 
 Las fuentes y los servicios de consulta están identificados. Quedan pendientes la descarga efectiva de las capas, la inspección de sus metadatos completos, la validación topológica y la comparación de la delimitación hidrográfica con el antecedente normativo. No se incorpora todavía ninguna geometría ni se modifica el mapa público.
+
+
+## 11. Verificación de metadatos de radios censales 2022
+
+Se contrastaron dos publicaciones institucionales disponibles para la cartografía de radios censales:
+
+- **Datos Abiertos de la Provincia de Buenos Aires:** el recurso «Radios censales del Censo 2022» está atribuido a INDEC, se publica como archivo ZIP y su ficha declara formato Shapefile en EPSG:4326 (WGS 84). La ficha indica creación el 10/06/2024 y última modificación el 11/06/2024. También existe una distribución GeoJSON ZIP con el mismo CRS declarado.
+- **GeoNode de INDEC:** la capa «Radios censales» está publicada y aprobada; sus metadatos describen la unidad radio urbano, rural o mixto y explican que la cobertura nacional integra cartografía de las Direcciones Provinciales de Estadística ajustada a límites provinciales IGN. La ficha declara EPSG:3857, publicación 20/03/2026 y licencia «Not Specified». El servicio ofrece WFS y exportaciones, pero la descarga GeoJSON consultada no respondió dentro del tiempo disponible.
+
+### Implicancias técnicas y metodológicas
+
+1. Las dos distribuciones no deben considerarse idénticas sin comparar archivos, atributos, identificadores y geometrías.
+2. La ficha PBA declara EPSG:4326 y resulta una alternativa operativa para estudiar radios de la Provincia de Buenos Aires; todavía falta descargar e inspeccionar el ZIP.
+3. La capa nacional de INDEC declara EPSG:3857. Si se utiliza, la reproyección debe ser explícita y registrada. Sus metadatos advierten que el ajuste a límites provinciales puede deformar geometrías y, excepcionalmente, trasladar superficie entre provincias.
+4. La licencia de la capa de GeoNode de INDEC no está especificada. No asumir permiso de redistribución de ese archivo sin aclararlo.
+5. La cartografía censal se produce con fines estadísticos. La publicación debe atribuir la fuente primaria a INDEC (2022), «Cartografía y códigos geográficos del Sistema Estadístico Nacional».
+6. La ficha de radios define códigos de nueve dígitos: jurisdicción (2), departamento (3), fracción (2) y radio (2). Los códigos se deben almacenar como texto para preservar ceros iniciales.
+7. La documentación de INDEC define radios urbanos, rurales y mixtos. El análisis no debe excluir radios rurales o mixtos por defecto sin una decisión metodológica explícita.
+
+### Estado
+
+Metadatos y diferencias de publicación verificadas. No se descargó ni validó el contenido geométrico de los archivos; siguen pendientes la inspección de ZIP, CRS real, campos, cobertura, validez topológica y comparación entre distribuciones. No se incorpora todavía ninguna capa al mapa público.
