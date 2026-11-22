@@ -139,23 +139,27 @@ export default function ReferenceMap({ municipality }: { municipality: string })
             : "Cargando mapa de referencias…"}
         </p>
       )}
-      {subbasinsFailed && (
-        <p
-          role="status"
-          className="absolute bottom-8 left-3 right-3 z-[450] rounded-md bg-ink p-3 text-sm text-ink-foreground"
-        >
-          No se pudieron cargar las teselas de subcuencas del IGN en esta vista. Podés
-          desactivar y volver a activar la capa desde el control para reintentar.
-        </p>
-      )}
-      {tileFailed && (
-        <p
-          role="status"
-          className="absolute bottom-8 left-3 right-3 z-[450] rounded-md bg-ink p-3 text-sm text-ink-foreground"
-        >
-          La carga del mapa base está interrumpida. Los puntos corresponden a centros urbanos
-          aproximados; la cartografía oficial se consulta en Monitor PISA.
-        </p>
+      {(subbasinsFailed || tileFailed) && (
+        <div className="pointer-events-none absolute left-3 right-3 top-14 z-[1100] flex flex-col gap-2">
+          {subbasinsFailed && (
+            <p
+              role="status"
+              className="pointer-events-auto rounded-md bg-ink p-3 text-sm text-ink-foreground shadow-lg"
+            >
+              No se pudieron cargar las teselas de subcuencas del IGN en esta vista. Podés
+              desactivar y volver a activar la capa desde el control para reintentar.
+            </p>
+          )}
+          {tileFailed && (
+            <p
+              role="status"
+              className="pointer-events-auto rounded-md bg-ink p-3 text-sm text-ink-foreground shadow-lg"
+            >
+              La carga del mapa base está interrumpida. Los puntos corresponden a centros urbanos
+              aproximados; la cartografía oficial se consulta en Monitor PISA.
+            </p>
+          )}
+        </div>
       )}
       <Button
         variant="labOutline"
