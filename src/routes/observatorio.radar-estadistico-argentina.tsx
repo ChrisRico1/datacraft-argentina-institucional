@@ -603,11 +603,10 @@ function RadarEstadisticoArgentina() {
             : [];
           collected.push(...pageRows);
 
-      const totalPart = (payload.contentRange ?? "").split("/").at(-1);
-      const expectedTotal =
-        totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))
-          ? Number(totalPart)
-          : null;
+          const totalPart = (payload.contentRange ?? "").split("/").at(-1);
+          if (totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))) {
+            expectedTotal = Number(totalPart);
+          }
           if (
             !loadAllPages ||
             pageRows.length < pageSize ||
@@ -794,11 +793,10 @@ function RadarEstadisticoArgentina() {
             : [];
           collected.push(...pageRows);
 
-      const totalPart = (payload.contentRange ?? "").split("/").at(-1);
-      const expectedTotal =
-        totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))
-          ? Number(totalPart)
-          : null;
+          const totalPart = (payload.contentRange ?? "").split("/").at(-1);
+          if (totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))) {
+            expectedTotal = Number(totalPart);
+          }
           if (pageRows.length < pageSize || (expectedTotal !== null && collected.length >= expectedTotal)) break;
         }
 
