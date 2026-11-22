@@ -1288,6 +1288,7 @@ function RadarEstadisticoArgentina() {
                           <option value="">Seleccionar una serie</option>
                           {chartContexts.map((context) => <option key={context} value={context}>{context}</option>)}
                         </select>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, selected.contextKey ?? "descripcion", chartContext)} />
                       </div>
                     ) : null}
                     {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "ipc" || selected.id === "salarios" || selected.id === "sipm" || selected.id === "costo-construccion" || selected.id === "canasta-crianza" ? (
@@ -1435,6 +1436,7 @@ function RadarEstadisticoArgentina() {
                     <option value="2y">Últimos 2 años</option>
                     <option value="1y">Último año</option>
                   </select>
+                  <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "periodo", period)} />
                 </label>
                 <div className="flex flex-col justify-end pb-2 text-xs text-ink-muted">
                   <span className="font-semibold uppercase tracking-wider">Fuente</span>
