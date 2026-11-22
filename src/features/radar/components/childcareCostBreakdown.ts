@@ -56,7 +56,7 @@ function parsePublishedAmount(value: unknown): number | null {
 }
 
 export function formatChildcarePeriodLabel(period: string): string {
-  const match = /^(\\d{4})(0[1-9]|1[0-2])$/.exec(period);
+  const match = /^(\d{4})(0[1-9]|1[0-2])$/.exec(period);
   if (!match) return period;
   const [, year, month] = match;
   return new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" }).format(
