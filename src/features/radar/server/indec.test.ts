@@ -56,6 +56,37 @@ describe("getIndecIndicator", () => {
     expect(response.result.contentRange).toBe("0-0/1");
   });
 
+  it("applies every allowlisted export dimension as an exact INDEC filter", async () => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+    const fetchMock = vi.fn().mockResolvedValue(new Response("[]", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getIndecIndicator("exportaciones", {
+      dimensions: JSON.stringify({ rubro_cod: "1", subrubro_cod: "12", pais_cod: "032" }),
+    });
+
+    const [requestUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(requestUrl).toContain("rubro_cod=eq.1");
+    expect(requestUrl).toContain("subrubro_cod=eq.12");
+    expect(requestUrl).toContain("pais_cod=eq.032");
+  });
+
+  it("rejects dimensions that are not registered for an indicator", async () => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+
+    await expect(getIndecIndicator("exportaciones", {
+      dimensions: JSON.stringify({ pais_nom: "Brasil" }),
+    })).rejects.toMatchObject({ status: 400 });
+  });
+
+  it("rejects malformed dimension payloads", async () => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+
+    await expect(getIndecIndicator("exportaciones", {
+      dimensions: "[",
+    })).rejects.toMatchObject({ status: 400 });
+  });
+
   it("rejects page sizes above the INDEC limit", async () => {
     process.env["INDEC_API_TOKEN"] = "test-secret-token";
 

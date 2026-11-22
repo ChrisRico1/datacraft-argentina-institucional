@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
+import { radarDimensionFilters } from "@/features/radar/filterConfig";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -385,6 +386,7 @@ function RadarEstadisticoArgentina() {
   const [economicOpeningCode, setEconomicOpeningCode] = useState("");
   const [economicCategory, setEconomicCategory] = useState("");
   const [economicRegion, setEconomicRegion] = useState("GBA");
+  const [dimensionFilters, setDimensionFilters] = useState<Record<string, string>>({});
   const [comparisonRows, setComparisonRows] = useState<Record<string, unknown>[]>([]);
   const [comparisonLoading, setComparisonLoading] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
@@ -409,6 +411,8 @@ function RadarEstadisticoArgentina() {
     categories: getUniqueFilterValues(apiRows, "descripcion"),
   }), [apiRows]);
   const availableMetrics = metricOptions[selected.id] ?? [];
+  const selectedDimensionFilters = radarDimensionFilters[selected.id] ?? [];
+  const serializedDimensionFilters = JSON.stringify(dimensionFilters);
   const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
   const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
   const selectedEconomicMetrics = economicMetricOptions[selected.id] ?? [];
@@ -474,6 +478,7 @@ function RadarEstadisticoArgentina() {
     if (economicLevel.trim()) params.set("level", economicLevel.trim());
     if (economicOpeningCode.trim()) params.set("openingCode", economicOpeningCode.trim());
     if (economicCategory.trim()) params.set("category", economicCategory.trim());
+    if (serializedDimensionFilters !== "{}") params.set("dimensions", serializedDimensionFilters);
 
     setApiLoading(true);
     setApiError(null);
@@ -556,7 +561,7 @@ function RadarEstadisticoArgentina() {
     void loadIndicatorPages();
 
     return () => controller.abort();
-  }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory, economicRegion]);
+  }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory, economicRegion, serializedDimensionFilters]);
 
 
   useEffect(() => {
@@ -668,6 +673,7 @@ function RadarEstadisticoArgentina() {
     setEconomicLevel("");
     setEconomicOpeningCode("");
     setEconomicCategory("");
+    setDimensionFilters({});
     setSearch("");
   };
 
@@ -817,7 +823,7 @@ function RadarEstadisticoArgentina() {
                     key={indicator.id}
                     type="button"
                     disabled={indicator.available === false}
-                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicRegion("GBA"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); }}
+                    onClick={() => { setSelectedIndicator(indicator.id); setOffset(0); setChartContext(""); setSelectedMetric(""); setEconomicMetric("default"); setEconomicRegion("GBA"); setEconomicIndicator(indicator.id === "sipm" ? "IPIB" : indicator.id === "costo-construccion" ? "ICC" : ""); setEconomicClassification(""); setEconomicLevel(""); setEconomicOpeningCode(""); setEconomicCategory(""); setDimensionFilters({}); }}
                     className={`w-full rounded-lg border p-3 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${selectedIndicator === indicator.id ? "border-lime/45 bg-lime/10" : "border-ink-foreground/10 hover:border-ink-foreground/25"}`}
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
@@ -848,12 +854,55 @@ function RadarEstadisticoArgentina() {
                 <Metadata label="Serie estadística" value={selected.service} icon={Database} />
               </div>
 
-              {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion") ? (
+              {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion" || selectedDimensionFilters.length > 0) ? (
                 <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/50 p-4 sm:p-5">
                   <div className="mb-3">
-                    <h4 className="font-semibold">Configurar serie económica</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">Elegí una única métrica y, cuando corresponda, acotá la clasificación para evitar mezclar series distintas.</p>
+                    <h4 className="font-semibold">Configurar filtros estadísticos</h4>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">Elegí las dimensiones de la observación que querés consultar. Las opciones disponibles dependen de la estructura de cada servicio del INDEC.</p>
                   </div>
+                  {(selected.id === "exportaciones" || selected.id === "importaciones") ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      Para aislar una serie mensual, completá los niveles de desagregación en orden: categoría principal, apertura secundaria y país. Si falta una dimensión, pueden quedar varias observaciones para el mismo período y el gráfico no trazará una línea única.
+                    </p>
+                  ) : null}
+                  {selectedDimensionFilters.length > 0 ? (
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      {selectedDimensionFilters.map((filter) => {
+                        const blocked = filter.dependsOn ? !dimensionFilters[filter.dependsOn]?.trim() : false;
+                        const listId = `radar-dimension-${selected.id}-${filter.field}`;
+                        return (
+                          <label key={filter.field} className="text-xs text-ink-muted">
+                            {filter.label}
+                            <input
+                              list={listId}
+                              value={dimensionFilters[filter.field] ?? ""}
+                              disabled={blocked}
+                              onChange={(event) => {
+                                const value = event.target.value;
+                                setDimensionFilters((current) => {
+                                  const next = { ...current, [filter.field]: value };
+                                  for (const child of selectedDimensionFilters) {
+                                    if (child.dependsOn === filter.field) delete next[child.field];
+                                  }
+                                  return next;
+                                });
+                                setOffset(0);
+                                setChartContext("");
+                              }}
+                              placeholder={blocked ? "Primero seleccioná el filtro anterior" : filter.placeholder}
+                              className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                            />
+                            <datalist id={listId}>
+                              {getUniqueFilterValues(apiRows, filter.field).map((value) => <option key={value} value={value} />)}
+                            </datalist>
+                          </label>
+                        );
+                      })}
+                      <p className="text-[11px] leading-relaxed text-ink-muted sm:col-span-2">
+                        Los campos corresponden a dimensiones publicadas por INDEC. Las sugerencias se obtienen de los registros cargados; también podés ingresar un código exacto del catálogo. Los filtros dependientes se habilitan en orden para evitar combinaciones ambiguas.
+                      </p>
+                    </div>
+                  ) : null}
                   {selectedEconomicMetrics.length > 0 ? (
                     <label className="block text-xs text-ink-muted">
                       Métrica
