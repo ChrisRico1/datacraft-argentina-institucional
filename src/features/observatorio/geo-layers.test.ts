@@ -11,8 +11,8 @@ describe("Cartografía temática de Infraestructura Cloacal", () => {
     );
     expect(acumarSubbasinsWms.attribution).toContain("IGN y ACUMAR");
     expect(acumarSubbasinsWms.brandColor).toBe("#0B369A");
-    expect(acumarSubbasinsWms.sldBody).toContain("<CssParameter name="fill">#0B369A</CssParameter>");
-    expect(acumarSubbasinsWms.sldBody).toContain("<CssParameter name="stroke">#0B369A</CssParameter>");
+    expect(acumarSubbasinsWms.sldBody).toContain('<CssParameter name="fill">#0B369A</CssParameter>');
+    expect(acumarSubbasinsWms.sldBody).toContain('<CssParameter name="stroke">#0B369A</CssParameter>');
     expect(acumarSubbasinsWms.fillOpacity).toBe(0.24);
     expect(acumarSubbasinsWms.strokeWidth).toBe(2.2);
   });
