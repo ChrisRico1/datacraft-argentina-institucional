@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as LeafletMap, LayerGroup } from "leaflet";
 import { municipalReferences } from "./catalog";
-import { acumarSubbasinsWms } from "./geo-layers";
+import { acumarSubbasinsWfs, acumarSubbasinsWms } from "./geo-layers";
 import { Button } from "@/components/ui/button";
 import { LocateFixed } from "lucide-react";
 
@@ -13,10 +13,11 @@ export default function ReferenceMap({ municipality }: { municipality: string })
   const [failed, setFailed] = useState(false);
   const [tileFailed, setTileFailed] = useState(false);
   const [subbasinsFailed, setSubbasinsFailed] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     void import("leaflet")
-      .then((L) => {
+      .then(async (L) => {
         if (cancelled || !container.current) return;
         const map = L.map(container.current, { scrollWheelZoom: false }).setView(
           [-34.81, -58.65],
@@ -33,40 +34,73 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           })
           .addTo(map);
         layers.current = L.layerGroup().addTo(map);
-        let subbasinTileErrors = 0;
-        let subbasinTileLoads = 0;
-        const subbasins = L.tileLayer.wms(acumarSubbasinsWms.endpoint, {
-          layers: acumarSubbasinsWms.layer,
-          format: "image/png",
-          transparent: true,
-          version: "1.1.1",
-          opacity: 0.92,
-          SLD_BODY: acumarSubbasinsWms.sldBody,
-          attribution: acumarSubbasinsWms.attribution,
-        });
-        // Evaluate availability per tile-loading batch, not on the first failed tile.
-        // Public WMS services can return intermittent errors while other tiles load correctly.
-        subbasins.on("loading", () => {
-          subbasinTileErrors = 0;
-          subbasinTileLoads = 0;
-          if (!cancelled) setSubbasinsFailed(false);
-        });
-        subbasins.on("tileload", () => {
-          subbasinTileLoads += 1;
-        });
-        subbasins.on("tileerror", () => {
-          subbasinTileErrors += 1;
-        });
-        subbasins.on("load", () => {
-          if (cancelled) return;
-          setSubbasinsFailed(subbasinTileErrors > 0 && subbasinTileLoads === 0);
-        });
-        subbasins.addTo(map);
+
+        const subbasins = L.layerGroup().addTo(map);
         L.control.layers(
           null,
           { "Subcuencas ACUMAR · IGN": subbasins },
           { collapsed: false, position: "bottomleft" },
         ).addTo(map);
+
+        try {
+          const response = await fetch(acumarSubbasinsWfs.url, {
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) {
+            throw new Error(`WFS HTTP ${response.status}`);
+          }
+          const collection = await response.json();
+          if (
+            collection?.type !== "FeatureCollection" ||
+            !Array.isArray(collection.features) ||
+            collection.features.length === 0
+          ) {
+            throw new Error("El WFS no devolvió una colección GeoJSON válida.");
+          }
+          if (cancelled) return;
+          L.geoJSON(collection, {
+            style: () => acumarSubbasinsWfs.style,
+            onEachFeature: (feature, layer) => {
+              const name = feature.properties?.nam ?? feature.properties?.Nam;
+              if (typeof name === "string" && name.trim()) {
+                layer.bindTooltip(name, { sticky: true });
+              }
+            },
+          }).addTo(subbasins);
+        } catch {
+          if (cancelled) return;
+          // GeoServer may deny browser-side WFS access through CORS. The WMS
+          // endpoint remains usable with its server-side default style.
+          let tileErrors = 0;
+          let tileLoads = 0;
+          const fallback = L.tileLayer.wms(acumarSubbasinsWms.endpoint, {
+            layers: acumarSubbasinsWms.layer,
+            format: "image/png",
+            transparent: true,
+            version: "1.1.1",
+            opacity: 0.92,
+            attribution: acumarSubbasinsWms.attribution,
+          });
+          fallback.on("loading", () => {
+            tileErrors = 0;
+            tileLoads = 0;
+            if (!cancelled) setSubbasinsFailed(false);
+          });
+          fallback.on("tileload", () => {
+            tileLoads += 1;
+          });
+          fallback.on("tileerror", () => {
+            tileErrors += 1;
+          });
+          fallback.on("load", () => {
+            if (!cancelled) {
+              setSubbasinsFailed(tileErrors > 0 && tileLoads === 0);
+            }
+          });
+          subbasins.addLayer(fallback);
+        }
+
+        if (cancelled) return;
         const observer = new ResizeObserver(() => map.invalidateSize());
         observer.observe(container.current);
         map.on("unload", () => observer.disconnect());
@@ -82,6 +116,7 @@ export default function ReferenceMap({ municipality }: { municipality: string })
       layers.current = null;
     };
   }, []);
+
   useEffect(() => {
     if (!ready) return;
     let cancelled = false;
@@ -90,7 +125,9 @@ export default function ReferenceMap({ municipality }: { municipality: string })
       const group = layers.current;
       if (cancelled || !map || !group) return;
       group.clearLayers();
-      const refs = municipalReferences.filter((ref) => !municipality || ref.name === municipality);
+      const refs = municipalReferences.filter(
+        (ref) => !municipality || ref.name === municipality,
+      );
       refs.forEach((ref) => {
         const popup = document.createElement("div");
         const title = document.createElement("strong");
@@ -115,12 +152,15 @@ export default function ReferenceMap({ municipality }: { municipality: string })
       const first = refs[0];
       if (refs.length === 1 && first) map.setView([first.lat, first.lng], 12);
       else if (refs.length > 0)
-        map.fitBounds(L.latLngBounds(refs.map((ref) => [ref.lat, ref.lng])), { padding: [28, 28] });
+        map.fitBounds(L.latLngBounds(refs.map((ref) => [ref.lat, ref.lng])), {
+          padding: [28, 28],
+        });
     });
     return () => {
       cancelled = true;
     };
   }, [municipality, ready]);
+
   return (
     <div className="relative">
       <div
