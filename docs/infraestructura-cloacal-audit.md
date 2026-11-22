@@ -221,6 +221,31 @@ El Monitor PISA publica un mapa con capas diferenciadas «Cuenca Matanza Riachue
 
 1. No incorporar todavía geometrías de CABA ni GeoNode INDEC a una distribución comercial.
 2. Priorizar el recurso PBA con licencia declarada, sujeto a inspección del ZIP y confirmación de la licencia aplicable al archivo.
-3. Solicitar a ACUMAR la geometría vectorial oficial o el endpoint de descarga de los límites hidrográfico y jurisdiccional, junto con metadatos, CRS y condiciones de uso.
+3. Continuar la búsqueda autónoma de la geometría vectorial oficial o de un endpoint público de descarga para los límites hidrográfico y jurisdiccional, junto con metadatos, CRS y condiciones de uso; no depender de entregas manuales de terceros.
 4. Contrastar cualquier archivo recibido con la Resolución 1113/2013 y su informe; registrar fuente, fecha, CRS, hash y método de validación.
 5. No digitalizar manualmente una imagen del mapa para presentarla como geometría oficial.
+
+
+## 13. Automatización de descarga y auditoría cartográfica
+
+La rama `audit/infraestructura-cloacal-geo-data` incorpora un proceso reproducible que descarga las fuentes públicas identificadas y genera un informe técnico sin alterar la aplicación:
+
+- IGN: consulta GetCapabilities del WFS para localizar un único tipo de entidad que identifique inequívocamente «Subcuencas ACUMAR». Si no existe o hay ambigüedad, registra el motivo y no descarga una geometría distinta.
+- Provincia de Buenos Aires: descarga el ZIP GeoJSON de radios censales 2022, extrae la colección y valida sus geometrías.
+- El informe registra URL, tamaño, SHA-256, cantidad de entidades, tipos geométricos, atributos, extensión, geometrías vacías/inválidas y CRS declarado frente al CRS de metadatos.
+- La validez topológica se calcula con Shapely. No se reparan, reproyectan ni simplifican geometrías.
+- El workflow se ejecuta manualmente y publica informe y fuentes como artefacto temporal. No publica datos en el sitio ni modifica el inventario de obras.
+
+### Estado tras la automatización
+
+La descarga y auditoría quedan implementadas como procedimiento reproducible; la ejecución contra las fuentes remotas y sus resultados deben quedar acreditados por el workflow de GitHub Actions. Hasta contar con ese artefacto no se afirma que los archivos se hayan descargado ni que las geometrías hayan superado controles.
+
+La fuente IGN sigue siendo candidata y no sustituye automáticamente el límite aprobado por Resolución 1113/2013. La cartografía PBA queda sujeta a confirmar que la licencia CC BY 4.0 del conjunto cubra el recurso individual antes de redistribuirlo.
+
+### Próxima secuencia
+
+1. Ejecutar el workflow de auditoría cartográfica y revisar el artefacto.
+2. Si el WFS IGN no expone la capa, probar el mecanismo de descarga publicado en el catálogo oficial y registrar el endpoint efectivo sin inferirlo.
+3. Contrastar la geometría candidata de subcuencas con los anexos de la Resolución 1113/2013.
+4. Completar la validación de radios censales PBA y su identificador geoestadístico; mantener códigos como texto.
+5. Recién después evaluar intersecciones espaciales y conexión a red pública del Censo 2022.
