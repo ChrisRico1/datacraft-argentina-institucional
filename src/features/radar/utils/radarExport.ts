@@ -12,5 +12,5 @@ export function createRadarCsv(rows: Record<string, unknown>[]): string {
     ),
   );
 
-  return `\\uFEFF${Papa.unparse(normalizedRows, { header: true, skipEmptyLines: true })}`;
+  return `\uFEFF${Papa.unparse(normalizedRows, { header: true, skipEmptyLines: true })}`;
 }
