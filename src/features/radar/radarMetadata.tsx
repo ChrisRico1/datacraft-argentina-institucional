@@ -5,7 +5,7 @@ export type RadarMetadata = {
 
 const FIELD_METADATA: Record<string, RadarMetadata> = {
   area_geografica_nom: { description: "Área geográfica de publicación de la EPH. En la consulta actualmente validada se observa el total T_31_A, correspondiente a 31 aglomerados urbanos.", interpretation: "No ofrece desagregación individual por ciudad o municipio en el servicio consultado." },
-  area_geografica_cod: { description: "Código geográfico asociado al área de publicación de la EPH.", interpretation: "La presencia del campo en la especificación no implica que la respuesta publique todas las áreas por separado." },
+  area_geografica_cod: { description: "Código geográfico asociado al área de publicación de la EPH.", interpretation: "En el agregado actualmente publicado por Radar (T_31_A), este campo llega nulo. No utilizarlo como filtro ni como parte de una clave; la cobertura efectiva se identifica por area_geografica_nom." },
   tipo_de_indicador_descripcion: { description: "Etiqueta textual de la métrica o serie estadística publicada por INDEC.", interpretation: "Usá esta descripción junto con el código de tipo de indicador para distinguir nivel, variación y serie." },
   anio: { description: "Año calendario al que pertenece la observación.", interpretation: "Para frecuencias inferiores al año, debe interpretarse junto con el mes o trimestre." },
   mes: { description: "Mes calendario de referencia de la observación.", interpretation: "El mes forma parte del período; no debe tratarse como un dato independiente del año." },
@@ -128,6 +128,21 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     };
     const label = salaryLabels[value];
     if (label) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${label}` };
+  }
+  if (value?.trim() && field === "tipo_de_indicador" && canonicalId === "cba-cbt") {
+    const canastaDefinitions: Record<string, string> = {
+      CBA: "Canasta Básica Alimentaria: valor mensual de los alimentos necesarios para cubrir requerimientos nutricionales, expresado por adulto equivalente.",
+      CBT: "Canasta Básica Total: valor mensual de la CBA más los bienes y servicios no alimentarios, expresado por adulto equivalente.",
+      ICE: "Indicador de relación entre el gasto total y el gasto alimentario utilizado en la valorización de la Canasta Básica Total; no es una tasa de inflación.",
+      "Hogar 1": "Canasta valorizada para un hogar de tres integrantes: mujer de 35 años, hijo de 18 años y madre de 61 años.",
+      "Hogar 2": "Canasta valorizada para un hogar de cuatro integrantes: varón de 35 años, mujer de 31 años, hijo de 6 años e hija de 8 años.",
+      "Hogar 3": "Canasta valorizada para un hogar de cinco integrantes: pareja de 30 años y tres hijos de 5, 3 y 1 años.",
+    };
+    if (canastaDefinitions[value]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${canastaDefinitions[value]}` };
+  }
+  if (value?.trim() && field === "rmba" && canonicalId === "poblacion-departamento") {
+    if (value === "1") return { description: metadata.description, interpretation: "Selección actual: 1 = pertenece a la Región Metropolitana de Buenos Aires (RMBA), según la variable publicada." };
+    if (value === "0") return { description: metadata.description, interpretation: "Selección actual: 0 = no pertenece a la Región Metropolitana de Buenos Aires (RMBA), según la variable publicada." };
   }
   if (value?.trim() && field === "indicador" && canonicalId === "sipm") {
     const labels: Record<string, string> = {
