@@ -31,6 +31,7 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 - La allowlist del servidor es la autoridad: un campo no incluido para un indicador se rechaza.
 - Los nombres visibles deben explicar qué representa cada dimensión; los códigos deben conservar el formato original.
 - Las dependencias solo se aplican cuando existe jerarquía real en la nomenclatura. El país no depende del subrubro ni de la GCE.
+- Un filtro dependiente se habilita solo después de elegir su dimensión padre y sus opciones se recalculan con las observaciones devueltas para esa selección. No se ofrecen valores nulos/vacíos ni opciones huérfanas; si no hay resultados válidos, el selector permanece deshabilitado e informa que no hay opciones.
 - Las sugerencias de autocompletado derivadas de una página parcial no equivalen a un catálogo completo.
 - Para comercio exterior, el INDEC publica `comercio_exterior_nomenclaturas` con `nombre_columna`, `codigo` y `codigo_descripcion`. Radar debe usarlo como diccionario oficial para país, rubros y aperturas; no inferir nombres ni opciones completas desde una muestra de operaciones.
 - La consulta de nomenclaturas se realiza por el endpoint interno `comercio-nomenclaturas`, que reutiliza el servidor seguro de INDEC y no aparece como indicador visible del catálogo.
@@ -44,6 +45,8 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 | Comparación de categorías o aglomerados | Barras horizontales ordenadas | Mismo período, métrica, unidad y nivel de clasificación. |
 | Componentes de una magnitud | Barras apiladas o agrupadas | Solo si los componentes son comparables y sumables; no sumar tasas ni índices. |
 | Estructura demográfica por edad y sexo | Pirámide poblacional | Misma fecha de referencia; separar sexo y conservar grupos de edad publicados. |
+
+La primera visualización demográfica incorporada es la pirámide poblacional de Población nacional. Se construye con la fecha de referencia más reciente que tenga registros de ambos sexos, edades publicadas y valores numéricos. Si se aplican filtros de edad o sexo, se prioriza la serie temporal filtrada en lugar de una pirámide incompleta.
 | Distribución territorial | Mapa coroplético | Solo con códigos geográficos oficiales vinculados a polígonos compatibles; no convertir aglomerados EPH en municipios. |
 | Composición del comercio exterior | Treemap o barras jerárquicas; flujos solo si origen/destino están completos | Nomenclaturas oficiales, período común y tratamiento explícito de supresiones por secreto estadístico. |
 | Relación entre dos variables | Dispersión | Misma unidad de observación, período y cobertura; no inferir causalidad. |
