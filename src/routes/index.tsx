@@ -208,9 +208,9 @@ const steps = [
 
 const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 const btnPrimary =
-  "group inline-flex items-center justify-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105";
+  "dc-button dc-button-primary group inline-flex items-center justify-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground";
 const btnGhost =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:border-lime hover:text-lime";
+  "dc-button dc-button-outline inline-flex items-center justify-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground";
 
 function Wordmark({ light = false }: { light?: boolean }) {
   return (
@@ -275,7 +275,7 @@ function Card({ icon: Icon, label, title, text, items, dark, id }: CardProps) {
   return (
     <article
       id={id}
-      className={`scroll-mt-24 rounded-2xl border p-7 transition hover:-translate-y-1 ${shell}`}
+      className={`dc-card scroll-mt-24 rounded-2xl border p-7 ${shell}`}
     >
       <div className="flex items-start justify-between gap-3">
         <span className={`grid h-12 w-12 place-items-center rounded-xl ${chip}`}>
@@ -310,7 +310,7 @@ function DataViz() {
   return (
     <div
       aria-hidden
-      className="relative rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 backdrop-blur"
+      className="dc-hero-visual relative rounded-2xl border border-ink-foreground/10 bg-ink-2/60 p-6 backdrop-blur"
     >
       <div className="flex items-center justify-between text-xs text-ink-muted">
         <span className="eyebrow">WORKFLOWS</span>
@@ -323,7 +323,7 @@ function DataViz() {
         {bars.map((h, i) => (
           <div key={i} className="flex-1 rounded-t-md bg-ink-foreground/10">
             <div
-              className={`rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`}
+              className={`dc-bar rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px`, animationDelay: `${i * 75}ms` }}
               style={{ height: `${h * 1.6}px` }}
             />
           </div>
@@ -402,7 +402,7 @@ function Index() {
                 <li key={id}>
                   <a
                     href={`#${id}`}
-                    className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime"
+                    className="dc-nav-link rounded-full px-3 py-2 text-sm text-ink-muted"
                   >
                     {label}
                   </a>
@@ -539,7 +539,7 @@ function Index() {
                 <li key={s.id}>
                   <a
                     href={`#${s.id}`}
-                    className="inline-block rounded-full border bg-card px-3 py-1.5 text-sm transition hover:border-primary hover:text-primary"
+                    className="dc-button inline-block rounded-full border bg-card px-3 py-1.5 text-sm hover:border-primary hover:text-primary"
                   >
                     {s.title}
                   </a>
@@ -621,7 +621,7 @@ function Index() {
             <SectionHead eyebrow="Metodología" title="Un proceso claro, de punta a punta." />
             <ol className="mt-8 grid gap-4 md:grid-cols-5">
               {steps.map(([t, d], i) => (
-                <li key={t} className="relative rounded-2xl border bg-card p-6">
+                <li key={t} className="dc-card relative rounded-2xl border bg-card p-6">
                   <span className="font-display text-3xl font-semibold text-sage">0{i + 1}</span>
                   <div className="my-4 h-px bg-border">
                     <div className="h-px bg-primary" style={{ width: `${(i + 1) * 20}%` }} />
@@ -667,7 +667,7 @@ function Index() {
                   <a
                     key={c.label}
                     href={c.href}
-                    className="flex justify-between rounded-xl border bg-card p-5 hover:border-primary"
+                    className="dc-card flex justify-between rounded-xl border bg-card p-5 hover:border-primary"
                   >
                     <span className="font-semibold">{c.label}</span>
                     <span className="text-muted-foreground">{c.value}</span>
@@ -684,7 +684,7 @@ function Index() {
                   key={label}
                   href={href}
                   {...ext}
-                  className="group flex items-center justify-between rounded-xl border bg-card p-5 transition hover:border-primary"
+                  className="dc-card group flex items-center justify-between rounded-xl border bg-card p-5"
                 >
                   <span className="flex items-center gap-3 font-semibold">
                     <Icon className="h-5 w-5 text-primary" aria-hidden />
@@ -715,7 +715,7 @@ function Index() {
                   href={href}
                   {...ext}
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-ink-foreground/15 text-ink-foreground transition hover:border-lime hover:text-lime"
+                  className="dc-button dc-button-outline grid h-10 w-10 place-items-center rounded-full border border-ink-foreground/15 text-ink-foreground"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
