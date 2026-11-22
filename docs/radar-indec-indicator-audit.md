@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `acd9c77d1932cfac378454b0bc4d31f7af2f9639`, posterior a las PR #82–#101  
+**Repositorio revisado:** `main`, commit `acd9c77d1932cfac378454b0bc4d31f7af2f9639`, posterior a las PR #82–#102  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -191,7 +191,7 @@ La selección se basa en la unidad, frecuencia, dimensiones y completitud de la 
 | IPC, salarios, EMAE, EPH, SIPM e ICC | Serie temporal | Una sola métrica y una observación por período. Si hay varias aperturas, se exige seleccionar una desagregación; si quedan períodos duplicados, se reemplaza el gráfico por una explicación y la tabla. |
 | IPC, salarios, EMAE, SIPM e ICC | Lectura de índice, variación o incidencia | Índices, porcentajes y puntos porcentuales conservan unidades separadas. Porcentajes y puntos porcentuales incluyen referencia en cero; los índices mantienen escala automática. |
 | SIPM e ICC | Comparación categórica | Solo para un período y métrica comunes, con clasificador y nivel definidos; se bloquea si se selecciona una apertura individual o si la jerarquía no es homogénea. |
-| Canasta de crianza | Barras apiladas | Bienes y servicios + tiempo de cuidado; el total publicado se muestra por separado y nunca se recalcula. |
+| Canasta de crianza | Barras apiladas + serie temporal | Bienes y servicios + tiempo de cuidado; el total publicado se muestra por separado y nunca se recalcula. La serie temporal permite seguir cada componente elegido. |
 | Población nacional | Pirámide poblacional | Solo cuando no se filtra edad ni sexo; con filtros se utiliza la serie temporal. |
 | Exportaciones e importaciones | Tabla y serie condicionada | No se dibuja composición/participación sobre una primera página parcial del universo. Exportaciones presenta 521 nulos en FOB y peso neto en la muestra 202610; no hay base suficiente para afirmar exhaustividad. |
 | Población por departamento/jurisdicción | Tabla y serie condicionada | No se presenta mapa hasta validar geometrías y correspondencia de códigos territoriales. |
