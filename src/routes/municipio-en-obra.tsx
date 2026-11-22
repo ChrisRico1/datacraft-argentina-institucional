@@ -158,13 +158,13 @@ function MunicipioEnObraPage() {
                 <Link
                   to="/"
                   hash="contacto"
-                  className="group inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105"
+                  className="dc-button dc-button-primary group inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground"
                 >
                   Conversar sobre una solución <ArrowUpRight className="h-4 w-4" />
                 </Link>
                 <a
                   href="#como-funciona"
-                  className="inline-flex items-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:border-lime hover:text-lime"
+                  className="dc-button dc-button-outline inline-flex items-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground"
                 >
                   Explorar la propuesta <ArrowRight className="h-4 w-4" />
                 </a>
@@ -175,7 +175,7 @@ function MunicipioEnObraPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-ink-foreground/15 bg-ink-2/80 p-4 shadow-2xl shadow-black/20 sm:p-6">
+            <div className="dc-hero-visual rounded-2xl border border-ink-foreground/15 bg-ink-2/80 p-4 shadow-2xl shadow-black/20 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-foreground/10 pb-4">
                 <div>
                   <p className="eyebrow text-lime">VISTA CONCEPTUAL</p>
@@ -192,14 +192,14 @@ function MunicipioEnObraPage() {
                   ["68%", "Avance medio"],
                   ["08", "Con alertas"],
                 ].map(([value, label]) => (
-                  <div key={label} className="rounded-xl border border-ink-foreground/10 bg-ink p-3">
+                  <div key={label} className="dc-card rounded-xl border border-ink-foreground/10 bg-ink p-3">
                     <p className="font-display text-2xl font-semibold text-lime">{value}</p>
                     <p className="mt-1 text-[11px] text-ink-muted">{label}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-[1.1fr_.9fr]">
-                <div className="rounded-xl border border-ink-foreground/10 bg-ink p-4">
+                <div className="dc-card rounded-xl border border-ink-foreground/10 bg-ink p-4">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-xs font-semibold">Avance de proyectos</p>
                     <ChartNoAxesCombined className="h-4 w-4 text-lime" />
@@ -218,7 +218,7 @@ function MunicipioEnObraPage() {
                     <span>ENE</span><span>ABR</span><span>JUL</span><span>OCT</span>
                   </div>
                 </div>
-                <div className="rounded-xl border border-ink-foreground/10 bg-ink p-4">
+                <div className="dc-card rounded-xl border border-ink-foreground/10 bg-ink p-4">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-xs font-semibold">Distribución territorial</p>
                     <MapPinned className="h-4 w-4 text-lime" />
@@ -254,7 +254,7 @@ function MunicipioEnObraPage() {
               ["Seguimiento fragmentado", "Dificultad para conocer el estado de cada proyecto y sus próximos hitos."],
               ["Trazabilidad limitada", "Necesidad de relacionar avances, inspecciones, documentos y decisiones."],
             ].map(([heading, text], index) => (
-              <article key={heading} className="rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-6">
+              <article key={heading} className="dc-card rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-6">
                 <p className="font-display text-3xl font-semibold text-lime">0{index + 1}</p>
                 <h3 className="mt-5 text-xl font-semibold">{heading}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-ink-muted">{text}</p>
@@ -272,7 +272,7 @@ function MunicipioEnObraPage() {
             />
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {modules.map(({ icon: Icon, number, title, text }) => (
-                <article key={number} className="rounded-2xl border border-ink-foreground/10 bg-ink p-6 transition hover:border-lime/40">
+                <article key={number} className="dc-card rounded-2xl border border-ink-foreground/10 bg-ink p-6">
                   <div className="flex items-center justify-between">
                     <span className="grid h-11 w-11 place-items-center rounded-xl bg-ink-foreground/10 text-lime"><Icon className="h-5 w-5" /></span>
                     <span className="eyebrow text-ink-muted">{number} / MÓDULO</span>
@@ -303,7 +303,7 @@ function MunicipioEnObraPage() {
             </div>
             <ol className="relative space-y-3 before:absolute before:bottom-6 before:left-5 before:top-6 before:w-px before:bg-ink-foreground/15">
               {stages.map(([name, detail], index) => (
-                <li key={name} className="relative flex gap-5 rounded-xl border border-ink-foreground/10 bg-ink-2/50 p-5">
+                <li key={name} className="dc-card relative flex gap-5 rounded-xl border border-ink-foreground/10 bg-ink-2/50 p-5">
                   <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full border border-lime/40 bg-ink text-sm font-semibold text-lime">
                     0{index + 1}
                   </span>
@@ -420,7 +420,7 @@ function MunicipioEnObraPage() {
               <Link
                 to="/"
                 hash="contacto"
-                className="inline-flex w-fit items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:-translate-y-0.5 hover:brightness-105"
+                className="dc-button dc-button-primary inline-flex w-fit items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground"
               >
                 Coordinar una reunión <ArrowUpRight className="h-4 w-4" />
               </Link>
