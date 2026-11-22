@@ -60,7 +60,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
     metricField: "tipo_de_indicador",
-    dimensionFields: ["clasificador", "nivel", "codigo"],
+    dimensionFields: ["clasificador", "nivel", "codigo", "indicador"],
   },
   emae: {
     endpoint: "estimador-mensual-de-actividad-economica-nivel-general",

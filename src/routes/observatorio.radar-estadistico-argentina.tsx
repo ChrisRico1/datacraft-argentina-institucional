@@ -860,6 +860,11 @@ function RadarEstadisticoArgentina() {
                     <h4 className="font-semibold">Configurar filtros estadísticos</h4>
                     <p className="mt-1 text-xs leading-relaxed text-ink-muted">Elegí las dimensiones de la observación que querés consultar. Las opciones disponibles dependen de la estructura de cada servicio del INDEC.</p>
                   </div>
+                  {(selected.id === "exportaciones" || selected.id === "importaciones") ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      Para aislar una serie mensual, completá los niveles de desagregación en orden: categoría principal, apertura secundaria y país. Si falta una dimensión, pueden quedar varias observaciones para el mismo período y el gráfico no trazará una línea única.
+                    </p>
+                  ) : null}
                   {selectedDimensionFilters.length > 0 ? (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       {selectedDimensionFilters.map((filter) => {

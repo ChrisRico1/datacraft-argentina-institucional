@@ -22,6 +22,7 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
     { field: "clasificador", label: "Clasificador", placeholder: "Código o nombre del clasificador" },
     { field: "nivel", label: "Nivel estadístico", placeholder: "Nivel publicado por INDEC" },
     { field: "codigo", label: "Código de apertura", placeholder: "Código de la categoría" },
+    { field: "indicador", label: "Indicador", placeholder: "Indicador publicado" },
   ],
   exportaciones: [
     { field: "rubro_cod", label: "Rubro", placeholder: "Código del rubro" },
