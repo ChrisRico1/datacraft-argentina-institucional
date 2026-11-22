@@ -71,13 +71,13 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
             aria-label="Menú móvil"
             className="flex flex-col gap-4 border-t border-ink-foreground/10 px-5 py-5 lg:hidden"
           >
-            <Link to="/" onClick={() => setOpen(false)}>
+            <Link to="/" onClick={() => setOpen(false)} className="dc-nav-link rounded-lg px-3 py-2 hover:text-lime">
               Inicio
             </Link>
-            <Link to="/observatorio" onClick={() => setOpen(false)} className="text-lime">
+            <Link to="/observatorio" onClick={() => setOpen(false)} className="dc-nav-link rounded-lg px-3 py-2 text-lime">
               Proyectos
             </Link>
-            <Link to="/" hash="contacto">
+            <Link to="/" hash="contacto" onClick={() => setOpen(false)} className="dc-nav-link rounded-lg px-3 py-2 hover:text-lime">
               Contacto
             </Link>
           </nav>
