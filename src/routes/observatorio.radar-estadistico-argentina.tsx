@@ -17,13 +17,13 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Papa from "papaparse";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 import { PopulationPyramidChart } from "@/features/radar/components/PopulationPyramidChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
 import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
+import { createRadarCsv } from "@/features/radar/utils/radarExport";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -727,8 +727,8 @@ function RadarEstadisticoArgentina() {
         ]),
       ),
     );
-    const csv = Papa.unparse(exportRows, { header: true, skipEmptyLines: true });
-    const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
+    const csv = createRadarCsv(exportRows);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -1070,6 +1070,7 @@ function RadarEstadisticoArgentina() {
                         const catalogRows = commerceNomenclatures.filter((row) => String(row["nombre_columna"] ?? "") === filter.field);
                         const catalogOptions = catalogRows.sort((a, b) => String(a["codigo_descripcion"] ?? a["codigo"] ?? "").localeCompare(String(b["codigo_descripcion"] ?? b["codigo"] ?? ""), "es"));
                         const dependentValues = filter.dependsOn ? getUniqueFilterValues(apiRows, filter.field) : [];
+                        const optionsIncomplete = Boolean(filter.dependsOn && apiIncomplete);
                         const dependentOptions = usesCommerceCatalog && filter.dependsOn
                           ? catalogOptions.filter((option) => dependentValues.includes(String(option["codigo"] ?? "")))
                           : [];
@@ -1102,12 +1103,12 @@ function RadarEstadisticoArgentina() {
                             {showSelect ? (
                               <select
                                 value={dimensionFilters[filter.field] ?? ""}
-                                disabled={blocked || (usesCommerceCatalog ? commerceNomenclaturesLoading : apiLoading) || Boolean(noOptions)}
+                                disabled={blocked || optionsIncomplete || (usesCommerceCatalog ? commerceNomenclaturesLoading : apiLoading) || Boolean(noOptions)}
                                 onChange={(event) => updateValue(event.target.value)}
                                 className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
                               >
                                 <option value="">
-                                  {blocked ? "Seleccioná primero el filtro anterior" : usesCommerceCatalog && commerceNomenclaturesLoading ? "Cargando nomenclatura oficial…" : apiLoading && filter.dependsOn ? "Actualizando opciones…" : noOptions ? "Sin opciones para esta selección" : "Seleccioná una opción"}
+                                  {blocked ? "Seleccioná primero el filtro anterior" : optionsIncomplete ? "Cargá todos los registros para ver opciones completas" : usesCommerceCatalog && commerceNomenclaturesLoading ? "Cargando nomenclatura oficial…" : apiLoading && filter.dependsOn ? "Actualizando opciones…" : noOptions ? "Sin opciones para esta selección" : "Seleccioná una opción"}
                                 </option>
                                 {selectOptions.map((option) => (
                                   <option key={option.value} value={option.value}>{option.label}</option>
