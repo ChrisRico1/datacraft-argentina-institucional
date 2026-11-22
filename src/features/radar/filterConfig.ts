@@ -25,7 +25,7 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
   exportaciones: [
     { field: "rubro_cod", label: "Rubro", placeholder: "Seleccioná un rubro", description: "Clasificación principal de los bienes exportados.", suggestion: "Podés elegir un rubro sin seleccionar país; el subrubro se habilita después." },
     { field: "subrubro_cod", label: "Subrubro", placeholder: "Seleccioná un subrubro", dependsOn: "rubro_cod", description: "Apertura más específica dentro del rubro elegido." },
-    { field: "pais_cod", label: "País de destino", placeholder: "Seleccioná un país", description: "Destino de las exportaciones. Es independiente del rubro y del subrubro.", suggestion: "Podés filtrar solo por país para analizar el intercambio con ese destino." },
+    { field: "pais_cod", label: "País de destino", placeholder: "Seleccioná un país", dependsOn: "rubro_cod", description: "Destino de las exportaciones dentro del rubro seleccionado.", suggestion: "Primero elegí un rubro; después podrás seleccionar los países de destino disponibles para ese rubro." },
   ],
   importaciones: [
     { field: "uso_economico_cod", label: "Uso económico", placeholder: "Seleccioná un uso económico", description: "Clasifica los bienes importados según su destino económico." },
