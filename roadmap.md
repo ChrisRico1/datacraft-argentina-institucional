@@ -20,12 +20,13 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 ## P1 — Radar Estadístico Argentina
 
-- [ ] Diseñar una paginación incremental v2 desde el código vigente de `main`, sin reemplazar la carga automática actual ni perder filtros.
+- [x] Incorporar paginación incremental desde el código vigente de `main`: carga inicial acotada, bloques de 1.000, conservación de filtros, cancelación al cambiar la consulta y límite de offset del servidor.
 - [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones.
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
-- [ ] Evaluar exportación y comparaciones adicionales solo después de validar los datos y sus dimensiones.
+- [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
+- [ ] Evaluar comparaciones adicionales solo después de validar los datos y sus dimensiones.
 
 ## P1 — Proyectos demostrativos
 
@@ -40,7 +41,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [ ] Inventariar las ramas antiguas y comparar su contenido con `main` antes de proponer su cierre o eliminación.
 - [ ] Resolver los PR abiertos #11, #15 y #33 mediante revisión individual; no integrarlos por antigüedad ni cerrarlos sin verificar su contenido.
 - [ ] Revisar dependencias, configuración de TypeScript/ESLint/Prettier y consistencia de nombres.
-- [ ] Mejorar cobertura de pruebas de rutas, estados de carga/error, filtros, paginación y componentes de visualización.
+- [ ] Ampliar cobertura de pruebas de rutas, estados de carga/error, filtros, paginación y componentes de visualización (la exportación CSV ya cuenta con pruebas unitarias).
 - [ ] Revisar accesibilidad por teclado, contraste, etiquetas y preferencias de movimiento reducido.
 - [ ] Medir rendimiento de mapas, tablas, visualizaciones y carga de datos.
 
