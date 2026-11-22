@@ -86,7 +86,7 @@ async function query(id) {
   const url = new URL(`${API_BASE}/${id}`);
   url.searchParams.set("limit", String(LIMIT));
   const response = await fetch(url, {
-    headers: { Accept: "application/json", Origin },
+    headers: { Accept: "application/json", Origin: ORIGIN },
     signal: AbortSignal.timeout(25_000),
   });
   let payload;
