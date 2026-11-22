@@ -29,6 +29,21 @@ describe("getIndecIndicator", () => {
     });
   });
 
+  it("maps an upstream INDEC rate limit to a controlled 503 response", async () => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ message: "rate limit exceeded" }), { status: 429 }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(getIndecIndicator("ipc", {})).rejects.toMatchObject({
+      name: "IndecServiceError",
+      status: 503,
+      message: "INDEC limitó temporalmente las consultas.",
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   it("uses a fixed upstream endpoint, safe filters and server-side bearer auth", async () => {
     process.env["INDEC_API_TOKEN"] = "test-secret-token";
     const fetchMock = vi.fn().mockResolvedValue(
