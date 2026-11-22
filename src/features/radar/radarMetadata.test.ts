@@ -1,0 +1,47 @@
+import { describe, expect, it } from "vitest";
+import { getRadarFieldMetadata, getRadarIndicatorMetadata, getRadarMetricMetadata } from "./radarMetadata";
+import { radarDimensionFilters } from "../filterConfig";
+
+describe("Radar metadata dictionary", () => {
+  it("documents every selectable indicator in the public catalogue", () => {
+    const ids = ["ipc", "salarios", "emae", "pobreza", "mercado-laboral", "cba-cbt", "canasta-crianza", "exportaciones", "importaciones", "poblacion-departamento", "poblacion-jurisdiccion", "poblacion-nacional", "ipi-manufacturero", "sipm", "costo-construccion"];
+    for (const id of ids) {
+      const metadata = getRadarIndicatorMetadata(id);
+      expect(metadata?.description, id).toBeTruthy();
+      expect(metadata?.interpretation, id).toBeTruthy();
+    }
+  });
+
+  it("documents every configured dimension filter", () => {
+    for (const [indicatorId, filters] of Object.entries(radarDimensionFilters)) {
+      for (const filter of filters) {
+        const metadata = getRadarFieldMetadata(indicatorId, filter.field);
+        expect(metadata?.description, `${indicatorId}.${filter.field}`).toBeTruthy();
+      }
+    }
+  });
+
+  it("explains all EPH rates with a distinct definition", () => {
+    const metrics = ["tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_empleo_formal", "tasa_de_empleo_informal", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"];
+    for (const metric of metrics) {
+      expect(getRadarFieldMetadata("mercado-laboral", metric)?.description ?? getRadarFieldMetadata("pobreza", metric)?.description, metric).toBeTruthy();
+    }
+  });
+
+  it("distinguishes index, percentage change and percentage-point contribution", () => {
+    expect(getRadarMetricMetadata("ipc", "Indice", "Índice").description).toContain("Nivel del índice");
+    expect(getRadarMetricMetadata("ipc", "v_m", "Variación mensual (%)").description).toContain("Cambio porcentual");
+    expect(getRadarMetricMetadata("ipc", "Incidencia_m", "Incidencia mensual (puntos porcentuales)").interpretation).toContain("No es el porcentaje");
+  });
+
+  it("describes the 12 childcare series without recalculating the published total", () => {
+    for (const field of ["tot_men1", "bys_men1", "cuid_men1", "tot_1a3", "bys_1a3", "cuid_1a3", "tot_4a5", "bys_4a5", "cuid_4a5", "tot_6a12", "bys_6a12", "cuid_6a12"]) {
+      expect(getRadarFieldMetadata("canasta-crianza", field)?.description).toBeTruthy();
+    }
+    expect(getRadarFieldMetadata("canasta-crianza", "tot_men1")?.interpretation).toContain("no se recalcula");
+  });
+
+  it("explains dynamic selections without losing the official label", () => {
+    expect(getRadarFieldMetadata("exportaciones", "pais_cod", "Brasil")?.interpretation).toContain("Selección actual: Brasil");
+  });
+});
