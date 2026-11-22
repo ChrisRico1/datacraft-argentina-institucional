@@ -26,7 +26,11 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 | SIPM | `operativo`, `indicador`, `clasificador`, `nivel`, `codigo_apertura`, `region`, `tipo_de_indicador` | Selección de índice, apertura y región; comparación de categorías solo a igual nivel. |
 | ICC | `indicador`, `codigo_apertura`, `codigo_CPC_1`, `clasificador`, `nivel`, `region`, `tipo_de_indicador` | Aperturas del costo de construcción para GBA; comparación solo entre categorías equivalentes. |
 
-### Reglas de implementación
+### Metadatos de lectura
+
+La interfaz incorpora definiciones en lenguaje claro debajo de cada selector y contextualiza la opción seleccionada. El diccionario cubre indicadores, métricas, dimensiones, unidades, períodos, cobertura, códigos y marcas estadísticas: ver [Diccionario de metadatos del Radar](radar-metadata-dictionary.md). Los nombres y códigos dinámicos de comercio exterior siguen procediendo del nomenclador oficial; el texto explicativo no sustituye ese catálogo.
+
+## Reglas de implementación
 
 - La allowlist del servidor es la autoridad: un campo no incluido para un indicador se rechaza.
 - Los nombres visibles deben explicar qué representa cada dimensión; los códigos deben conservar el formato original.

@@ -1,8 +1,14 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `6078041ce9f377e5971cac8f810decf5d6a5ee6e`, posterior a la integración de la PR #65  
+**Repositorio revisado:** `main`, commit `72ca07e500e28f9b72d7c84afe9de1b343609b96`, posterior a las PR #82–#87  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
+
+## Metadatos de interpretación en la interfaz
+
+El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.tsx` y se documenta en `docs/radar-metadata-dictionary.md`. La interfaz muestra definiciones debajo de los indicadores, métricas, filtros, rangos temporales y desagregaciones seleccionadas; también incorpora un glosario para las columnas de observaciones y las marcas estadísticas.
+
+**Alcance:** cubre conceptualmente los 15 servicios del catálogo y sus dimensiones configuradas. Esta mejora de comprensión no altera el estado de validación de ejecución: un servicio con metadatos explicativos no se considera validado por ese motivo. IPI manufacturero permanece deshabilitado.
 
 ## Criterio de lectura
 

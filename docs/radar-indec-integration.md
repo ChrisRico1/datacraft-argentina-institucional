@@ -79,6 +79,10 @@ La interfaz incluye un acceso independiente para población nacional. No debe co
 
 La cantidad de servicios registrados en el servidor no equivale a la cantidad de indicadores plenamente validados. La interfaz de canasta de crianza configura 12 series (cuatro tramos por tres componentes), cuya disponibilidad debe comprobarse con datos reales en PRD. El IPI manufacturero permanece deshabilitado hasta validar su respuesta y dimensiones.
 
+## Metadatos en la interfaz
+
+Las definiciones de indicadores, métricas, filtros, unidades, cobertura, períodos y marcas estadísticas se centralizan en [`docs/radar-metadata-dictionary.md`](radar-metadata-dictionary.md) y `src/features/radar/radarMetadata.tsx`. La interfaz muestra estas explicaciones debajo de cada selector y en las tarjetas de contexto. La existencia de metadatos no modifica el estado de validación operativa de cada servicio.
+
 ## Consideraciones estadísticas
 
 - Pobreza e indigencia y mercado laboral de EPH tienen cobertura de aglomerados urbanos; no son automáticamente representativos de cada departamento o municipio.
