@@ -42,7 +42,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 - [ ] Actualizar documentación heredada que describa una landing de una sola página o instrucciones que ya no representan el producto.
 - [ ] Inventariar las ramas antiguas y comparar su contenido con `main` antes de proponer su cierre o eliminación.
-- [ ] Resolver los PR abiertos #11 y #15 mediante revisión individual; la paginación antigua de #33 fue reemplazada por #64 y su PR quedó cerrada.
+- [x] Revisar y cerrar los PR obsoletos #11 (la página actual de Municipio en Obra ya está en `main` y reemplaza su propuesta antigua) y #15 (documento conceptual sustituido por la documentación vigente del Radar); #33 fue reemplazada por #64.
 - [ ] Revisar dependencias, configuración de TypeScript/ESLint/Prettier y consistencia de nombres.
 - [ ] Ampliar cobertura de pruebas de rutas, estados de carga/error, filtros, paginación y componentes de visualización (la exportación CSV ya cuenta con pruebas unitarias).
 - [ ] Revisar accesibilidad por teclado, contraste, etiquetas y preferencias de movimiento reducido.
