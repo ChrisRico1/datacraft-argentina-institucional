@@ -65,7 +65,7 @@ El catálogo visual debe mantener una correspondencia explícita con los 15 serv
 | IPC, salarios, EMAE | Disponible | Métricas y series específicas configuradas |
 | Pobreza, mercado laboral | Disponible | Cobertura EPH: 31 aglomerados urbanos |
 | CBA/CBT | Disponible | Gran Buenos Aires; dimensiones estadísticas |
-| Canasta de crianza | Parcial | Se presenta inicialmente el tramo menor de 1 año; los otros tramos requieren validar sus campos y métricas antes de exponerlos |
+| Canasta de crianza | 12 series configuradas en la interfaz | Selector para cuatro tramos etarios y tres componentes por tramo (bienes y servicios, tiempo de cuidado y total). Confirmar las 12 series con datos reales en PRD |
 | Exportaciones e importaciones | Disponible | Filtros jerárquicos de clasificación y país |
 | Población por departamento | Disponible | Estimaciones por departamento |
 | Población por jurisdicción | Disponible | Proyecciones por jurisdicción, sexo y edad |
@@ -75,14 +75,14 @@ El catálogo visual debe mantener una correspondencia explícita con los 15 serv
 
 La interfaz incluye un acceso independiente para población nacional. No debe confundirse con las proyecciones por jurisdicción ni con las estimaciones departamentales.
 
-La cantidad de servicios registrados en el servidor no equivale a la cantidad de indicadores plenamente explorables: canasta de crianza conserva una cobertura parcial y el IPI manufacturero permanece deshabilitado hasta su validación operativa.
+La cantidad de servicios registrados en el servidor no equivale a la cantidad de indicadores plenamente validados. La interfaz de canasta de crianza configura 12 series (cuatro tramos por tres componentes), cuya disponibilidad debe comprobarse con datos reales en PRD. El IPI manufacturero permanece deshabilitado hasta validar su respuesta y dimensiones.
 
 ## Consideraciones estadísticas
 
 - Pobreza e indigencia y mercado laboral de EPH tienen cobertura de aglomerados urbanos; no son automáticamente representativos de cada departamento o municipio.
 - CBA/CBT y canasta de crianza se publican para Gran Buenos Aires según la documentación consultada.
 - Las exportaciones e importaciones incluyen supresiones por secreto estadístico. Los códigos y nomencladores deben interpretarse con su servicio de referencia.
-- La tarjeta de canasta de crianza muestra inicialmente `tot_men1`, total del tramo menor de 1 año. No representa todos los tramos de edad.
+- El selector de canasta de crianza permite elegir 12 métricas: total, bienes y servicios y tiempo de cuidado para cuatro tramos etarios (menores de 1 año, 1 a 3, 4 a 5 y 6 a 12 años). No asumir que las 12 series están validadas en producción hasta comprobar sus respuestas reales.
 - Las marcas convencionales y observaciones de INDEC deben conservarse. En particular, `s` indica dato confidencial; `*` provisorio; `**` preliminar; `e` estimado por extrapolación/proyección; `i` estimado por imputación; `u` calidad inferior al estándar; `-` cero absoluto; `.` no registrado; `...` no disponible; `///` no corresponde presentar.
 - Los totales por suma y las variaciones pueden diferir de publicaciones técnicas por redondeo, según advierte la documentación del Catálogo.
 
