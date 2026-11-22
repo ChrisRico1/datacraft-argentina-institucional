@@ -40,7 +40,7 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
               Datacraft <span className="font-normal text-ink-muted">Argentina</span>
             </span>
           </Link>
-          <nav aria-label="Principal" className="hidden items-center gap-6 sm:flex">
+          <nav aria-label="Principal" className="hidden items-center gap-6 lg:flex">
             <Link to="/" className="dc-nav-link rounded-full px-3 py-2 text-sm text-ink-muted">
               Inicio
             </Link>
@@ -60,7 +60,7 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
             aria-controls="lab-mobile-nav"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
             onClick={() => setOpen(!open)}
-            className="sm:hidden"
+            className="lg:hidden"
           >
             {open ? <X /> : <Menu />}
           </Button>
@@ -69,7 +69,7 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
           <nav
             id="lab-mobile-nav"
             aria-label="Menú móvil"
-            className="flex flex-col gap-4 border-t border-ink-foreground/10 px-5 py-5 sm:hidden"
+            className="flex flex-col gap-4 border-t border-ink-foreground/10 px-5 py-5 lg:hidden"
           >
             <Link to="/" onClick={() => setOpen(false)}>
               Inicio
