@@ -47,37 +47,46 @@
 
 :root {
   --radius: 0.875rem;
-  --background: oklch(0.975 0.006 240);
-  --foreground: oklch(0.21 0.02 260);
-  --card: oklch(0.99 0.004 240);
-  --card-foreground: oklch(0.21 0.02 260);
-  --popover: oklch(0.99 0.004 240);
-  --popover-foreground: oklch(0.21 0.02 260);
-  --primary: oklch(0.32 0.07 255);
-  --primary-foreground: oklch(0.97 0.01 240);
-  --secondary: oklch(0.93 0.03 220);
-  --secondary-foreground: oklch(0.3 0.06 255);
-  --muted: oklch(0.94 0.015 230);
-  --muted-foreground: oklch(0.46 0.03 255);
-  --accent: oklch(0.86 0.07 220);
-  --accent-foreground: oklch(0.22 0.03 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.89 0.02 240);
-  --input: oklch(0.89 0.02 240);
-  --ring: oklch(0.6 0.12 240);
-  --ink: oklch(0.22 0.03 265);
-  --ink-2: oklch(0.28 0.04 262);
-  --ink-foreground: oklch(0.97 0.01 240);
-  --ink-muted: oklch(0.79 0.04 245);
-  --lime: oklch(0.9 0.19 118);
-  --lime-foreground: oklch(0.22 0.04 260);
-  --carbon: oklch(0.18 0.02 265);
-  --sage: oklch(0.6 0.07 245);
-  --sky: oklch(0.8 0.1 245);
-  --mint: oklch(0.9 0.07 165);
-  --blush: oklch(0.86 0.07 350);
-  --gradient-iridescent: linear-gradient(120deg, var(--sky), var(--mint) 38%, var(--lime) 62%, var(--blush));
+
+  /* Datacraft Argentina · identidad visual */
+  --brand-terracotta: #C34811;
+  --brand-gallery-blue: #0B369A;
+  --brand-stone-linen: #D9D1CA;
+  --brand-terracotta-soft: #F09A70;
+
+  --background: #F7F4F0;
+  --foreground: #17233E;
+  --card: #FFFEFC;
+  --card-foreground: #17233E;
+  --popover: #FFFEFC;
+  --popover-foreground: #17233E;
+  --primary: var(--brand-gallery-blue);
+  --primary-foreground: #FFFFFF;
+  --secondary: #ECE7E1;
+  --secondary-foreground: #17336F;
+  --muted: #F0ECE7;
+  --muted-foreground: #596273;
+  --accent: var(--brand-terracotta);
+  --accent-foreground: #FFFFFF;
+  --destructive: #B42318;
+  --destructive-foreground: #FFFFFF;
+  --border: var(--brand-stone-linen);
+  --input: var(--brand-stone-linen);
+  --ring: var(--brand-gallery-blue);
+
+  /* Alias semánticos para componentes existentes durante la migración. */
+  --ink: #0A1F55;
+  --ink-2: #102D73;
+  --ink-foreground: #F7F4F0;
+  --ink-muted: var(--brand-stone-linen);
+  --lime: var(--brand-terracotta-soft);
+  --lime-foreground: #17233E;
+  --carbon: #081A45;
+  --sage: var(--brand-gallery-blue);
+  --sky: var(--brand-gallery-blue);
+  --mint: var(--brand-stone-linen);
+  --blush: var(--brand-stone-linen);
+  --gradient-iridescent: linear-gradient(120deg, var(--brand-gallery-blue), var(--brand-terracotta) 62%, var(--brand-stone-linen));
 }
 
 @layer base {
