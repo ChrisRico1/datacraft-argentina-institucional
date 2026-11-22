@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - fix/radar-production-smoke-range-metadata
+      - fix/radar-import-smoke-contract
   workflow_dispatch:
 
 permissions:
