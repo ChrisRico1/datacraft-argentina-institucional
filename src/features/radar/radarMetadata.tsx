@@ -34,10 +34,10 @@ const FIELD_METADATA: Record<string, RadarMetadata> = {
   tasa_de_desocupacion: { description: "Porcentaje de la población económicamente activa que está desocupada y busca empleo.", interpretation: "El denominador es la población económicamente activa, no la población total." },
   tasa_de_empleo_formal: { description: "Proporción de la población ocupada clasificada como empleo formal según la definición de INDEC.", interpretation: "Leer con el universo y la definición operativa publicados para el período." },
   tasa_de_empleo_informal: { description: "Proporción de la población ocupada clasificada como empleo informal según la definición de INDEC.", interpretation: "El universo es la población ocupada; no comparar como si fuera una tasa sobre la población total." },
-  tasa_de_ocupacion_demandante: { description: "Porcentaje de la población económicamente activa que está ocupada y busca activamente otra ocupación.", interpretation: "Se calcula sobre la población ocupada según la definición de la EPH." },
-  tasa_de_subocupacion: { description: "Proporción de personas ocupadas que trabajan menos de 35 horas semanales por causas involuntarias y desean trabajar más.", interpretation: "El universo es la población económicamente activa según la definición de INDEC." },
+  tasa_de_ocupacion_demandante: { description: "Porcentaje de la población económicamente activa que está ocupada y busca activamente otra ocupación.", interpretation: "El denominador es la población económicamente activa, según la definición de la EPH." },
+  tasa_de_subocupacion: { description: "Porcentaje de la población económicamente activa que está ocupada menos de 35 horas semanales por causas involuntarias y desea trabajar más.", interpretation: "El denominador es la población económicamente activa, según la definición de INDEC." },
   tasa_de_subocupacion_demandante: { description: "Porcentaje de la población económicamente activa que está subocupada y busca activamente otra ocupación.", interpretation: "El denominador es la población económicamente activa; no sumar tasas como si fueran categorías independientes." },
-  tasa_de_subocupacion_no_demandante: { description: "Porcentaje de la población económicamente activa que está subocupada y no busca activamente otra ocupación.", interpretation: "Es un subconjunto de la subocupación; no sumar tasas como si fueran categorías independientes." },
+  tasa_de_subocupacion_no_demandante: { description: "Porcentaje de la población económicamente activa que está subocupada y no busca activamente otra ocupación.", interpretation: "El denominador es la población económicamente activa; no sumar tasas como si fueran categorías independientes." },
   rubro_cod: { description: "Agrupación principal de bienes que organiza las exportaciones por grandes rubros.", interpretation: "El subrubro y los destinos disponibles se limitan a las observaciones del rubro elegido." },
   subrubro_cod: { description: "Desagregación de bienes dentro del rubro principal de exportación.", interpretation: "Solo está disponible dentro del rubro seleccionado." },
   pais_cod: { description: "Código del país asociado al flujo comercial. En exportaciones representa destino; en importaciones, origen.", interpretation: "El nombre se obtiene del nomenclador oficial de INDEC; el código se conserva como identificador." },
@@ -96,6 +96,42 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     else if (field.startsWith("tot_")) metadata = FIELD_METADATA.total;
   }
   if (!metadata) return null;
+  if (value?.trim() && field === "indicador" && indicatorId === "sipm") {
+    const labels: Record<string, string> = {
+      IPIB: "Índice de precios básicos del productor: mide precios en la primera etapa de comercialización, sin impuestos.",
+      IPIM: "Índice de precios internos al por mayor: mide la evolución de los precios de productos nacionales e importados ofrecidos en el mercado interno.",
+      IPP: "Índice de precios básicos del productor: mide precios percibidos por el productor, sin impuestos ni costos de distribución.",
+    };
+    if (labels[value]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${labels[value]}` };
+  }
+  if (value?.trim() && field === "indicador" && indicatorId === "cba-cbt") {
+    if (/^CBA$/i.test(value)) return { description: metadata.description, interpretation: "Selección actual: CBA. Canasta Básica Alimentaria: valor de los alimentos necesarios para cubrir requerimientos nutricionales; se utiliza como línea de indigencia." };
+    if (/^CBT$/i.test(value)) return { description: metadata.description, interpretation: "Selección actual: CBT. Canasta Básica Total: incorpora a la CBA bienes y servicios no alimentarios; se utiliza como línea de pobreza." };
+  }
+  if (value?.trim() && field === "tipo_de_indicador") {
+    const code = value.toLocaleLowerCase("es-AR");
+    const definitions: Record<string, string> = {
+      indice: "Nivel del índice en relación con su período base; no es una tasa de variación.",
+      v_m: "Variación porcentual respecto del período inmediatamente anterior.",
+      v_ia: "Variación porcentual respecto del mismo período del año anterior.",
+      v_acum: "Variación porcentual acumulada desde el período de referencia anual.",
+      incidencia: "Contribución a la variación del indicador general, expresada en puntos porcentuales.",
+      incidencia_m: "Contribución a la variación mensual, expresada en puntos porcentuales.",
+      incidencia_ia: "Contribución a la variación interanual, expresada en puntos porcentuales.",
+      incidencia_acum: "Contribución a la variación acumulada, expresada en puntos porcentuales.",
+    };
+    if (definitions[code]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${definitions[code]}` };
+  }
+  if (value?.trim() && field === "serie") {
+    const series = value.toLocaleLowerCase("es-AR");
+    if (series.includes("original")) return { description: metadata.description, interpretation: "La serie original conserva los efectos estacionales y de calendario observados." };
+    if (series.includes("desestacionalizada")) return { description: metadata.description, interpretation: "La serie ajusta patrones estacionales para facilitar comparaciones entre períodos consecutivos." };
+    if (series.includes("tendencia")) return { description: metadata.description, interpretation: "La serie suaviza componentes estacionales e irregulares para mostrar la trayectoria subyacente." };
+  }
+  if (value?.trim() && field === "sexo_cod") {
+    if (value === "1") return { description: metadata.description, interpretation: "Selección actual: 1 = Mujer, según la codificación de las proyecciones nacionales del INDEC." };
+    if (value === "2") return { description: metadata.description, interpretation: "Selección actual: 2 = Varón, según la codificación de las proyecciones nacionales del INDEC." };
+  }
   if (!value?.trim()) return metadata;
   return {
     description: metadata.description,
