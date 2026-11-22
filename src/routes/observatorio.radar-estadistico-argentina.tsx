@@ -679,7 +679,7 @@ function RadarEstadisticoArgentina() {
         <div className="relative mx-auto max-w-7xl px-5 pb-14 pt-10 sm:pb-20 sm:pt-14">
           <Link
             to="/observatorio"
-            className="inline-flex items-center gap-2 text-sm text-ink-muted transition hover:text-lime"
+            className="dc-nav-link inline-flex items-center gap-2 text-sm text-ink-muted transition hover:text-lime"
           >
             <ArrowLeft className="h-4 w-4" /> Volver a Proyectos
           </Link>
@@ -700,15 +700,15 @@ function RadarEstadisticoArgentina() {
                 Información económica, social y territorial en un solo lugar.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#explorador" className="inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground transition hover:brightness-105">
+                <a href="#explorador" className="dc-button dc-button-primary inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 text-sm font-semibold text-lime-foreground">
                   Explorar indicadores <ArrowRight className="h-4 w-4" />
                 </a>
-                <a href="#metodologia" className="inline-flex items-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:border-lime hover:text-lime">
+                <a href="#metodologia" className="dc-button dc-button-outline inline-flex items-center gap-2 rounded-full border border-ink-foreground/25 px-6 py-3 text-sm font-semibold text-ink-foreground">
                   Cómo funciona <BookOpen className="h-4 w-4" />
                 </a>
               </div>
             </div>
-            <div className="rounded-2xl border border-ink-foreground/10 bg-ink-2/70 p-6 backdrop-blur sm:p-7">
+            <div className="dc-card rounded-2xl border border-ink-foreground/10 bg-ink-2/70 p-6 backdrop-blur sm:p-7">
               <div className="flex items-center justify-between gap-4">
                 <span className="eyebrow text-ink-muted">PLATAFORMA DE DATOS PÚBLICOS</span>
                 <Activity className="h-5 w-5 text-lime" />
@@ -752,7 +752,7 @@ function RadarEstadisticoArgentina() {
                 type="button"
                 onClick={() => selectTopic(topic.id)}
                 aria-pressed={activeTopic === topic.id}
-                className={`group rounded-2xl border p-5 text-left transition hover:-translate-y-1 hover:border-lime/50 ${activeTopic === topic.id ? "border-lime/50 bg-ink-2" : "border-ink-foreground/10 bg-ink-2/45"}`}
+                className={`dc-card group rounded-2xl border p-5 text-left ${activeTopic === topic.id ? "border-lime/50 bg-ink-2" : "border-ink-foreground/10 bg-ink-2/45"}`}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs tracking-[0.18em] text-ink-muted">{topic.number} / 04</span>
