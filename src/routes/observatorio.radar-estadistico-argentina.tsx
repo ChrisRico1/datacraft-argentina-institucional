@@ -297,6 +297,20 @@ const metricOptions: Record<string, MetricOption[]> = {
     { valueKey: "tasa_de_subocupacion_demandante", label: "Subocupación demandante (%)" },
     { valueKey: "tasa_de_subocupacion_no_demandante", label: "Subocupación no demandante (%)" },
   ],
+  "canasta-crianza": [
+    { valueKey: "tot_men1", label: "Total · menores de 1 año" },
+    { valueKey: "bys_men1", label: "Bienes y servicios · menores de 1 año" },
+    { valueKey: "cuid_men1", label: "Tiempo de cuidado · menores de 1 año" },
+    { valueKey: "tot_1a3", label: "Total · de 1 a 3 años" },
+    { valueKey: "bys_1a3", label: "Bienes y servicios · de 1 a 3 años" },
+    { valueKey: "cuid_1a3", label: "Tiempo de cuidado · de 1 a 3 años" },
+    { valueKey: "tot_4a5", label: "Total · de 4 a 5 años" },
+    { valueKey: "bys_4a5", label: "Bienes y servicios · de 4 a 5 años" },
+    { valueKey: "cuid_4a5", label: "Tiempo de cuidado · de 4 a 5 años" },
+    { valueKey: "tot_6a12", label: "Total · de 6 a 12 años" },
+    { valueKey: "bys_6a12", label: "Bienes y servicios · de 6 a 12 años" },
+    { valueKey: "cuid_6a12", label: "Tiempo de cuidado · de 6 a 12 años" },
+  ],
 };
 
 const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
@@ -792,8 +806,8 @@ function RadarEstadisticoArgentina() {
         </div>
       </section>
 
-      <section id="explorador" className="border-y border-ink-foreground/10 bg-carbon/70 py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-5">
+      <section id="explorador" className="border-y border-ink-foreground/10 bg-carbon/70 py-10 sm:py-12">
+        <div className="mx-auto max-w-screen-2xl px-5">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="eyebrow text-lime">EXPLORADOR DE INDICADORES</p>
@@ -807,7 +821,7 @@ function RadarEstadisticoArgentina() {
             </span>
           </div>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(250px,0.75fr)_minmax(0,1.7fr)]">
             <div className="rounded-2xl border border-ink-foreground/10 bg-ink-2/55 p-5 sm:p-6">
               <label className="eyebrow text-ink-muted" htmlFor="radar-topic">ÁREA TEMÁTICA</label>
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -863,14 +877,14 @@ function RadarEstadisticoArgentina() {
                 <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-[11px] text-lime">{selected.available === false ? "No disponible vía API" : "Fuente INDEC"}</span>
               </div>
 
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid grid-cols-2 gap-2 xl:grid-cols-4">
                 <Metadata label="Unidad de medida" value={selectedUnit} icon={BarChart3} />
                 <Metadata label="Frecuencia" value={selected.frequency} icon={CalendarDays} />
                 <Metadata label="Cobertura geográfica" value={selected.coverage} icon={MapPinned} />
                 <Metadata label="Serie estadística" value={selected.service} icon={Database} />
               </div>
 
-              {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion" || selectedDimensionFilters.length > 0) ? (
+              {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion" || selected.id === "canasta-crianza" || selectedDimensionFilters.length > 0) ? (
                 <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/50 p-4 sm:p-5">
                   <div className="mb-3">
                     <h4 className="font-semibold">Configurar filtros estadísticos</h4>
@@ -886,8 +900,13 @@ function RadarEstadisticoArgentina() {
                       Cada observación combina edad en años cumplidos y sexo. Para construir una serie anual sin mezclar grupos, seleccioná ambos filtros. Sexo: código 1 = Mujer y 2 = Varón. La población se estima al 1 de julio de cada año.
                     </p>
                   ) : null}
+                  {selected.id === "canasta-crianza" ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      INDEC publica cuatro tramos de edad y tres componentes por tramo: bienes y servicios, tiempo de cuidado y total. Elegí la serie que querés analizar en “Indicador para visualizar”.
+                    </p>
+                  ) : null}
                   {selectedDimensionFilters.length > 0 ? (
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                       {selectedDimensionFilters.map((filter) => {
                         const blocked = filter.dependsOn ? !dimensionFilters[filter.dependsOn]?.trim() : false;
                         const listId = `radar-dimension-${selected.id}-${filter.field}`;
@@ -919,7 +938,7 @@ function RadarEstadisticoArgentina() {
                           </label>
                         );
                       })}
-                      <p className="text-[11px] leading-relaxed text-ink-muted sm:col-span-2">
+                      <p className="text-[11px] leading-relaxed text-ink-muted col-span-full">
                         Los campos corresponden a dimensiones publicadas por INDEC. Las sugerencias se obtienen de los registros cargados; también podés ingresar un código exacto del catálogo. Los filtros dependientes se habilitan en orden para evitar combinaciones ambiguas.
                       </p>
                     </div>
@@ -939,7 +958,7 @@ function RadarEstadisticoArgentina() {
                           {["GBA", "Nacional", "Pampeana", "Noreste", "Noroeste", "Cuyo", "Patagonia"].map((region) => <option key={region} value={region}>{region}</option>)}
                         </select>
                       </label>
-                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         <label className="text-xs text-ink-muted">Clasificador
                           <input list="radar-ipc-classifications" value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un clasificador" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                           <datalist id="radar-ipc-classifications">{economicFilterSuggestions.classifications.map((value) => <option key={value} value={value} />)}</datalist>
@@ -961,7 +980,7 @@ function RadarEstadisticoArgentina() {
                     </div>
                   ) : null}
                   {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                       <label className="text-xs text-ink-muted">Indicador
                         <input list="radar-economic-indicators" value={economicIndicator} onChange={(event) => { setEconomicIndicator(event.target.value); setOffset(0); setChartContext(""); }} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-indicators">{economicFilterSuggestions.indicators.map((value) => <option key={value} value={value} />)}</datalist>
@@ -978,11 +997,11 @@ function RadarEstadisticoArgentina() {
                         <input list="radar-economic-opening-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-opening-codes">{economicFilterSuggestions.openingCodes.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
-                      <label className="text-xs text-ink-muted sm:col-span-2">Categoría o descripción exacta
+                      <label className="text-xs text-ink-muted col-span-full">Categoría o descripción exacta
                         <input list="radar-economic-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí una descripción" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-categories">{economicFilterSuggestions.categories.map((value) => <option key={value} value={value} />)}</datalist>
                       </label>
-                      <p className="text-[11px] leading-relaxed text-ink-muted sm:col-span-2">Las sugerencias se obtienen de las observaciones cargadas. También podés escribir un valor publicado por INDEC.</p>
+                      <p className="text-[11px] leading-relaxed text-ink-muted col-span-full">Las sugerencias se obtienen de las observaciones cargadas. También podés escribir un valor publicado por INDEC.</p>
                     </div>
                   ) : null}
                   {selected.id === "emae" ? <p className="mt-3 text-xs leading-relaxed text-ink-muted">Las variaciones y los índices se consultan por separado. No se combinan escalas ni tipos de serie en un mismo gráfico.</p> : null}
@@ -1071,46 +1090,48 @@ function RadarEstadisticoArgentina() {
                         contextValue={chartContext}
                       />
                     ) : null}
-                    {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
-                      <EconomicCategoryComparison
-                        rows={comparisonRows}
-                        period={latestEconomicPeriod}
-                        metricLabel={activeEconomicMetric?.label ?? selectedValueLabel}
-                        unit={selectedUnit}
-                        loading={comparisonLoading}
-                        error={comparisonPrerequisiteMessage ?? comparisonError}
-                        incomplete={comparisonIncomplete}
-                      />
-                    ) : null}
-                    <div className="mb-5">
-                      <IndicatorTimeSeriesChart
-                        rows={apiRows}
-                        periodKey={selected.periodKey}
-                        valueKey={selectedValueKey}
-                        valueLabel={selectedValueLabel}
-                        unit={selectedUnit}
-                        contextKey={selected.contextKey}
-                        contextValue={chartContext}
-                      />
-                    </div>
-                    <div
-                      className="overflow-x-auto rounded-lg border border-ink-foreground/10"
-                      tabIndex={0}
-                      role="region"
-                      aria-label="Tabla de observaciones oficiales de INDEC"
-                    >
-                      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                    <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)] xl:items-start">
+                      <div className="min-w-0 space-y-4">
+                        {(selected.id === "sipm" || selected.id === "costo-construccion") ? (
+                          <EconomicCategoryComparison
+                            rows={comparisonRows}
+                            period={latestEconomicPeriod}
+                            metricLabel={activeEconomicMetric?.label ?? selectedValueLabel}
+                            unit={selectedUnit}
+                            loading={comparisonLoading}
+                            error={comparisonPrerequisiteMessage ?? comparisonError}
+                            incomplete={comparisonIncomplete}
+                          />
+                        ) : null}
+                        <IndicatorTimeSeriesChart
+                          rows={apiRows}
+                          periodKey={selected.periodKey}
+                          valueKey={selectedValueKey}
+                          valueLabel={selectedValueLabel}
+                          unit={selectedUnit}
+                          contextKey={selected.contextKey}
+                          contextValue={chartContext}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <div
+                          className="max-h-[480px] overflow-auto rounded-lg border border-ink-foreground/10"
+                          tabIndex={0}
+                          role="region"
+                          aria-label="Tabla de observaciones oficiales de INDEC; desplazamiento interno"
+                        >
+                          <table className="w-full min-w-[560px] border-collapse text-left text-sm">
                         <caption className="sr-only">
                           Observaciones del indicador {selected.title}, con período, desagregación,
                           valor publicado, marcas estadísticas y observaciones de INDEC
                         </caption>
                         <thead>
-                          <tr className="border-b border-ink-foreground/15 text-[11px] uppercase tracking-wider text-ink-muted">
-                            <th scope="col" className="px-3 py-3 font-medium">Período</th>
-                            <th scope="col" className="px-3 py-3 font-medium">Desagregación</th>
-                            <th scope="col" className="px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
-                            <th scope="col" className="px-3 py-3 font-medium">Marca INDEC</th>
-                            <th scope="col" className="px-3 py-3 font-medium">Observaciones</th>
+                          <tr className="border-b border-ink-foreground/15 bg-ink-2 text-[11px] uppercase tracking-wider text-ink-muted">
+                            <th scope="col" className="sticky top-0 z-10 bg-ink-2 px-3 py-3 font-medium">Período</th>
+                            <th scope="col" className="sticky top-0 z-10 bg-ink-2 px-3 py-3 font-medium">Desagregación</th>
+                            <th scope="col" className="sticky top-0 z-10 bg-ink-2 px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
+                            <th scope="col" className="sticky top-0 z-10 bg-ink-2 px-3 py-3 font-medium">Marca INDEC</th>
+                            <th scope="col" className="sticky top-0 z-10 bg-ink-2 px-3 py-3 font-medium">Observaciones</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1141,36 +1162,38 @@ function RadarEstadisticoArgentina() {
                           })}
                         </tbody>
                       </table>
-                    </div>
-                    <p className="mb-4 text-[11px] leading-relaxed text-ink-muted">
-                      Marcas de INDEC: <strong>s</strong> confidencial · <strong>*</strong> provisorio · <strong>**</strong> preliminar · <strong>e</strong> estimado · <strong>i</strong> imputado · <strong>u</strong> baja calidad · <strong>-</strong> cero absoluto · <strong>.</strong> no registrado · <strong>...</strong> no disponible · <strong>///</strong> no aplicable. La marca se muestra separada del valor y de las observaciones.
-                    </p>
-                    <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-[11px] leading-relaxed text-ink-muted">
-                        Fuente: INDEC · Página {Math.floor(offset / 20) + 1} · {apiRows.length} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${totalRows} disponibles` : ""}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          disabled={offset === 0 || apiLoading}
-                          onClick={() => setOffset((value) => Math.max(0, value - 20))}
-                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          Anterior
-                        </button>
-                        <button
-                          type="button"
-                          disabled={!hasNextPage || apiLoading}
-                          onClick={() => setOffset((value) => value + 20)}
-                          className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          Siguiente
-                        </button>
+                        </div>
+                        <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+                          Marcas de INDEC: <strong>s</strong> confidencial · <strong>*</strong> provisorio · <strong>**</strong> preliminar · <strong>e</strong> estimado · <strong>i</strong> imputado · <strong>u</strong> baja calidad · <strong>-</strong> cero absoluto · <strong>.</strong> no registrado · <strong>...</strong> no disponible · <strong>///</strong> no aplicable. La marca se muestra separada del valor y de las observaciones.
+                        </p>
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-[11px] leading-relaxed text-ink-muted">
+                            Fuente: INDEC · Página {Math.floor(offset / 20) + 1} · {apiRows.length} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${totalRows} disponibles` : ""}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              disabled={offset === 0 || apiLoading}
+                              onClick={() => setOffset((value) => Math.max(0, value - 20))}
+                              className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              Anterior
+                            </button>
+                            <button
+                              type="button"
+                              disabled={!hasNextPage || apiLoading}
+                              onClick={() => setOffset((value) => value + 20)}
+                              className="rounded-full border border-ink-foreground/20 px-3 py-2 text-xs font-medium transition hover:border-lime disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              Siguiente
+                            </button>
+                          </div>
+                        </div>
+                        <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
+                          Se conservan los valores y observaciones recibidos del INDEC, incluidas sus marcas estadísticas.
+                        </p>
                       </div>
                     </div>
-                    <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
-                      Se conservan los valores y observaciones recibidos del INDEC, incluidas sus marcas estadísticas.
-                    </p>
                   </>
                 )}
               </div>
@@ -1274,7 +1297,7 @@ function Metadata({
   icon: typeof BarChart3;
 }) {
   return (
-    <div className="flex min-h-[88px] gap-3 rounded-lg border border-ink-foreground/10 bg-ink/50 p-3">
+    <div className="flex min-h-[68px] gap-2.5 rounded-lg border border-ink-foreground/10 bg-ink/50 p-3">
       <Icon className="mt-0.5 h-4 w-4 shrink-0 text-lime" />
       <div>
         <p className="text-[11px] uppercase tracking-wider text-ink-muted">{label}</p>

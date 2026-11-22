@@ -87,6 +87,33 @@ describe("getIndecIndicator", () => {
     })).rejects.toMatchObject({ status: 400 });
   });
 
+  it.each([
+    ["pobreza", { area_geografica_cod: "32" }, "area_geografica_cod", "eq.32"],
+    ["mercado-laboral", { area_geografica_cod: "32" }, "area_geografica_cod", "eq.32"],
+    ["cba-cbt", { tipo_de_indicador: "Indice" }, "tipo_de_indicador", "eq.Indice"],
+    ["poblacion-departamento", { jurisdiccion_cod: "06" }, "jurisdiccion_cod", "eq.06"],
+    ["poblacion-departamento", { rmba: "Sí" }, "rmba", "eq.Sí"],
+    ["costo-construccion", { codigo_CPC_1: "01" }, "codigo_CPC_1", "eq.01"],
+    ["ipi-manufacturero", { codigo_CLaNAE_2004: "C" }, "codigo_CLaNAE_2004", "eq.C"],
+    ["ipi-manufacturero", { serie: "Original" }, "serie", "eq.Original"],
+  ])("applies documented dimensions for %s", async (indicator, dimensions, field, expected) => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+    const fetchMock = vi.fn().mockResolvedValue(new Response("[]", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getIndecIndicator(indicator, { dimensions: JSON.stringify(dimensions) });
+    const [requestUrl] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(new URL(requestUrl).searchParams.get(field)).toBe(expected);
+  });
+
+  it("rejects obsolete IPI manufacturer dimension names", async () => {
+    process.env["INDEC_API_TOKEN"] = "test-secret-token";
+
+    await expect(getIndecIndicator("ipi-manufacturero", {
+      dimensions: JSON.stringify({ codigo_ClaNAE_2010: "C" }),
+    })).rejects.toMatchObject({ status: 400 });
+  });
+
   it("rejects page sizes above the INDEC limit", async () => {
     process.env["INDEC_API_TOKEN"] = "test-secret-token";
 
