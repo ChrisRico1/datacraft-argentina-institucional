@@ -33,6 +33,8 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           })
           .addTo(map);
         layers.current = L.layerGroup().addTo(map);
+        let subbasinTileErrors = 0;
+        let subbasinTileLoads = 0;
         const subbasins = L.tileLayer.wms(acumarSubbasinsWms.endpoint, {
           layers: acumarSubbasinsWms.layer,
           format: "image/png",
@@ -41,15 +43,30 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           opacity: 0.92,
           SLD_BODY: acumarSubbasinsWms.sldBody,
           attribution: acumarSubbasinsWms.attribution,
-        }).addTo(map);
+        });
+        // Evaluate availability per tile-loading batch, not on the first failed tile.
+        // Public WMS services can return intermittent errors while other tiles load correctly.
+        subbasins.on("loading", () => {
+          subbasinTileErrors = 0;
+          subbasinTileLoads = 0;
+          if (!cancelled) setSubbasinsFailed(false);
+        });
+        subbasins.on("tileload", () => {
+          subbasinTileLoads += 1;
+        });
+        subbasins.on("tileerror", () => {
+          subbasinTileErrors += 1;
+        });
+        subbasins.on("load", () => {
+          if (cancelled) return;
+          setSubbasinsFailed(subbasinTileErrors > 0 && subbasinTileLoads === 0);
+        });
+        subbasins.addTo(map);
         L.control.layers(
           null,
           { "Subcuencas ACUMAR · IGN": subbasins },
           { collapsed: false, position: "bottomleft" },
         ).addTo(map);
-        subbasins.on("tileerror", () => {
-          if (!cancelled) setSubbasinsFailed(true);
-        });
         const observer = new ResizeObserver(() => map.invalidateSize());
         observer.observe(container.current);
         map.on("unload", () => observer.disconnect());
@@ -127,8 +144,8 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           role="status"
           className="absolute bottom-8 left-3 right-3 z-[450] rounded-md bg-ink p-3 text-sm text-ink-foreground"
         >
-          La capa de subcuencas del IGN no está disponible en este momento. Podés desactivarla
-          desde el control de capas.
+          No se pudieron cargar las teselas de subcuencas del IGN en esta vista. Podés
+          desactivar y volver a activar la capa desde el control para reintentar.
         </p>
       )}
       {tileFailed && (
