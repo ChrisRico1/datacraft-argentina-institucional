@@ -42,7 +42,29 @@ No requiere secretos ni expone el token de INDEC: consulta exclusivamente los en
 
 - [Radar Production smoke #45068877709](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068877709): **15/15 servicios y 35/35 opciones de métrica**.
 - [Radar Production smoke #45072657136](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45072657136): **15/15 servicios, 35/35 opciones de métrica y 56 consultas individuales de filtros**, con una muestra de hasta 100 filas por servicio.
-- La versión incorporada en PR #114 amplía la muestra a dos páginas de hasta 1.000 observaciones por servicio. El workflow también queda configurado para ejecutarse en futuras pull requests que modifiquen el Radar.
+- [Radar Production smoke #45073107843](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45073107843), ejecutado sobre PR #114: **15/15 servicios, 35/35 opciones de métrica y 134 consultas individuales de filtros**. La muestra alcanzó hasta dos páginas de 1.000 observaciones por servicio y hasta tres valores distintos por dimensión.
+
+Comprobaciones individuales por servicio en la ejecución ampliada:
+
+| Servicio | Valores de filtros comprobados |
+|---|---:|
+| IPC | 17 |
+| Salarios | 11 |
+| EMAE | 2 |
+| Pobreza | 1 |
+| Mercado de trabajo | 1 |
+| CBA / CBT | 11 |
+| Canasta de crianza | 0 |
+| Exportaciones | 8 |
+| Importaciones | 9 |
+| Población por departamento | 13 |
+| Población por jurisdicción | 11 |
+| Población nacional | 5 |
+| IPI manufacturero (endpoint; sigue deshabilitado en la interfaz) | 15 |
+| SIPM | 14 |
+| ICC | 16 |
+
+Canasta de crianza no tiene filtros de dimensión en este smoke; sus 12 series se verificaron por presencia de valores numéricos.
 
 La ejecución más reciente se consulta en el [historial del workflow Radar Production smoke](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/workflows/radar-production-smoke.yml). Un smoke exitoso verifica el contrato de consulta, no todas las combinaciones posibles ni la experiencia visual completa.
 
