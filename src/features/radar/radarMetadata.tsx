@@ -99,6 +99,10 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     else if (field.startsWith("tot_")) metadata = FIELD_METADATA.total;
   }
   if (!metadata) return null;
+  if (value?.trim() && field === "periodRange") {
+    const ranges: Record<string, string> = { all: "Todos los períodos disponibles", "5y": "Últimos cinco años", "2y": "Últimos dos años", "1y": "Último año" };
+    return { description: metadata.description, interpretation: `Selección actual: ${ranges[value] ?? value}. El rango limita la consulta, no modifica la frecuencia de publicación.` };
+  }
   if (value?.trim() && field === "indicador" && canonicalId === "sipm") {
     const labels: Record<string, string> = {
       IPIB: "Índice de precios internos básicos al por mayor: cubre productos nacionales e importados ofrecidos en el mercado interno, con precios considerados sin impuestos.",
@@ -154,9 +158,9 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
     if (metricValue === "Indice") return { description: "Nivel del índice publicado para la selección actual.", interpretation: "Interpretalo con la base, el indicador y la apertura seleccionados." };
   }
   if (canonicalId === "emae") {
-    if (metric.includes("interanual")) return { description: "Cambio respecto del mismo mes del año anterior, calculado sobre la serie original.", interpretation: "Conserva efectos estacionales; no compararlo con la variación mensual desestacionalizada." };
-    if (metric.includes("desestacionalizada")) return { description: "Serie ajustada para remover patrones estacionales y facilitar comparaciones entre meses.", interpretation: "La variación mensual se calcula sobre la serie ajustada; no mezclar con serie original o tendencia-ciclo." };
-    if (metric.includes("tendencia-ciclo")) return { description: "Estimación suavizada de la trayectoria subyacente de la actividad.", interpretation: "No reemplaza la serie original y puede revisarse al incorporar nuevos datos." };
+    if (metric.includes("interanual")) return { description: "Cambio respecto del mismo mes del año anterior, calculado sobre la serie original.", interpretation: "El índice del EMAE usa base 2004=100. La serie original conserva efectos estacionales; no comparar esta tasa con la variación mensual desestacionalizada." };
+    if (metric.includes("desestacionalizada")) return { description: "Serie ajustada para remover patrones estacionales y facilitar comparaciones entre meses.", interpretation: "El índice del EMAE usa base 2004=100; la variación mensual se calcula sobre la serie ajustada. No mezclar con serie original o tendencia-ciclo." };
+    if (metric.includes("tendencia-ciclo")) return { description: "Estimación suavizada de la trayectoria subyacente de la actividad.", interpretation: "El índice del EMAE usa base 2004=100. No reemplaza la serie original y puede revisarse al incorporar nuevos datos." };
   }
   if (canonicalId === "pobreza" || canonicalId === "mercado-laboral" || canonicalId === "canasta-crianza") {
     const entry = getRadarFieldMetadata(canonicalId, metricValue);
