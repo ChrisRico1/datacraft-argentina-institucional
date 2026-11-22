@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   ArrowLeft,
@@ -17,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Papa from "papaparse";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 import { PopulationPyramidChart } from "@/features/radar/components/PopulationPyramidChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
@@ -403,6 +404,9 @@ function RadarEstadisticoArgentina() {
   const [search, setSearch] = useState("");
   const [apiRows, setApiRows] = useState<Record<string, unknown>[]>([]);
   const [apiIncomplete, setApiIncomplete] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
+  const loadMoreController = useRef<AbortController | null>(null);
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [contentRange, setContentRange] = useState<string | null>(null);
@@ -517,6 +521,10 @@ function RadarEstadisticoArgentina() {
           : null;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
+  const knownMoreRows = Boolean(totalRows && /^\\d+$/.test(totalRows) && apiRows.length < Number(totalRows));
+  const unknownMoreRows = totalRows === "*" && apiIncomplete && apiRows.length >= 10000;
+  const requiresEconomicOpening = (selected.id === "sipm" || selected.id === "costo-construccion") && !economicOpeningCode.trim() && !economicCategory.trim();
+  const canLoadMore = apiIncomplete && !requiresEconomicOpening && (knownMoreRows || unknownMoreRows) && apiRows.length < 1_000_000;
   const hasNextPage = offset + 20 < apiRows.length;
   const visibleRows = apiRows.slice(offset, offset + 20);
   const chartContexts = selected.contextKey
@@ -528,6 +536,10 @@ function RadarEstadisticoArgentina() {
       )].sort((a, b) => a.localeCompare(b, "es"))
     : [];
   useEffect(() => {
+    loadMoreController.current?.abort();
+    loadMoreController.current = null;
+    setLoadingMore(false);
+    setLoadMoreError(null);
     const controller = new AbortController();
     const currentYear = new Date().getFullYear();
     const fromYear =
@@ -628,9 +640,106 @@ function RadarEstadisticoArgentina() {
 
     void loadIndicatorPages();
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      loadMoreController.current?.abort();
+    };
   }, [selected.apiId, period, refreshKey, activeEconomicMetric?.value, economicIndicator, economicClassification, economicLevel, economicOpeningCode, economicCategory, economicRegion, serializedDimensionFilters]);
 
+
+  const loadMoreRows = async () => {
+    if (!canLoadMore || loadingMore || apiRows.length >= 1_000_000) return;
+    const controller = new AbortController();
+    loadMoreController.current = controller;
+    setLoadingMore(true);
+    setLoadMoreError(null);
+
+    const currentYear = new Date().getFullYear();
+    const fromYear =
+      period === "5y" ? currentYear - 5 :
+      period === "2y" ? currentYear - 2 :
+      period === "1y" ? currentYear - 1 :
+      null;
+    const params = new URLSearchParams({ limit: "1000", offset: String(apiRows.length) });
+    if (fromYear !== null) params.set("from", String(fromYear));
+    if (activeEconomicMetric) params.set("metric", activeEconomicMetric.value);
+    if (selected.id === "ipc") params.set("region", economicRegion || "GBA");
+    if (selected.id === "sipm") params.set("region", "Total del país");
+    if (selected.id === "costo-construccion") params.set("region", "GBA");
+    if (economicIndicator.trim()) params.set("indicator", economicIndicator.trim());
+    if (economicClassification.trim()) params.set("classification", economicClassification.trim());
+    if (economicLevel.trim()) params.set("level", economicLevel.trim());
+    if (economicOpeningCode.trim()) params.set("openingCode", economicOpeningCode.trim());
+    if (economicCategory.trim()) params.set("category", economicCategory.trim());
+    if (serializedDimensionFilters !== "{}") params.set("dimensions", serializedDimensionFilters);
+
+    try {
+      const response = await fetch(`/api/radar/${selected.apiId}?${params.toString()}`, {
+        signal: controller.signal,
+      });
+      const payload = (await response.json()) as {
+        data?: unknown;
+        contentRange?: string | null;
+        error?: string;
+      };
+      if (!response.ok) throw new Error(payload.error ?? "No se pudieron cargar más registros.");
+      const rows = Array.isArray(payload.data)
+        ? payload.data.filter(
+            (row): row is Record<string, unknown> =>
+              typeof row === "object" && row !== null && !Array.isArray(row),
+          )
+        : [];
+      if (controller.signal.aborted) return;
+      if (rows.length === 0) {
+        setApiIncomplete(false);
+        setLoadMoreError("INDEC no devolvió registros adicionales para el rango solicitado.");
+        return;
+      }
+
+      const totalMatch = /\\/(\\d+)$/.exec(payload.contentRange ?? "");
+      const expectedTotal = totalMatch ? Number(totalMatch[1]) : null;
+      setApiRows((current) => {
+        const nextRows = [...current, ...rows];
+        setContentRange(`0-${nextRows.length - 1}/${expectedTotal ?? totalRows ?? "*"}`);
+        setApiIncomplete(
+          expectedTotal !== null
+            ? nextRows.length < expectedTotal
+            : rows.length === 1000 && nextRows.length < 1_000_000,
+        );
+        return nextRows;
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return;
+      setLoadMoreError(error instanceof Error ? error.message : "No se pudieron cargar más registros.");
+    } finally {
+      if (loadMoreController.current === controller) {
+        loadMoreController.current = null;
+        setLoadingMore(false);
+      }
+    }
+  };
+
+  const exportLoadedRows = () => {
+    if (apiRows.length === 0) return;
+    const exportRows = apiRows.map((row) =>
+      Object.fromEntries(
+        Object.entries(row).map(([key, value]) => [
+          key,
+          value !== null && typeof value === "object" ? JSON.stringify(value) : value,
+        ]),
+      ),
+    );
+    const csv = Papa.unparse(exportRows, { header: true, skipEmptyLines: true });
+    const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `radar-${selected.id}-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     const isComparableSource = selected.id === "sipm" || selected.id === "costo-construccion";
@@ -1146,11 +1255,23 @@ function RadarEstadisticoArgentina() {
                       {contentRange ? <span>Rango cargado: {contentRange}</span> : null}
                     </div>
                     {apiIncomplete ? (
-                      <p className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-ink-muted">
-                        {(selected.id === "sipm" || selected.id === "costo-construccion") && !economicOpeningCode.trim() && !economicCategory.trim()
-                          ? "La consulta contiene más registros de los cargados. Seleccioná un código de apertura o una categoría para recuperar su serie histórica sin mezclar aperturas."
-                          : "La consulta supera el límite de seguridad de 10.000 registros. Refiná los filtros para reducir el conjunto y consultar una serie completa."}
-                      </p>
+                      <div className="mb-4 rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                        <p>
+                          {(selected.id === "sipm" || selected.id === "costo-construccion") && !economicOpeningCode.trim() && !economicCategory.trim()
+                            ? "La consulta contiene más registros de los cargados. Seleccioná un código de apertura o una categoría para recuperar su serie histórica sin mezclar aperturas."
+                            : "La tabla, los filtros derivados de observaciones y los gráficos representan únicamente los registros cargados. Podés continuar la consulta en bloques de 1.000 sin perder los filtros actuales."}
+                        </p>
+                        {canLoadMore ? (
+                          <div className="mt-3 flex flex-wrap items-center gap-3">
+                            <Button size="sm" variant="lab" disabled={loadingMore || apiLoading} onClick={() => void loadMoreRows()}>
+                              {loadingMore ? "Cargando..." : "Cargar siguientes 1.000 registros"}
+                            </Button>
+                            <span>{new Intl.NumberFormat("es-AR").format(apiRows.length)} registros cargados{totalRows && /^\\d+$/.test(totalRows) ? ` de ${new Intl.NumberFormat("es-AR").format(Number(totalRows))}` : ""}</span>
+                          </div>
+                        ) : null}
+                        {loadMoreError ? <p role="alert" className="mt-2 text-red-300">{loadMoreError}</p> : null}
+                        {apiRows.length >= 1_000_000 ? <p className="mt-2">Se alcanzó el máximo de desplazamiento admitido por el servicio. Aplicá filtros para acotar la consulta.</p> : null}
+                      </div>
                     ) : null}
                     {chartContexts.length > 1 ? (
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3">
@@ -1313,6 +1434,9 @@ function RadarEstadisticoArgentina() {
                   <span className="font-semibold uppercase tracking-wider">Fuente</span>
                   <span className="mt-2">INDEC · Catálogo API v1</span>
                 </div>
+                <Button className="self-end" variant="outline" disabled={apiRows.length === 0 || apiLoading} onClick={exportLoadedRows}>
+                  Exportar CSV
+                </Button>
                 <Button className="self-end" variant="lab" disabled={apiLoading} onClick={() => setRefreshKey((value) => value + 1)}>
                   Actualizar datos <ArrowRight />
                 </Button>
