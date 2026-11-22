@@ -4,6 +4,13 @@ export type RadarMetadata = {
 };
 
 const FIELD_METADATA: Record<string, RadarMetadata> = {
+  area_geografica_nom: { description: "Área geográfica de publicación de la EPH. En la consulta actualmente validada se observa el total T_31_A, correspondiente a 31 aglomerados urbanos.", interpretation: "No ofrece desagregación individual por ciudad o municipio en el servicio consultado." },
+  area_geografica_cod: { description: "Código geográfico asociado al área de publicación de la EPH.", interpretation: "La presencia del campo en la especificación no implica que la respuesta publique todas las áreas por separado." },
+  tipo_de_indicador_descripcion: { description: "Etiqueta textual de la métrica o serie estadística publicada por INDEC.", interpretation: "Usá esta descripción junto con el código de tipo de indicador para distinguir nivel, variación y serie." },
+  anio: { description: "Año calendario al que pertenece la observación.", interpretation: "Para frecuencias inferiores al año, debe interpretarse junto con el mes o trimestre." },
+  mes: { description: "Mes calendario de referencia de la observación.", interpretation: "El mes forma parte del período; no debe tratarse como un dato independiente del año." },
+  valor_null: { description: "Marca estadística asociada a un valor no numérico o a una observación con tratamiento especial.", interpretation: "No reemplazar marcas por cero. Consultá la leyenda de marcas INDEC y conservá la observación original." },
+  observaciones: { description: "Nota textual publicada por INDEC sobre la observación.", interpretation: "Puede aclarar carácter provisional, preliminar, estimado u otra condición del dato." },
   periodo: { description: "Identifica el momento al que corresponde la observación. Su formato depende de la frecuencia: mes, trimestre, semestre o año.", interpretation: "Compará períodos equivalentes y respetá la frecuencia de publicación del indicador." },
   fecha: { description: "Fecha de referencia de la estimación o proyección de población.", interpretation: "Las proyecciones nacionales y jurisdiccionales toman como referencia el 1 de julio de cada año." },
   region: { description: "Ámbito geográfico al que corresponde el dato. En IPC distingue el nivel nacional y las regiones estadísticas; en otros servicios puede referir a una cobertura específica.", interpretation: "La región no amplía la cobertura original del relevamiento." },
@@ -110,12 +117,8 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
     if (metric.includes("desestacionalizada")) return { description: "Serie ajustada para remover patrones estacionales y facilitar comparaciones entre meses.", interpretation: "La variación mensual se calcula sobre la serie ajustada; no mezclar con serie original o tendencia-ciclo." };
     if (metric.includes("tendencia-ciclo")) return { description: "Estimación suavizada de la trayectoria subyacente de la actividad.", interpretation: "No reemplaza la serie original y puede revisarse al incorporar nuevos datos." };
   }
-  if (indicatorId === "pobreza" || indicatorId === "mercado-laboral") {
-    return { description: "Tasa expresada como porcentaje del universo definido para esa variable.", interpretation: "Consultá el universo y denominador específicos; la cobertura EPH es el total de 31 aglomerados urbanos." };
-  }
-  if (indicatorId === "canasta-crianza") {
-    const field = metricValue;
-    const entry = getRadarFieldMetadata(indicatorId, field);
+  if (indicatorId === "pobreza" || indicatorId === "mercado-laboral" || indicatorId === "canasta-crianza") {
+    const entry = getRadarFieldMetadata(indicatorId, metricValue);
     if (entry) return entry;
   }
   if (indicatorId === "exportaciones" || indicatorId === "importaciones") {
