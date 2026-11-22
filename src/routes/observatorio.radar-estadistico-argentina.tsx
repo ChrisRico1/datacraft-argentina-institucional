@@ -440,7 +440,7 @@ function RadarEstadisticoArgentina() {
     categories: getUniqueFilterValues(apiRows, "descripcion"),
   }), [apiRows]);
   const availableMetrics = metricOptions[selected.id] ?? [];
-  const selectedDimensionFilters = radarDimensionFilters[selected.id] ?? [];
+  const selectedDimensionFilters = radarDimensionFilters[selected.apiId] ?? radarDimensionFilters[selected.id] ?? [];
   const serializedDimensionFilters = JSON.stringify(dimensionFilters);
 
   useEffect(() => {
