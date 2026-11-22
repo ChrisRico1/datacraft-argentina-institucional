@@ -15,14 +15,14 @@ Script: `scripts/radar-production-sample-audit.mjs`
 - **Integridad muestral:** presencia de campos mínimos y duplicados de una clave compuesta explícita por servicio.
 - **Conteo total:** total informado por `Content-Range`, separado del tamaño de muestra descargado.
 
-El workflow publica el perfil completo en el resumen de GitHub Actions y en los logs del job para facilitar su revisión y archivo. No escribe ni modifica datos en INDEC ni en el Worker.
+El workflow publica el perfil completo en el resumen de GitHub Actions y en los logs del job para facilitar su revisión y archivo. La ejecución posterior al merge #45067841486 (22/11/2026) terminó correctamente: 15/15 servicios, campos mínimos presentes y cero duplicados en las claves completas. No escribe ni modifica datos en INDEC ni en el Worker.
 
 ## Alcance y límites
 
 - Consulta hasta 1.000 registros por servicio, ordenados según la configuración actual del Worker.
 - Los resultados describen una **muestra de hasta 1.000 filas**, no el universo completo.
 - Un período único en la muestra no significa que el indicador tenga un solo período disponible.
-- Un duplicado según la clave propuesta requiere revisión metodológica; no se elimina automáticamente.
+- Un duplicado según la clave propuesta requiere revisión metodológica; no se elimina automáticamente. Para mercado laboral la clave confirmada es período + `area_geografica_nom`, porque `area_geografica_cod` llega nulo en el agregado `T_31_A`.
 - Las marcas, nulos y valores no numéricos se reportan, nunca se convierten a cero.
 - El perfil no recorre todas las combinaciones de filtros ni valida la presentación en el navegador.
 - IPI manufacturero se incluye para diagnóstico, pero permanece deshabilitado hasta completar su validación integral.
