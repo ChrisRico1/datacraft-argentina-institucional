@@ -182,6 +182,27 @@ La extracción pública de referencia del 2 de noviembre de 2026 enumera 19 tabl
 | IPI minero | Producción minera | Evaluar como indicador independiente; no reutilizar el esquema de IPI manufacturero sin comprobar sus campos y unidades. |
 | Redeterminación de precios de contratos de obra pública | Seguimiento de índices y aperturas usados para redeterminar contratos | Candidato relevante para Municipio en Obra; requiere analizar alcance normativo, campos, unidad y lectura adecuada antes de incorporarlo. |
 
+## Decisión de visualizaciones implementadas
+
+La selección se basa en la unidad, frecuencia, dimensiones y completitud de la consulta; no se fuerza un gráfico para cada endpoint.
+
+| Familia | Visualización | Condición / límite |
+|---|---|---|
+| IPC, salarios, EMAE, EPH, SIPM e ICC | Serie temporal | Una sola métrica y una observación por período. Si hay varias aperturas, se exige seleccionar una desagregación; si quedan períodos duplicados, se reemplaza el gráfico por una explicación y la tabla. |
+| IPC, salarios, EMAE, SIPM e ICC | Lectura de índice, variación o incidencia | Índices, porcentajes y puntos porcentuales conservan unidades separadas. Porcentajes y puntos porcentuales incluyen referencia en cero; los índices mantienen escala automática. |
+| SIPM e ICC | Comparación categórica | Solo para un período y métrica comunes, con clasificador y nivel definidos; se bloquea si se selecciona una apertura individual o si la jerarquía no es homogénea. |
+| Canasta de crianza | Barras apiladas | Bienes y servicios + tiempo de cuidado; el total publicado se muestra por separado y nunca se recalcula. |
+| Población nacional | Pirámide poblacional | Solo cuando no se filtra edad ni sexo; con filtros se utiliza la serie temporal. |
+| Exportaciones e importaciones | Tabla y serie condicionada | No se dibuja composición/participación sobre una primera página parcial del universo. Exportaciones presenta 521 nulos en FOB y peso neto en la muestra 202610; no hay base suficiente para afirmar exhaustividad. |
+| Población por departamento/jurisdicción | Tabla y serie condicionada | No se presenta mapa hasta validar geometrías y correspondencia de códigos territoriales. |
+| IPI manufacturero | Sin visualización pública | El indicador permanece deshabilitado hasta validar el conjunto completo, filtros, marcas y lectura de series. |
+
+La implementación se apoya en IndicatorTimeSeriesChart, EconomicCategoryComparison, ChildcareCostBreakdownChart y PopulationPyramidChart. Las reglas de series temporales detectan duplicados por período y valores no numéricos; ante una consulta ambigua o incompleta, Radar conserva la tabla y explica por qué no grafica.
+
+## Límites temporales de consulta (429)
+
+El servidor transforma una respuesta HTTP 429 de INDEC en HTTP 503 con el mensaje “INDEC limitó temporalmente las consultas.”. La interfaz muestra el mensaje y orienta a esperar unos minutos antes de usar «Actualizar datos» una sola vez, evitando reintentos repetidos. La prueba unitaria del servidor cubre la traducción 429→503 y la ayuda contextual tiene prueba propia. **No se forzó una respuesta 429 real en Production**: queda pendiente comprobar ese caso extremo contra el upstream sin provocar una limitación artificial de la cuenta.
+
 ## Reglas para visualizaciones
 
 - Series temporales: una observación por período, con una sola métrica, unidad, universo y desagregación.
