@@ -90,7 +90,7 @@ export function getRadarIndicatorMetadata(indicatorId: string): RadarMetadata | 
   return INDICATOR_METADATA[indicatorId] ?? null;
 }
 
-export function getRadarFieldMetadata(indicatorId: string, field: string, value?: string): RadarMetadata | null {
+export function getRadarFieldMetadata(indicatorId: string, field: string, value?: string, valueLabel?: string): RadarMetadata | null {
   const canonicalId = indicatorId === "canastas" ? "cba-cbt" : indicatorId === "poblacion" ? "poblacion-departamento" : indicatorId;
   const normalized = field.toLocaleLowerCase("es-AR");
   const base = FIELD_METADATA[field] ?? FIELD_METADATA[normalized];
@@ -190,7 +190,7 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
   if (!value?.trim()) return metadata;
   return {
     description: metadata.description,
-    interpretation: `Selección actual: ${value}. ${metadata.interpretation ?? "El valor corresponde a una categoría publicada por INDEC; conservá su denominación y código al comparar."}`,
+    interpretation: `Selección actual: ${valueLabel && valueLabel !== value ? valueLabel + " (código " + value + ")" : value}. ${metadata.interpretation ?? "El valor corresponde a una categoría publicada por INDEC; conservá su denominación y código al comparar."}`,
   };
 }
 

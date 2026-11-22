@@ -7,7 +7,7 @@
 - Cada indicador del catálogo muestra una descripción debajo de su nombre.
 - La ficha del indicador explica objetivo, unidad, frecuencia, cobertura y servicio.
 - Cada selector de métrica muestra su definición y cómo interpretar el resultado.
-- Cada filtro estadístico muestra qué representa la variable y, cuando se selecciona una opción, contextualiza la selección sin alterar el código ni el rótulo oficial.
+- Cada filtro estadístico muestra qué representa la variable y, cuando se selecciona una opción, contextualiza la selección sin alterar el código ni el rótulo oficial. En listas basadas en nomenclaturas, la ayuda repite también la descripción oficial seleccionada junto con su código para que el usuario no tenga que interpretar identificadores aislados.
 - Los filtros dependientes conservan las jerarquías de los nomencladores; las etiquetas comerciales se obtienen del nomenclador oficial de INDEC.
 - Los rangos de período y las desagregaciones de los gráficos explican qué dimensión se está limitando o visualizando.
 - La tabla incluye un glosario de período, desagregación, valor, marca INDEC y observaciones.

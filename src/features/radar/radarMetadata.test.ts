@@ -72,6 +72,8 @@ describe("Radar metadata dictionary", () => {
   });
 
   it("explains dynamic selections without losing the official label", () => {
-    expect(getRadarFieldMetadata("exportaciones", "pais_cod", "Brasil")?.interpretation).toContain("Selección actual: Brasil");
+    expect(getRadarFieldMetadata("exportaciones", "pais_cod", "BR")?.interpretation).toContain("Selección actual: BR");
+    expect(getRadarFieldMetadata("exportaciones", "pais_cod", "BR", "Brasil")?.interpretation).toContain("Brasil (código BR)");
+    expect(getRadarFieldMetadata("exportaciones", "rubro_cod", "1", "Productos primarios")?.interpretation).toContain("Productos primarios (código 1)");
   });
 });

@@ -1092,6 +1092,7 @@ function RadarEstadisticoArgentina() {
                             : dependentValues.map((value) => ({ value, label: value }))
                           : catalogOptions.map((option) => ({ value: String(option["codigo"]), label: String(option["codigo_descripcion"] ?? option["codigo"]) }));
                         const noOptions = filter.dependsOn && selectOptions.length === 0;
+                        const selectedOptionLabel = selectOptions.find((option) => option.value === dimensionFilters[filter.field])?.label;
                         return (
                           <label key={filter.field} className="text-xs text-ink-muted">
                             {filter.label}
@@ -1123,7 +1124,7 @@ function RadarEstadisticoArgentina() {
                                 </datalist>
                               </>
                             )}
-                            <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, filter.field, dimensionFilters[filter.field])} />
+                            <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, filter.field, dimensionFilters[filter.field], selectedOptionLabel)} />
                             {filter.suggestion ? <span className="mt-1 block text-[11px] leading-relaxed text-lime/90">Sugerencia: {filter.suggestion}</span> : null}
                           </label>
                         );
