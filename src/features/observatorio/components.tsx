@@ -41,10 +41,10 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
             </span>
           </Link>
           <nav aria-label="Principal" className="hidden items-center gap-6 sm:flex">
-            <Link to="/" className="text-sm text-ink-muted hover:text-lime">
+            <Link to="/" className="dc-nav-link rounded-full px-3 py-2 text-sm text-ink-muted">
               Inicio
             </Link>
-            <Link to="/observatorio" className="text-sm text-lime">
+            <Link to="/observatorio" className="dc-nav-link rounded-full px-3 py-2 text-sm text-lime">
               Proyectos
             </Link>
             <Button asChild variant="labOutline">
@@ -87,7 +87,7 @@ export function ObservatoryShell({ children }: { children: ReactNode }) {
       <footer className="mt-12 border-t border-ink-foreground/10 bg-carbon py-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 text-sm text-ink-muted">
           <p>© {new Date().getFullYear()} Datacraft Argentina · DATACRAFT LAB</p>
-          <Link to="/" className="inline-flex items-center gap-2 hover:text-lime">
+          <Link to="/" className="dc-nav-link inline-flex items-center gap-2 hover:text-lime">
             <ArrowLeft className="h-4 w-4" /> Volver a Datacraft
           </Link>
         </div>
@@ -119,7 +119,7 @@ export function SourceLink({ source, compact = false }: { source: Source; compac
 }
 export function ProjectCard({ project }: { project: Observatory }) {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-ink-foreground/15 bg-ink-2/60 p-7 transition hover:border-lime/50">
+    <article className="dc-card flex h-full flex-col rounded-2xl border border-ink-foreground/15 bg-ink-2/60 p-7">
       <div className="flex items-start justify-between gap-3">
         <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
           <MapPinned className="h-6 w-6" />
