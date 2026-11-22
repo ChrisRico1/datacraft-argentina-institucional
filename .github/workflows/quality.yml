@@ -9,6 +9,7 @@ on:
       - main
       - fix/radar-production-smoke-range-metadata
       - fix/radar-import-smoke-contract
+      - audit/radar-production-sample-profiling
   workflow_dispatch:
 
 permissions:
@@ -37,6 +38,9 @@ jobs:
       # Keep semantic ESLint checks blocking while legacy formatting debt is handled separately.
       - name: Validate Radar production smoke script
         run: node --check scripts/radar-production-smoke.mjs
+
+      - name: Validate Radar production sample audit script
+        run: node --check scripts/radar-production-sample-audit.mjs
 
       - name: Lint
         run: >-
