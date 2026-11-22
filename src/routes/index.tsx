@@ -323,8 +323,8 @@ function DataViz() {
         {bars.map((h, i) => (
           <div key={i} className="flex-1 rounded-t-md bg-ink-foreground/10">
             <div
-              className={`dc-bar rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`} style={{ height: `${h * 1.6}px`, animationDelay: `${i * 75}ms` }}
-              style={{ height: `${h * 1.6}px` }}
+              className={`dc-bar rounded-t-md ${i === 5 ? "iridescent" : "bg-sage/70"}`}
+              style={{ height: `${h * 1.6}px`, animationDelay: `${i * 75}ms` }}
             />
           </div>
         ))}
@@ -448,7 +448,7 @@ function Index() {
                   <a
                     href={`#${id}`}
                     onClick={() => setOpen(false)}
-                    className="block py-3 text-ink-foreground hover:text-lime"
+                    className="dc-nav-link block rounded-lg px-3 py-3 text-ink-foreground hover:text-lime"
                   >
                     {label}
                   </a>
@@ -646,7 +646,7 @@ function Index() {
             <a
               href={primaryCtaHref}
               {...ext}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground transition hover:-translate-y-0.5 focus-visible:outline-ink"
+              className="dc-button dc-button-outline mt-8 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground focus-visible:outline-ink"
             >
               Hablemos de tu proyecto <ArrowUpRight className="h-4 w-4" />
             </a>
