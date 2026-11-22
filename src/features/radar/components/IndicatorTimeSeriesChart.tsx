@@ -1,3 +1,4 @@
+import { formatMetricValue } from "@/features/radar/utils/formatMetricValue";
 import {
   CartesianGrid,
   Line,
