@@ -25,6 +25,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
+- [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
 - [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
 - [ ] Evaluar comparaciones adicionales solo después de validar los datos y sus dimensiones.
 
@@ -39,7 +40,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 - [ ] Actualizar documentación heredada que describa una landing de una sola página o instrucciones que ya no representan el producto.
 - [ ] Inventariar las ramas antiguas y comparar su contenido con `main` antes de proponer su cierre o eliminación.
-- [ ] Resolver los PR abiertos #11, #15 y #33 mediante revisión individual; no integrarlos por antigüedad ni cerrarlos sin verificar su contenido.
+- [ ] Resolver los PR abiertos #11 y #15 mediante revisión individual; la paginación antigua de #33 fue reemplazada por #64 y su PR quedó cerrada.
 - [ ] Revisar dependencias, configuración de TypeScript/ESLint/Prettier y consistencia de nombres.
 - [ ] Ampliar cobertura de pruebas de rutas, estados de carga/error, filtros, paginación y componentes de visualización (la exportación CSV ya cuenta con pruebas unitarias).
 - [ ] Revisar accesibilidad por teclado, contraste, etiquetas y preferencias de movimiento reducido.
