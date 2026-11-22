@@ -1,0 +1,29 @@
+name: Radar Production smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-production-smoke.yml"
+      - "scripts/radar-production-smoke.mjs"
+      - "src/features/radar/**"
+      - "src/routes/observatorio.radar-estadistico-argentina.tsx"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-smoke:
+    name: Check all 15 Radar services against Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Query Production endpoints and representative filters
+        run: node scripts/radar-production-smoke.mjs
