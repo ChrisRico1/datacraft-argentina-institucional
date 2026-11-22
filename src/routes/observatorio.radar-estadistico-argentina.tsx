@@ -603,8 +603,11 @@ function RadarEstadisticoArgentina() {
             : [];
           collected.push(...pageRows);
 
-          const totalMatch = /\/(\d+)$/.exec(payload.contentRange ?? "");
-          if (totalMatch) expectedTotal = Number(totalMatch[1]);
+      const totalPart = (payload.contentRange ?? "").split("/").at(-1);
+      const expectedTotal =
+        totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))
+          ? Number(totalPart)
+          : null;
           if (
             !loadAllPages ||
             pageRows.length < pageSize ||
@@ -728,7 +731,7 @@ function RadarEstadisticoArgentina() {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   useEffect(() => {
