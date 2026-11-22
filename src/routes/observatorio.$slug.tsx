@@ -87,7 +87,7 @@ function CloacalStudy() {
       <section className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
         <Link
           to="/observatorio"
-          className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-lime"
+          className="dc-nav-link inline-flex items-center gap-2 text-sm text-ink-muted hover:text-lime"
         >
           <ArrowLeft className="h-4 w-4" /> Todos los observatorios
         </Link>
@@ -127,7 +127,7 @@ function CloacalStudy() {
             </Button>
           )}
         </div>
-        <div className="mt-9 rounded-2xl border border-lime/30 bg-ink-2/60 p-6 sm:p-8">
+        <div className="dc-card mt-9 rounded-2xl border border-lime/30 bg-ink-2/60 p-6 sm:p-8">
           <p className="eyebrow text-lime">Objetivo del estudio</p>
           <h2 className="mt-3 max-w-3xl text-2xl font-semibold sm:text-3xl">
             Conocer la cobertura cloacal en la Cuenca Baja
@@ -152,7 +152,7 @@ function CloacalStudy() {
             </div>
           </div>
         </div>
-        <div className="mt-6 rounded-xl border border-ink-foreground/15 p-5">
+        <div className="dc-card mt-6 rounded-xl border border-ink-foreground/15 p-5">
           <p className="font-semibold">Cobertura cloacal · Cuenca Baja</p>
           <p className="mt-2 max-w-3xl text-sm text-ink-muted">
             Para consultar la cobertura territorial de la red, accedé al visualizador oficial de
@@ -160,7 +160,7 @@ function CloacalStudy() {
           </p>
           {pisa && (
             <a href={pisa.url} target="_blank" rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-2 text-sm text-mint hover:text-lime">
+              className="dc-nav-link mt-3 inline-flex items-center gap-2 text-sm text-mint hover:text-lime">
               Consultar cobertura en Monitor PISA <ArrowUpRight className="h-4 w-4" />
               <span className="sr-only">(nueva pestaña)</span>
             </a>
