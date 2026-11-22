@@ -97,12 +97,16 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     endpoint: "comercio_exterior_exportacion_bienes",
     order: "Anio,Mes,Periodo,rubro_cod,subrubro_cod,pais_cod",
     periodField: "Periodo",
+    regionField: "pais_cod",
+    seriesField: "subrubro_cod",
     categoryField: "rubro_cod",
   },
   importaciones: {
     endpoint: "comercio_exterior_importacion_bienes",
     order: "Anio,Mes,Periodo,uso_economico_cod,gce_cod,pais_cod",
     periodField: "Periodo",
+    regionField: "pais_cod",
+    seriesField: "gce_cod",
     categoryField: "uso_economico_cod",
   },
   "poblacion-departamento": {
