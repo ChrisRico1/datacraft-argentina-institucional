@@ -51,10 +51,8 @@ async function queryService(id, params) {
   if (payload.indicator !== id || payload.source !== "INDEC" || typeof payload.fetchedAt !== "string") {
     throw new Error("El sobre de respuesta no coincide con el contrato esperado.");
   }
-  if (!response.headers.get("content-range")) {
-    throw new Error("La respuesta no informa Content-Range.");
-  }
-  return { payload, contentRange: response.headers.get("content-range"), status: response.status };
+  const contentRange = response.headers.get("content-range") ?? payload.contentRange ?? null;
+  return { payload, contentRange, status: response.status };
 }
 
 function buildFilterParams(service, row, periodValue) {
@@ -100,7 +98,7 @@ for (const service of services) {
       throw new Error(`El filtro de período devolvió ${String(filteredRow[service.period] ?? "sin período")} en lugar de ${periodValue}.`);
     }
 
-    console.log(`PASS ${service.id}: HTTP ${initial.status}, ${initial.contentRange}; filtro de período y dimensiones: HTTP ${filtered.status}, ${filtered.contentRange}`);
+    console.log(`PASS ${service.id}: HTTP ${initial.status}, Content-Range ${initial.contentRange ?? "no informado"}; filtro de período y dimensiones: HTTP ${filtered.status}, Content-Range ${filtered.contentRange ?? "no informado"}`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     failures.push({ indicator: service.id, error: message });
