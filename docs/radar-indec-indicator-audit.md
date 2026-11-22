@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `72ca07e500e28f9b72d7c84afe9de1b343609b96`, posterior a las PR #82–#87  
+**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#91  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -62,7 +62,7 @@ La existencia de un endpoint o una prueba unitaria del armado de URL no demuestr
 | CBA / CBT | `valorizacion_canastas_cba_cbt` | `periodo`, `region`, `clasificador`, `nivel`, `codigo`, `indicador`, `tipo_de_indicador`, `valor` | Gran Buenos Aires; mensual | Activo. Filtros por región y apertura estadística; índice, variación e incidencia no se mezclan. Validación de ejecución pendiente. |
 | Canasta de crianza | `canasta-crianza` | `Periodo`, `bys_*`, `cuid_*`, `tot_*` | Gran Buenos Aires; mensual; cuatro tramos etarios | Activo. Doce series configuradas: tres componentes por cuatro tramos. Nueva comparación apilada de bienes/servicios y cuidado; el total se muestra desde el campo publicado por INDEC. Validación individual de las 12 métricas pendiente. |
 | Exportaciones | `comercio_exterior_exportacion_bienes` | `Periodo`, `rubro_cod`, `subrubro_cod`, `pais_cod`, `valor_FOB`, `Peso_Neto` | Nacional; mensual | Activo. Subrubro y país destino dependen del rubro; nomenclaturas oficiales. Treemap/composición pendiente de validación de supresiones y exhaustividad. |
-| Importaciones | `comercio_exterior_importacion_bienes` | `Periodo`, `uso_economico_cod`, `gce_cod`, `pais_cod`, `valor_CIF`, `Peso_Neto` | Nacional; mensual | Activo. GCE depende del uso económico; país origen es independiente. Visualización de composición pendiente. |
+| Importaciones | `comercio_exterior_importacion_bienes` | `Periodo`, `uso_economico_cod`, `gce_cod`, `pais_cod`, `valor_CIF` | Nacional; mensual | Activo. GCE depende del uso económico; país origen es independiente. La respuesta actual de API no incluye `Peso_Neto`; no se muestra ni infiere. Visualización de composición pendiente. |
 | Población por departamento | `estimaciones_poblacion_departamento_2022_2035` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `departamento_cod`, `departamento_nom`, `sexo_cod`, `poblacion`, `rmba` | Departamentos/partidos/comunas; anual, 2022–2035 | Activo. Estimaciones por departamento y sexo. Mapa pendiente de vincular códigos oficiales con geometrías compatibles. |
 | Población por jurisdicción | `proyecciones_poblacion_jurisdiccion_2022_2040` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `sexo_cod`, `edad_cod`, `edad_nom`, `poblacion` | Jurisdicciones; anual, 2022–2040 | Activo. Proyecciones por grupos quinquenales de edad. Mapa/comparación territorial pendiente. |
 | Población nacional | `proyecciones_poblacion_nacional_2022_2040` | `fecha`, `edad`, `sexo_cod`, `sexo_nom`, `poblacion` | Total nacional; anual, 2022–2040 | Activo. Pirámide poblacional solo con ambos sexos y una misma fecha; al filtrar edad/sexo se utiliza la serie temporal. Validación de ejecución pendiente. |
