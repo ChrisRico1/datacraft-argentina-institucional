@@ -201,3 +201,26 @@ Se contrastaron dos publicaciones institucionales disponibles para la cartograf�
 ### Estado
 
 Metadatos de PBA, CABA e INDEC comparados. PBA y CABA declaran EPSG:4326; GeoNode INDEC declara EPSG:3857 y licencia no especificada. Se identificaron las URL directas de descarga PBA y el WFS de IDEEC para CABA, pero no se descargó ni validó el contenido geométrico de esos recursos. Siguen pendientes la inspección de archivos, CRS real, campos, cobertura, validez topológica y comparación entre distribuciones. No se incorpora todavía ninguna capa al mapa público.
+
+
+## 12. Condiciones de uso y fuente normativa del límite
+
+### Licencias y restricciones
+
+- **Radios censales PBA 2022:** el catálogo general de Datos Abiertos de la Provincia declara licencia Creative Commons Attribution 4.0 para el conjunto «Radios censales». Las fichas individuales de los ZIP identifican a INDEC como responsable y declaran EPSG:4326. Antes de redistribuir el archivo, conservar atribución a INDEC y a Datos Abiertos PBA, y verificar si la licencia del conjunto cubre expresamente el recurso cartográfico individual.
+- **Radios censales CABA 2022:** la ficha técnica de la capa «RC_CNPHyV2022» declara CC-BY-2.5-AR. Sin embargo, la página general de Geoservicios IDEEC establece que queda prohibida la comercialización de la información obtenida y exige citar a IDEEC. Estas condiciones publicadas no son equivalentes y requieren aclaración escrita del organismo antes de incorporar la capa a una entrega o distribución comercial de Datacraft. No almacenar ni redistribuir esta geometría como parte de un producto comercial hasta resolver la contradicción.
+- **GeoNode INDEC:** la licencia continúa como «Not Specified» en sus metadatos. No usar ni redistribuir el archivo sin aclaración de derechos.
+
+### Límite oficial de la cuenca
+
+La Resolución ACUMAR 1113/2013 aprueba el «Mapa de Delimitación Topográfica de la Cuenca Hidrográfica del Río Matanza Riachuelo» y su informe. El informe describe límites hidrográficos y subcuencas, además de una delimitación topográfica por calles. Esta resolución y sus anexos son la referencia normativa que debe regir la selección de la geometría; no sustituirla por límites jurisdiccionales ni por una silueta aproximada del visor.
+
+El Monitor PISA publica un mapa con capas diferenciadas «Cuenca Matanza Riachuelo - Límite Hidrográfico» y «Cuenca Matanza Riachuelo - Límite Jurisdiccional». En la consulta realizada se verificó la presencia de ambas capas en el visor, pero no se identificó un endpoint vectorial descargable ni un archivo de geometría pública. Por tanto, el nombre de la capa no acredita que su geometría haya sido descargada ni que coincida con el anexo normativo.
+
+### Decisión de integración
+
+1. No incorporar todavía geometrías de CABA ni GeoNode INDEC a una distribución comercial.
+2. Priorizar el recurso PBA con licencia declarada, sujeto a inspección del ZIP y confirmación de la licencia aplicable al archivo.
+3. Solicitar a ACUMAR la geometría vectorial oficial o el endpoint de descarga de los límites hidrográfico y jurisdiccional, junto con metadatos, CRS y condiciones de uso.
+4. Contrastar cualquier archivo recibido con la Resolución 1113/2013 y su informe; registrar fuente, fecha, CRS, hash y método de validación.
+5. No digitalizar manualmente una imagen del mapa para presentarla como geometría oficial.
