@@ -21,7 +21,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 ## P1 — Radar Estadístico Argentina
 
 - [x] Incorporar paginación incremental desde el código vigente de `main`: carga inicial acotada, bloques de 1.000, conservación de filtros, cancelación al cambiar la consulta y límite de offset del servidor.
-- [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones. **Avance:** IPC, Índice de salarios, EMAE — nivel general, Pobreza e indigencia y Mercado de trabajo validados manualmente en Production el 22/11/2026 (5/15); los otros 10 indicadores siguen pendientes.
+- [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones. **Avance:** IPC, Índice de salarios, EMAE — nivel general, Pobreza e indigencia y Mercado de trabajo validados manualmente en Production el 22/11/2026 (5/15). IPI manufacturero cuenta con validación parcial de descarga paginada (41.667 registros, 22/11/2026), pero sigue deshabilitado y pendiente de integridad, filtros e interfaz; no se suma al conteo de indicadores validados.
 - [ ] Validar en Production el manejo de límites de consulta (`429`), su mensaje visible y el procedimiento de recuperación.
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
