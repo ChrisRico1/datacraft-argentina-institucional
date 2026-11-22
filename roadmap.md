@@ -37,6 +37,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [x] Incorporar parser inicial aislado para los CSV originales ACUMAR, con pruebas basadas en muestras compartidas: encabezados, campos citados multilínea, servicio, estados, cantidades, porcentajes y fechas.
 - [ ] Reconciliar el inventario comprimido de obras con los recursos completos 2024 y 2025 de ACUMAR; verificar cantidades, identificadores, duplicados, cambios entre cortes y alcance territorial. La revisión completa sigue pendiente porque solo se recibieron muestras parciales.
 - [ ] Obtener y validar geometrías oficiales de la cuenca hidrográfica/jurisdiccional y radios censales compatibles.
+  - Fuentes identificadas: capas hidrográfica y jurisdiccional del Monitor PISA; Resolución ACUMAR 1113/2013; geoservicio WFS de INDEC y radios censales 2022 de PBA. Descarga, metadatos, CRS, licencia y validación topológica siguen pendientes.
 - [ ] Auditar variables censales de desagüe a red pública, universo y nivel geográfico.
 - [ ] Verificar capas e indicadores de cobertura cloacal del Monitor PISA, su fecha y su definición; distinguir cobertura de conexión efectiva.
 - [ ] Diseñar cruces territoriales reproducibles sin atribuir a la cuenca datos municipales completos ni usar centros urbanos como ubicación de obras.

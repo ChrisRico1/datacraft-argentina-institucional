@@ -146,3 +146,34 @@ El parser:
 - Rechaza columnas obligatorias faltantes y errores de estructura CSV.
 
 Las pruebas usan exclusivamente las muestras compartidas y casos sintéticos explícitos. No certifican el contenido completo de los recursos ni habilitan la integración automática del inventario. La asignación de sector de cuenca, coordenadas y alcance territorial sigue fuera del parser porque no se desprende de forma segura de estos campos.
+
+
+## 10. Fuentes cartográficas oficiales identificadas
+
+La revisión de fuentes permite establecer un orden de consulta, pero todavía no acredita que las geometrías estén descargadas, validadas ni listas para incorporarse a la aplicación.
+
+### Límites de la cuenca
+
+- El [Mapa del Monitor PISA de ACUMAR](https://monitorpisa.acumar.gob.ar/mapa/) ofrece dos capas distintas: «Cuenca Matanza Riachuelo - Límite Hidrográfico» y «Cuenca Matanza Riachuelo - Límite Jurisdiccional». Deben conservarse como geometrías separadas y documentar cuál se utiliza en cada análisis.
+- La [Resolución ACUMAR 1113/2013](https://www.argentina.gob.ar/normativa/nacional/resoluci%C3%B3n-1113-2013-221349/texto) aprobó el Mapa de Delimitación Topográfica de la Cuenca Hidrográfica y su informe. Es el antecedente normativo para contrastar la capa hidrográfica; no sustituye la descarga ni la verificación del archivo vectorial.
+- La capa jurisdiccional responde a otro criterio espacial. No debe utilizarse como sustituto de la divisoria hidrográfica ni mezclarse con ella en una misma intersección.
+
+### Radios censales y marco geoestadístico
+
+- INDEC publica [geoservicios WMS y WFS](https://www.indec.gob.ar/indec/web/Nivel4-Tema-1-16-188) del Marco Geoestadístico Nacional. El endpoint WFS publicado es https://geonode.indec.gob.ar/geoserver/geonode/wfs y permite consultar/descargar información vectorial.
+- El catálogo de Datos Abiertos de la Provincia de Buenos Aires publica el recurso [Radios censales del Censo 2022 — Shapefile](https://catalogo.datos.gba.gob.ar/dataset/radios-censales/archivo/603ce4ba-a0da-429e-ae04-119f99556207), atribuido a INDEC y declarado en EPSG:4326.
+- La capa de radios censales del GeoNode de INDEC presenta metadatos con EPSG:3857 y licencia no especificada. Antes de elegir una distribución debe verificarse la versión, cobertura territorial, atributos, fecha y condiciones de uso; no asumir que ambas publicaciones son el mismo archivo ni reproyectarlas sin registrar el CRS de origen.
+
+### Condiciones previas a integrar geometrías
+
+1. Obtener los archivos vectoriales desde la fuente institucional y conservar URL, fecha de descarga, metadatos, licencia, nombre de capa y CRS original.
+2. Confirmar que el límite hidrográfico corresponda al aprobado y que el límite jurisdiccional tenga definición y fecha identificables.
+3. Comprobar validez geométrica, geometrías multipartes, anillos, vacíos, extensión espacial y sistema de referencia.
+4. Verificar códigos y nombres de jurisdicciones y radios contra el Marco Geoestadístico Nacional; los códigos deben tratarse como texto para preservar ceros iniciales.
+5. Reproyectar solo mediante una transformación explícita y documentada. Registrar CRS de origen y destino.
+6. Ejecutar pruebas de intersección sobre un conjunto pequeño y verificable antes de procesar todos los radios censales.
+7. No asignar radios por centroide solamente ni utilizar límites municipales completos para inferir pertenencia a la cuenca.
+
+### Estado de verificación
+
+Las fuentes y los servicios de consulta están identificados. Quedan pendientes la descarga efectiva de las capas, la inspección de sus metadatos completos, la validación topológica y la comparación de la delimitación hidrográfica con el antecedente normativo. No se incorpora todavía ninguna geometría ni se modifica el mapa público.
