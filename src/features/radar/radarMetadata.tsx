@@ -113,6 +113,40 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     };
     if (regions[value]) return { description: metadata.description, interpretation: `Selección actual: ${regions[value]}` };
   }
+  if (value?.trim() && field === "clasificador" && canonicalId === "sipm") {
+    const classifiers: Record<string, string> = {
+      CIIU3: "Clasificación Industrial Internacional Uniforme, revisión 3; organiza las actividades económicas.",
+      "SIPM 93": "Clasificador histórico del sistema de precios mayoristas asociado a la serie base 1993.",
+    };
+    if (classifiers[value]) return { description: metadata.description, interpretation: `Selección actual: ${classifiers[value]}` };
+  }
+  if (value?.trim() && field === "clasificador" && canonicalId === "costo-construccion") {
+    const classifiers: Record<string, string> = {
+      "ICC 93": "Clasificación histórica del ICC, base 1993; incluye aperturas agregadas que no tienen un código CPC de producto.",
+      "ICC 93-CPC": "Apertura del ICC organizada con códigos de la Clasificación Central de Productos (CPC). El nivel del índice se publica con período de referencia enero de 2022 = 100.",
+    };
+    if (classifiers[value]) return { description: metadata.description, interpretation: `Selección actual: ${classifiers[value]}` };
+  }
+  if (value?.trim() && field === "codigo_CPC_1" && canonicalId === "costo-construccion" && value === "-") {
+    return { description: metadata.description, interpretation: "Esta apertura no tiene un código CPC de producto en la respuesta; el guion no es un valor numérico ni un producto." };
+  }
+  if (value?.trim() && field === "nivel") {
+    const levels: Record<string, string> = {
+      "Nivel general": "Agregado total del indicador.",
+      "Categoría de Tabulación": "Agrupación superior de actividades o productos según el clasificador seleccionado.",
+      División: "Agrupación de dos dígitos dentro de la clasificación.",
+      Grupo: "Desagregación intermedia dentro de una división.",
+      Clase: "Apertura detallada dentro de un grupo.",
+      Ítems: "Apertura por ítems de obra o insumos del ICC.",
+      Producto: "Apertura de productos según CPC.",
+      Capitulo: "Agrupación de productos o componentes del ICC.",
+      Sector: "Agrupación amplia del clasificador.",
+      Origen: "Clasificación por origen de los productos.",
+      Hogar: "Valor correspondiente a un hogar tipo de referencia.",
+      "Adulto equivalente": "Valor calculado para una unidad de consumo equivalente, no para un hogar completo.",
+    };
+    if (levels[value]) return { description: metadata.description, interpretation: `Selección actual: ${levels[value]}` };
+  }
   if (value?.trim() && field === "periodRange") {
     const ranges: Record<string, string> = { all: "Todos los períodos disponibles", "5y": "Últimos cinco años", "2y": "Últimos dos años", "1y": "Último año" };
     return { description: metadata.description, interpretation: `Selección actual: ${ranges[value] ?? value}. El rango limita la consulta, no modifica la frecuencia de publicación.` };
@@ -199,6 +233,10 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
   const metric = metricLabel.toLocaleLowerCase("es-AR");
   if (canonicalId === "ipc" || canonicalId === "salarios" || canonicalId === "sipm" || canonicalId === "costo-construccion" || canonicalId === "cba-cbt") {
     if (metric.includes("incidencia")) return { description: "Aporte de una categoría a la variación del indicador general, expresado en puntos porcentuales.", interpretation: "No es el porcentaje de aumento de esa categoría ni una tasa porcentual." };
+    if (metric.includes("índice") && canonicalId === "sipm") return { description: "Nivel del índice de precios mayoristas.", interpretation: "La serie revisada informa base 1993, diciembre de 2015 = 100. No confundir el nivel con una variación porcentual." };
+    if (metric.includes("índice") && canonicalId === "costo-construccion") return { description: "Nivel del índice del costo de la construcción.", interpretation: "El ICC conserva ponderaciones de base 1993 y publica el nivel con período de referencia enero de 2022 = 100. La apertura depende del clasificador." };
+    if (metric.includes("índice") && canonicalId === "ipc") return { description: "Nivel del índice de precios al consumidor.", interpretation: "Base diciembre de 2016 = 100. El nivel no es una variación del período." };
+    if (metric.includes("índice") && canonicalId === "salarios") return { description: "Nivel del índice de salarios.", interpretation: "Base octubre de 2016 = 100. El nivel no expresa pesos ni poder adquisitivo." };
     if (metric.includes("índice")) return { description: "Nivel del índice en relación con su período base.", interpretation: "No es una variación del período. Para medir aumentos, elegí una variación mensual, interanual o acumulada." };
     if (metric.includes("interanual")) return { description: "Cambio porcentual respecto del mismo período del año anterior.", interpretation: "Compara períodos separados por doce meses; no representa el cambio del último mes." };
     if (metric.includes("acumulada")) return { description: "Cambio porcentual acumulado desde el período de referencia anual definido por INDEC.", interpretation: "No equivale a la variación mensual ni a la interanual." };
