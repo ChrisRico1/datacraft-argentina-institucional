@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, corte del 22 de noviembre de 2026, posterior a las PR #110 y #111  
+**Repositorio revisado:** `main`, corte del 22 de noviembre de 2026, posterior a las PR #110–#114  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -73,7 +73,7 @@ Conteos informados por `Content-Range` durante la ejecución:
 
 El smoke detectó y corrigió una suposición de contrato: la respuesta de importaciones no contiene `Peso_Neto`; no se infiere ni se reemplaza por cero. La primera ejecución también detectó que `Content-Range` no está expuesto uniformemente como encabezado HTTP; el test lee el campo del sobre JSON cuando existe.
 
-**Límite de la ejecución documentada:** el resultado 15/15 y 35/35 corresponde al smoke anterior a la ampliación de PR #111. El script actualizado toma hasta 100 observaciones por servicio y prueba hasta tres valores distintos por dimensión compatible, conservando el período de origen. Esa ampliación mejora la cobertura de filtros, pero no recorre todos los valores, combinaciones dependientes ni reemplaza la validación de la interfaz. La primera ejecución de Production con esta nueva cobertura debe quedar registrada por separado. IPI manufacturero permanece deshabilitado.
+**Ejecución ampliada:** el workflow [Radar Production smoke #45073107843](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45073107843), ejecutado sobre PR #114, comprobó 15/15 servicios, 35/35 métricas y 134 consultas individuales de filtros. La muestra abarcó hasta dos páginas de 1.000 observaciones por servicio y probó hasta tres valores distintos por dimensión compatible, conservando el período de origen. El resultado y la ejecución más reciente quedan disponibles en el [historial del workflow Radar Production smoke](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/workflows/radar-production-smoke.yml). El smoke no recorre todos los valores ni todas las combinaciones dependientes, y no reemplaza la validación de la interfaz. IPI manufacturero permanece deshabilitado.
 
 ## Criterio de lectura
 

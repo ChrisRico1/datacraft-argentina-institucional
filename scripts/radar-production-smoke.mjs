@@ -1,7 +1,7 @@
 const API_BASE = process.env.RADAR_API_BASE_URL ?? "https://datacraft-argentina-institucional.digitalperseo.workers.dev/api/radar";
 const ORIGIN = process.env.RADAR_PRODUCTION_ORIGIN ?? "https://datacraft-argentina.lovable.app";
 const PAUSE_MS = 350;
-const FILTER_SAMPLE_LIMIT = 100;
+const FILTER_SAMPLE_LIMIT = 1000;
 const MAX_FILTER_VALUES = 3;
 
 const services = [
@@ -105,12 +105,17 @@ function sampleFilterValues(rows, field, max = MAX_FILTER_VALUES) {
   return [...selected.entries()].map(([value, row]) => ({ value, row }));
 }
 
+function rangeTotal(contentRange) {
+  const match = typeof contentRange === "string" ? contentRange.match(/\/(\d+)$/) : null;
+  return match ? Number(match[1]) : null;
+}
+
 function hasNumericValue(value) {
   if (value === null || value === undefined || String(value).trim() === "") return false;
   return Number.isFinite(Number(value));
 }
 console.log(`Radar Production smoke · ${new Date().toISOString()}`);
-console.log(`Muestra de filtros: hasta ${FILTER_SAMPLE_LIMIT} observaciones por servicio; máximo ${MAX_FILTER_VALUES} valores distintos por dimensión.`);
+console.log(`Muestra de filtros: hasta dos páginas de ${FILTER_SAMPLE_LIMIT} observaciones por servicio; máximo ${MAX_FILTER_VALUES} valores distintos por dimensión.`);
 console.log(`API: ${API_BASE}`);
 console.log(`Origen CORS esperado: ${ORIGIN}`);
 
@@ -127,6 +132,20 @@ for (const service of services) {
       throw new Error(`La primera observación no contiene el período ${service.period}.`);
     }
 
+    const filterSampleRows = [...initial.payload.data];
+    const sampleTotal = rangeTotal(initial.contentRange);
+    if (sampleTotal !== null && sampleTotal > filterSampleRows.length) {
+      await sleep(PAUSE_MS);
+      const nextPage = await queryService(
+        service.id,
+        new URLSearchParams({
+          limit: String(FILTER_SAMPLE_LIMIT),
+          offset: String(filterSampleRows.length),
+        }),
+      );
+      filterSampleRows.push(...nextPage.payload.data);
+    }
+
     await sleep(PAUSE_MS);
     const filtered = await queryService(service.id, buildFilterParams(service, row, periodValue));
     const filteredRow = filtered.payload.data[0];
@@ -140,7 +159,7 @@ for (const service of services) {
     ])];
     let individualFilterChecks = 0;
     for (const field of filterFields) {
-      const selectedValues = sampleFilterValues(initial.payload.data, field);
+      const selectedValues = sampleFilterValues(filterSampleRows, field);
       for (const { value, row: sourceRow } of selectedValues) {
         await sleep(PAUSE_MS);
         const individual = await queryService(service.id, buildSingleFilterParams(service, sourceRow, field, value));
@@ -164,7 +183,7 @@ for (const service of services) {
       console.log(`PASS ${service.id} · ${service.seriesFields.length} series numéricas.`);
     }
 
-    console.log(`PASS ${service.id}: HTTP ${initial.status}; filtro combinado y período: HTTP ${filtered.status}; ${individualFilterChecks} valores de filtros individuales comprobados en ${filterFields.length} dimensiones.`);
+    console.log(`PASS ${service.id}: HTTP ${initial.status}; filtro combinado y período: HTTP ${filtered.status}; ${individualFilterChecks} valores de filtros individuales comprobados en ${filterFields.length} dimensiones (muestra: ${filterSampleRows.length} observaciones).`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     failures.push({ indicator: service.id, error: message });
