@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, BarChart3, Building2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { observatories } from "@/features/observatorio/catalog";
 import { ProjectCard } from "@/features/observatorio/components";
 
@@ -71,12 +72,11 @@ function ObservatoryIndex() {
               <li>Indicadores oficiales y trazabilidad</li>
               <li>Exploración temática y visualización de datos</li>
             </ul>
-            <Link
-              to="/observatorio/radar-estadistico-argentina"
-              className="dc-nav-link mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-lime"
-            >
-              Explorar proyecto <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            <Button asChild variant="lab" className="mt-auto w-fit">
+              <Link to="/observatorio/radar-estadistico-argentina">
+                Explorar proyecto <ArrowUpRight />
+              </Link>
+            </Button>
           </article>
           {observatories.map((project) => (
             <ProjectCard key={project.slug} project={project} />
@@ -95,12 +95,11 @@ function ObservatoryIndex() {
               Una propuesta de gestión inteligente para organizar proyectos de infraestructura
               pública y mejorar su seguimiento y trazabilidad.
             </p>
-            <Link
-              to="/municipio-en-obra"
-              className="dc-nav-link mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime"
-            >
-              Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            <Button asChild variant="lab" className="mt-auto w-fit">
+              <Link to="/municipio-en-obra">
+                Conocer la propuesta <ArrowUpRight />
+              </Link>
+            </Button>
           </article>
         </div>
       </section>
