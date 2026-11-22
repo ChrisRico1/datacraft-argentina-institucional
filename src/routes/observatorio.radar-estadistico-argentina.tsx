@@ -1023,15 +1023,24 @@ function RadarEstadisticoArgentina() {
                         contextValue={chartContext}
                       />
                     </div>
-                    <div className="overflow-x-auto">
+                    <div
+                      className="overflow-x-auto rounded-lg border border-ink-foreground/10"
+                      tabIndex={0}
+                      role="region"
+                      aria-label="Tabla de observaciones oficiales de INDEC"
+                    >
                       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                        <caption className="sr-only">
+                          Observaciones del indicador {selected.title}, con período, desagregación,
+                          valor publicado, marcas estadísticas y observaciones de INDEC
+                        </caption>
                         <thead>
                           <tr className="border-b border-ink-foreground/15 text-[11px] uppercase tracking-wider text-ink-muted">
-                            <th className="px-3 py-3 font-medium">Período</th>
-                            <th className="px-3 py-3 font-medium">Desagregación</th>
-                            <th className="px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
-                            <th className="px-3 py-3 font-medium">Marca INDEC</th>
-                            <th className="px-3 py-3 font-medium">Observaciones</th>
+                            <th scope="col" className="px-3 py-3 font-medium">Período</th>
+                            <th scope="col" className="px-3 py-3 font-medium">Desagregación</th>
+                            <th scope="col" className="px-3 py-3 text-right font-medium">{selectedValueLabel}</th>
+                            <th scope="col" className="px-3 py-3 font-medium">Marca INDEC</th>
+                            <th scope="col" className="px-3 py-3 font-medium">Observaciones</th>
                           </tr>
                         </thead>
                         <tbody>
