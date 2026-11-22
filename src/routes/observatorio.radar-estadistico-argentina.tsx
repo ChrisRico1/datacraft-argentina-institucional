@@ -521,7 +521,7 @@ function RadarEstadisticoArgentina() {
           : null;
   const activeTopicData = topics.find((topic) => topic.id === activeTopic) ?? topics[0]!;
   const totalRows = contentRange?.split("/")[1];
-  const knownMoreRows = Boolean(totalRows && /^\\d+$/.test(totalRows) && apiRows.length < Number(totalRows));
+  const knownMoreRows = Boolean(totalRows && /^\d+$/.test(totalRows) && apiRows.length < Number(totalRows));
   const unknownMoreRows = totalRows === "*" && apiIncomplete && apiRows.length >= 10000;
   const requiresEconomicOpening = (selected.id === "sipm" || selected.id === "costo-construccion") && !economicOpeningCode.trim() && !economicCategory.trim();
   const canLoadMore = apiIncomplete && !requiresEconomicOpening && (knownMoreRows || unknownMoreRows) && apiRows.length < 1_000_000;
@@ -696,7 +696,7 @@ function RadarEstadisticoArgentina() {
         return;
       }
 
-      const totalMatch = /\\/(\\d+)$/.exec(payload.contentRange ?? "");
+      const totalMatch = /\\/(\d+)$/.exec(payload.contentRange ?? "");
       const expectedTotal = totalMatch ? Number(totalMatch[1]) : null;
       const nextRows = [...apiRows, ...rows];
       setApiRows(nextRows);
@@ -728,7 +728,7 @@ function RadarEstadisticoArgentina() {
       ),
     );
     const csv = Papa.unparse(exportRows, { header: true, skipEmptyLines: true });
-    const blob = new Blob(["\\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -1264,7 +1264,7 @@ function RadarEstadisticoArgentina() {
                             <Button size="sm" variant="lab" disabled={loadingMore || apiLoading} onClick={() => void loadMoreRows()}>
                               {loadingMore ? "Cargando..." : "Cargar siguientes 1.000 registros"}
                             </Button>
-                            <span>{new Intl.NumberFormat("es-AR").format(apiRows.length)} registros cargados{totalRows && /^\\d+$/.test(totalRows) ? ` de ${new Intl.NumberFormat("es-AR").format(Number(totalRows))}` : ""}</span>
+                            <span>{new Intl.NumberFormat("es-AR").format(apiRows.length)} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${new Intl.NumberFormat("es-AR").format(Number(totalRows))}` : ""}</span>
                           </div>
                         ) : null}
                         {loadMoreError ? <p role="alert" className="mt-2 text-red-300">{loadMoreError}</p> : null}
