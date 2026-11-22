@@ -38,6 +38,6 @@ No requiere secretos ni expone el token de INDEC: consulta exclusivamente los en
 
 ## Resultado de Production — 22/11/2026
 
-El workflow [Radar Production smoke #45068591929](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068591929) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Además, verificó **35/35 opciones de métrica** en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC, sin fallas. Cada consulta devolvió el tipo de indicador o descripción de serie solicitado.
+El workflow [Radar Production smoke #45068877709](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068877709) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Además, verificó **35/35 opciones de métrica** en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC, sin fallas. Cada consulta devolvió el tipo de indicador o descripción de serie solicitado.
 
 La ejecución inicial del smoke había detectado dos supuestos que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`. La ejecución actual volvió a superar el conjunto de controles.
