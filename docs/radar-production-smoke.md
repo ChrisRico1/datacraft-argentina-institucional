@@ -21,7 +21,7 @@ Los 15 servicios cubiertos son IPC, salarios, EMAE, pobreza, mercado de trabajo,
 
 ## Qué no demuestra
 
-- No concilia el universo completo de registros, duplicados, continuidad histórica ni supresiones.
+- No exige que `Content-Range` esté expuesto como encabezado HTTP en todos los servicios: el Worker puede transportar esa información dentro del sobre JSON o no disponer de ella para una respuesta concreta. No concilia el universo completo de registros, duplicados, continuidad histórica ni supresiones.
 - No recorre todos los valores posibles de cada filtro ni todas las métricas de cada indicador.
 - No valida por sí solo la visualización, el resumen, la exportación o la interacción completa en el navegador.
 - No habilita IPI manufacturero ni cambia el estado de validación manual registrado en `docs/radar-indec-indicator-audit.md`.
