@@ -136,7 +136,7 @@ export function ProjectCard({ project }: { project: Observatory }) {
         <li>Fuentes públicas y trazabilidad</li>
         <li>Alcance y estado de validación documentados</li>
       </ul>
-      <Button asChild variant="lab" className="mt-auto w-fit">
+      <Button asChild variant="lab" className="mt-auto h-10 w-fit px-5">
         <Link to="/observatorio/$slug" params={{ slug: project.slug }}>
           Explorar observatorio <ArrowRight />
         </Link>
