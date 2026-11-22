@@ -220,6 +220,30 @@
 }
 .dc-glow-dot { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 12%, transparent), 0 0 22px color-mix(in oklab, var(--lime) 65%, transparent); }
 
+/* Feedback equivalente para teclado y pantallas táctiles. */
+.dc-button:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 12%, transparent),
+    0 0 24px color-mix(in oklab, var(--lime) 22%, transparent);
+}
+.dc-card:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 10%, transparent),
+    0 12px 32px rgb(0 0 0 / .16);
+}
+@media (hover: none) and (pointer: coarse) {
+  .dc-button:active {
+    transform: scale(.985);
+    filter: brightness(1.08);
+  }
+  .dc-card:active {
+    transform: scale(.992);
+    border-color: color-mix(in oklab, var(--lime) 42%, var(--border));
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .dc-button:hover {
     transform: translateY(-2px);
