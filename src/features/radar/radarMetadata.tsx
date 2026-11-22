@@ -113,6 +113,22 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     };
     if (regions[value]) return { description: metadata.description, interpretation: `Selección actual: ${regions[value]}` };
   }
+  if (value?.trim() && field === "tipo_de_indicador" && value.toLocaleLowerCase("es-AR") === "indice") {
+    const bases: Record<string, string> = {
+      ipc: "Nivel del IPC con base diciembre de 2016 = 100.",
+      salarios: "Nivel del índice de salarios con base octubre de 2016 = 100.",
+      sipm: "Nivel de precios mayoristas con base 1993, diciembre de 2015 = 100.",
+      "costo-construccion": "Nivel del ICC con ponderaciones de base 1993 y período de referencia enero de 2022 = 100.",
+      emae: "Nivel del EMAE con base 2004 = 100.",
+    };
+    if (bases[canonicalId]) return { description: metadata.description, interpretation: bases[canonicalId] };
+  }
+  if (value?.trim() && field === "region" && canonicalId === "costo-construccion" && value === "GBA") {
+    return { description: metadata.description, interpretation: "Gran Buenos Aires: Ciudad Autónoma de Buenos Aires y 24 partidos del conurbano bonaerense." };
+  }
+  if (value?.trim() && field === "region" && canonicalId === "sipm" && value === "Total del país") {
+    return { description: metadata.description, interpretation: "Agregado nacional del sistema de precios mayoristas." };
+  }
   if (value?.trim() && field === "clasificador" && canonicalId === "sipm") {
     const classifiers: Record<string, string> = {
       CIIU3: "Clasificación Industrial Internacional Uniforme, revisión 3; organiza las actividades económicas.",
