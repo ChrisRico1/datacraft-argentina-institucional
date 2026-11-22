@@ -101,9 +101,9 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
   if (!metadata) return null;
   if (value?.trim() && field === "indicador" && canonicalId === "sipm") {
     const labels: Record<string, string> = {
-      IPIB: "Índice de precios básicos del productor: mide precios en la primera etapa de comercialización, sin impuestos.",
-      IPIM: "Índice de precios internos al por mayor: mide la evolución de los precios de productos nacionales e importados ofrecidos en el mercado interno.",
-      IPP: "Índice de precios básicos del productor: mide precios percibidos por el productor, sin impuestos ni costos de distribución.",
+      IPIB: "Índice de precios internos básicos al por mayor: cubre productos nacionales e importados ofrecidos en el mercado interno, con precios considerados sin impuestos.",
+      IPIM: "Índice de precios internos al por mayor: mide los precios de productos nacionales e importados ofrecidos en el mercado interno, incluidos IVA y otros impuestos.",
+      IPP: "Índice de precios básicos del productor: mide productos exclusivamente de origen nacional, destinados al mercado interno y a la exportación, sin impuestos.",
     };
     if (labels[value]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${labels[value]}` };
   }
