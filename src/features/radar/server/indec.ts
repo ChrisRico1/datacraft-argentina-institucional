@@ -283,7 +283,7 @@ export async function getIndecIndicator(
   const level = cleanFilter(query.level, "level");
   const openingCode = cleanFilter(query.openingCode, "openingCode");
   const metric = cleanFilter(query.metric, "metric");
-  let dimensions: Record<string, string> = {};
+  const dimensions: Record<string, string> = {};
   if (query.dimensions) {
     let parsed: unknown;
     try {
