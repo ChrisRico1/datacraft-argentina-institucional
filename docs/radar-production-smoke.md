@@ -40,6 +40,10 @@ No requiere secretos ni expone el token de INDEC: consulta exclusivamente los en
 
 ## Resultado de Production — 22/11/2026
 
-El workflow [Radar Production smoke #45068877709](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068877709) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Además, verificó **35/35 opciones de métrica** en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC, sin fallas. Cada consulta devolvió el tipo de indicador o descripción de serie solicitado.
+- [Radar Production smoke #45068877709](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068877709): **15/15 servicios y 35/35 opciones de métrica**.
+- [Radar Production smoke #45072657136](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45072657136): **15/15 servicios, 35/35 opciones de métrica y 56 consultas individuales de filtros**, con una muestra de hasta 100 filas por servicio.
+- La versión incorporada en PR #114 amplía la muestra a dos páginas de hasta 1.000 observaciones por servicio. El workflow también queda configurado para ejecutarse en futuras pull requests que modifiquen el Radar.
 
-La ejecución inicial del smoke había detectado dos supuestos que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`. La ejecución actual volvió a superar el conjunto de controles.
+La ejecución más reciente se consulta en el [historial del workflow Radar Production smoke](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/workflows/radar-production-smoke.yml). Un smoke exitoso verifica el contrato de consulta, no todas las combinaciones posibles ni la experiencia visual completa.
+
+La ejecución inicial del smoke había detectado dos supuestos que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`.
