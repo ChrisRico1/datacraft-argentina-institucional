@@ -24,6 +24,11 @@ describe("Radar metadata dictionary", () => {
     expect(getRadarFieldMetadata("emae", "serie", "Serie desestacionalizada")?.interpretation).toContain("patrones estacionales");
   });
 
+  it("explains structurally missing values without converting them to zero", () => {
+    expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_empleo_formal")?.interpretation).toContain("2023T4");
+    expect(getRadarIndicatorMetadata("exportaciones")?.interpretation).toContain("no se infiere su causa");
+  });
+
   it("explains CBA/CBT household codes and population geography flags", () => {
     expect(getRadarFieldMetadata("canastas", "tipo_de_indicador", "Hogar 1")?.interpretation).toContain("tres integrantes");
     expect(getRadarFieldMetadata("canastas", "tipo_de_indicador", "ICE")?.interpretation).toContain("gasto total");
