@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowUpRight, Info } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { AlertCircle, ArrowLeft, ArrowUpRight, LoaderCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   sources,
@@ -76,9 +76,21 @@ function CloacalStudy() {
   const project = Route.useLoaderData();
   const [filters, setFilters] = useState(emptyFilters);
   const [works, setWorks] = useState<Work[]>([]);
-  useEffect(() => {
-    loadWorksData().then(setWorks).catch((error) => console.error("No se pudo cargar el inventario ACUMAR", error));
+  const [worksState, setWorksState] = useState<"loading" | "ready" | "error">("loading");
+  const loadWorks = useCallback(async () => {
+    setWorksState("loading");
+    try {
+      const records = await loadWorksData();
+      setWorks(records);
+      setWorksState("ready");
+    } catch (error) {
+      console.error("No se pudo cargar el inventario ACUMAR", error);
+      setWorksState("error");
+    }
   }, []);
+  useEffect(() => {
+    void loadWorks();
+  }, [loadWorks]);
   const records = filterWorks(works, filters);
   const source = getSource("works-2025");
   const pisa = getSource("pisa");
@@ -196,12 +208,42 @@ function CloacalStudy() {
           de la obra. Los registros se presentan como referencias jurisdiccionales y no implican
           que todas las obras estén confirmadas dentro de la Cuenca Baja.
         </p>
-        <WorksTable
-          records={records}
-          hasRecords={works.some((work) => work.service === "Cloacal")}
-          filters={filters}
-          onChange={setFilters}
-        />
+        {worksState === "loading" && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-6 flex items-center gap-3 rounded-xl border border-ink-foreground/15 bg-ink-2/50 p-5 text-sm text-ink-muted"
+          >
+            <LoaderCircle className="h-5 w-5 animate-spin text-lime" aria-hidden="true" />
+            <span>Estamos cargando y validando el inventario de obras de ACUMAR…</span>
+          </div>
+        )}
+        {worksState === "error" && (
+          <div
+            role="alert"
+            className="mt-6 flex flex-wrap items-center gap-4 rounded-xl border border-amber-400/30 bg-amber-400/5 p-5"
+          >
+            <AlertCircle className="h-5 w-5 shrink-0 text-amber-400" aria-hidden="true" />
+            <div className="min-w-0 flex-1">
+              <p className="font-medium">No pudimos cargar el inventario de obras.</p>
+              <p className="mt-1 text-sm text-ink-muted">
+                No podemos determinar si hay obras disponibles hasta completar la validación de los datos.
+                Podés volver a intentarlo.
+              </p>
+            </div>
+            <Button variant="labOutline" onClick={() => void loadWorks()}>
+              <RefreshCw /> Reintentar
+            </Button>
+          </div>
+        )}
+        {worksState === "ready" && (
+          <WorksTable
+            records={records}
+            hasRecords={works.some((work) => work.service === "Cloacal")}
+            filters={filters}
+            onChange={setFilters}
+          />
+        )}
       </section>
       <div className="mx-auto grid max-w-7xl gap-x-12 px-5 lg:grid-cols-2">
         <MethodologySection id="que-medimos" title="Qué información se analiza">
