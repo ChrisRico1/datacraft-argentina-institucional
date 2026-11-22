@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getRadarFieldMetadata, getRadarIndicatorMetadata, getRadarMetricMetadata } from "./radarMetadata";
-import { radarDimensionFilters } from "../filterConfig";
+import { radarDimensionFilters } from "./filterConfig";
 
 describe("Radar metadata dictionary", () => {
   it("documents every selectable indicator in the public catalogue", () => {
