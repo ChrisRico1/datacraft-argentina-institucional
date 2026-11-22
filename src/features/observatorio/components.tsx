@@ -325,7 +325,7 @@ export function WorksTable({
         />
       </label>
       <div
-        className="mt-3 max-h-[68vh] min-h-[320px] overflow-auto overscroll-contain rounded-lg border border-ink-foreground/15 shadow-inner"
+        className="mt-3 max-h-[68vh] min-h-[320px] overflow-auto overscroll-contain rounded-lg border border-ink-foreground/15 bg-ink-2/70 shadow-inner"
         style={{ contain: "layout paint" }}
         tabIndex={0}
         role="region"
@@ -355,7 +355,10 @@ export function WorksTable({
           </thead>
           <tbody>
             {records.map((work) => (
-              <tr key={work.id} className="border-t border-ink-foreground/10">
+              <tr
+                key={work.id}
+                className="border-t border-ink-foreground/10 transition-colors odd:bg-ink-2/20 even:bg-ink-2/55 hover:bg-ink-foreground/[0.07]"
+              >
                 <td className="px-3 py-2">
                   {work.municipality}
                   <span className="mt-1 block text-xs text-ink-muted">
