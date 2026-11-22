@@ -1391,6 +1391,13 @@ function RadarEstadisticoArgentina() {
                         <p className="mt-3 text-[11px] leading-relaxed text-ink-muted">
                           Marcas de INDEC: <strong>s</strong> confidencial · <strong>*</strong> provisorio · <strong>**</strong> preliminar · <strong>e</strong> estimado · <strong>i</strong> imputado · <strong>u</strong> baja calidad · <strong>-</strong> cero absoluto · <strong>.</strong> no registrado · <strong>...</strong> no disponible · <strong>///</strong> no aplicable. La marca se muestra separada del valor y de las observaciones.
                         </p>
+                        <div className="mt-3 grid gap-2 rounded-lg border border-ink-foreground/10 bg-ink-2/30 p-3 text-[11px] leading-relaxed text-ink-muted sm:grid-cols-2">
+                          <p><strong className="text-ink-foreground">Período:</strong> momento al que corresponde la observación, según la frecuencia de publicación.</p>
+                          <p><strong className="text-ink-foreground">Desagregación:</strong> categoría, territorio, actividad, grupo etario o dimensión que identifica la observación.</p>
+                          <p><strong className="text-ink-foreground">Valor:</strong> magnitud publicada para la métrica seleccionada; su unidad y definición se explican junto al selector.</p>
+                          <p><strong className="text-ink-foreground">Marca INDEC:</strong> condición estadística del dato. Una marca no debe reemplazarse por cero ni interpretarse como un valor numérico.</p>
+                          <p className="sm:col-span-2"><strong className="text-ink-foreground">Observaciones:</strong> notas adicionales del organismo sobre esa fila, cuando están disponibles.</p>
+                        </div>
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                           <p className="text-[11px] leading-relaxed text-ink-muted">
                             Fuente: INDEC · Página {Math.floor(offset / 20) + 1} · {apiRows.length} registros cargados{totalRows && /^\d+$/.test(totalRows) ? ` de ${totalRows} disponibles` : ""}
@@ -1437,7 +1444,7 @@ function RadarEstadisticoArgentina() {
                     <option value="2y">Últimos 2 años</option>
                     <option value="1y">Último año</option>
                   </select>
-                  <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "periodo", period)} />
+                  <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "periodRange", period)} />
                 </label>
                 <div className="flex flex-col justify-end pb-2 text-xs text-ink-muted">
                   <span className="font-semibold uppercase tracking-wider">Fuente</span>
