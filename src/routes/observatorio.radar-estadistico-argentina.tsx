@@ -417,6 +417,8 @@ function RadarEstadisticoArgentina() {
   const [economicCategory, setEconomicCategory] = useState("");
   const [economicRegion, setEconomicRegion] = useState("GBA");
   const [dimensionFilters, setDimensionFilters] = useState<Record<string, string>>({});
+  const [commerceNomenclatures, setCommerceNomenclatures] = useState<Record<string, unknown>[]>([]);
+  const [commerceNomenclaturesLoading, setCommerceNomenclaturesLoading] = useState(false);
   const [comparisonRows, setComparisonRows] = useState<Record<string, unknown>[]>([]);
   const [comparisonLoading, setComparisonLoading] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
@@ -443,6 +445,40 @@ function RadarEstadisticoArgentina() {
   const availableMetrics = metricOptions[selected.id] ?? [];
   const selectedDimensionFilters = radarDimensionFilters[selected.id] ?? [];
   const serializedDimensionFilters = JSON.stringify(dimensionFilters);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadNomenclatures = async () => {
+      setCommerceNomenclaturesLoading(true);
+      const collected: Record<string, unknown>[] = [];
+      const pageSize = 1000;
+      const maxRows = 10000;
+      try {
+        for (let offset = 0; offset < maxRows; offset += pageSize) {
+          const response = await fetch(`/api/radar/comercio-nomenclaturas?limit=${pageSize}&offset=${offset}`, {
+            signal: controller.signal,
+          });
+          const payload = (await response.json()) as { data?: unknown; error?: string };
+          if (!response.ok) throw new Error(payload.error ?? "No se pudo cargar el nomenclador de comercio exterior.");
+          const pageRows = Array.isArray(payload.data)
+            ? payload.data.filter((row): row is Record<string, unknown> => typeof row === "object" && row !== null && !Array.isArray(row))
+            : [];
+          collected.push(...pageRows);
+          if (pageRows.length < pageSize) break;
+        }
+        if (!controller.signal.aborted) setCommerceNomenclatures(collected);
+      } catch (error) {
+        if (!(error instanceof Error && error.name === "AbortError")) {
+          console.error("[Radar] No se pudo cargar el nomenclador oficial de comercio exterior.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setCommerceNomenclaturesLoading(false);
+      }
+    };
+    void loadNomenclatures();
+    return () => controller.abort();
+  }, []);
+
   const activeMetric = availableMetrics.find((metric) => metric.valueKey === selectedMetric) ?? availableMetrics[0];
   const selectedValueKey = activeMetric?.valueKey ?? selected.valueKey;
   const selectedEconomicMetrics = economicMetricOptions[selected.id] ?? [];
@@ -892,7 +928,12 @@ function RadarEstadisticoArgentina() {
                   </div>
                   {(selected.id === "exportaciones" || selected.id === "importaciones") ? (
                     <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
-                      Para aislar una serie mensual, completá los niveles de desagregación en orden: categoría principal, apertura secundaria y país. Si falta una dimensión, pueden quedar varias observaciones para el mismo período y el gráfico no trazará una línea única.
+                      País es un filtro independiente: podés elegir destino/origen sin completar rubro, subrubro, uso económico o GCE. Las aperturas secundarias sí dependen de su categoría principal. Si la consulta conserva varias observaciones por período, Radar evita dibujar una serie mezclada.
+                    </p>
+                  ) : null}
+                  {(selected.id === "pobreza" || selected.id === "mercado-laboral") ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      Este servicio de la EPH publica actualmente la serie agregada <strong>T_31_A</strong> (total de los 31 aglomerados urbanos). Aunque la especificación contempla campos geográficos, la respuesta disponible no ofrece una desagregación seleccionable por ciudad o aglomerado. Por eso no se muestran filtros territoriales que devolverían resultados vacíos.
                     </p>
                   ) : null}
                   {selected.id === "poblacion-nacional" ? (
@@ -910,36 +951,61 @@ function RadarEstadisticoArgentina() {
                       {selectedDimensionFilters.map((filter) => {
                         const blocked = filter.dependsOn ? !dimensionFilters[filter.dependsOn]?.trim() : false;
                         const listId = `radar-dimension-${selected.id}-${filter.field}`;
+                        const commerceCatalogFields = ["rubro_cod", "subrubro_cod", "uso_economico_cod", "gce_cod", "pais_cod"];
+                        const usesCommerceCatalog = commerceCatalogFields.includes(filter.field);
+                        const catalogOptions = commerceNomenclatures
+                          .filter((row) => String(row["nombre_columna"] ?? "") === filter.field)
+                          .sort((a, b) => String(a["codigo_descripcion"] ?? a["codigo"] ?? "").localeCompare(String(b["codigo_descripcion"] ?? b["codigo"] ?? ""), "es"));
+                        const updateValue = (value: string) => {
+                          setDimensionFilters((current) => {
+                            const next = { ...current, [filter.field]: value };
+                            for (const child of selectedDimensionFilters) {
+                              if (child.dependsOn === filter.field) delete next[child.field];
+                            }
+                            return next;
+                          });
+                          setOffset(0);
+                          setChartContext("");
+                        };
                         return (
                           <label key={filter.field} className="text-xs text-ink-muted">
                             {filter.label}
-                            <input
-                              list={listId}
-                              value={dimensionFilters[filter.field] ?? ""}
-                              disabled={blocked}
-                              onChange={(event) => {
-                                const value = event.target.value;
-                                setDimensionFilters((current) => {
-                                  const next = { ...current, [filter.field]: value };
-                                  for (const child of selectedDimensionFilters) {
-                                    if (child.dependsOn === filter.field) delete next[child.field];
-                                  }
-                                  return next;
-                                });
-                                setOffset(0);
-                                setChartContext("");
-                              }}
-                              placeholder={blocked ? "Primero seleccioná el filtro anterior" : filter.placeholder}
-                              className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                            />
-                            <datalist id={listId}>
-                              {getUniqueFilterValues(apiRows, filter.field).map((value) => <option key={value} value={value} />)}
-                            </datalist>
+                            {usesCommerceCatalog ? (
+                              <select
+                                value={dimensionFilters[filter.field] ?? ""}
+                                disabled={blocked || commerceNomenclaturesLoading || catalogOptions.length === 0}
+                                onChange={(event) => updateValue(event.target.value)}
+                                className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                <option value="">{commerceNomenclaturesLoading ? "Cargando nomenclatura oficial…" : catalogOptions.length ? "Todas las opciones" : "Nomenclatura no disponible"}</option>
+                                {catalogOptions.map((option) => (
+                                  <option key={String(option["codigo"])} value={String(option["codigo"])}>
+                                    {String(option["codigo_descripcion"] ?? option["codigo"])}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <>
+                                <input
+                                  list={listId}
+                                  value={dimensionFilters[filter.field] ?? ""}
+                                  disabled={blocked}
+                                  onChange={(event) => updateValue(event.target.value)}
+                                  placeholder={blocked ? "Primero seleccioná el filtro anterior" : filter.placeholder}
+                                  className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                                />
+                                <datalist id={listId}>
+                                  {getUniqueFilterValues(apiRows, filter.field).map((value) => <option key={value} value={value} />)}
+                                </datalist>
+                              </>
+                            )}
+                            {filter.description ? <span className="mt-1 block text-[11px] leading-relaxed text-ink-muted">{filter.description}</span> : null}
+                            {filter.suggestion ? <span className="mt-1 block text-[11px] leading-relaxed text-lime/90">Sugerencia: {filter.suggestion}</span> : null}
                           </label>
                         );
                       })}
                       <p className="text-[11px] leading-relaxed text-ink-muted col-span-full">
-                        Los campos corresponden a dimensiones publicadas por INDEC. Las sugerencias se obtienen de los registros cargados; también podés ingresar un código exacto del catálogo. Los filtros dependientes se habilitan en orden para evitar combinaciones ambiguas.
+                        Los filtros de comercio exterior utilizan el nomenclador oficial de INDEC (descripción + código), no una muestra parcial de operaciones. País permanece independiente de las categorías; las dependencias solo se aplican a jerarquías reales.
                       </p>
                     </div>
                   ) : null}
