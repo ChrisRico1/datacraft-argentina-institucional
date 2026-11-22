@@ -103,6 +103,18 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     const ranges: Record<string, string> = { all: "Todos los períodos disponibles", "5y": "Últimos cinco años", "2y": "Últimos dos años", "1y": "Último año" };
     return { description: metadata.description, interpretation: `Selección actual: ${ranges[value] ?? value}. El rango limita la consulta, no modifica la frecuencia de publicación.` };
   }
+  if (value?.trim() && field === "area_geografica_nom" && value === "T_31_A") {
+    return { description: metadata.description, interpretation: "Selección actual: total de los 31 aglomerados urbanos relevados por la EPH; no es una ciudad ni un municipio." };
+  }
+  if (value?.trim() && field === "indicador" && canonicalId === "salarios") {
+    const salaryLabels: Record<string, string> = {
+      "Sector público": "Evolución de las remuneraciones del personal del sector público.",
+      "Privado registrado": "Evolución de las remuneraciones del empleo asalariado privado registrado.",
+      "Privado no registrado": "Estimación de la evolución de los salarios del empleo privado no registrado a partir de la EPH.",
+    };
+    const label = salaryLabels[value];
+    if (label) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${label}` };
+  }
   if (value?.trim() && field === "indicador" && canonicalId === "sipm") {
     const labels: Record<string, string> = {
       IPIB: "Índice de precios internos básicos al por mayor: cubre productos nacionales e importados ofrecidos en el mercado interno, con precios considerados sin impuestos.",
@@ -127,7 +139,14 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
       incidencia_ia: "Contribución a la variación interanual, expresada en puntos porcentuales.",
       incidencia_acum: "Contribución a la variación acumulada, expresada en puntos porcentuales.",
     };
-    if (definitions[code]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${definitions[code]}` };
+    const dynamicDefinition = definitions[code]
+      ?? (code.includes("incidencia") ? "Contribución a la variación del indicador general, expresada en puntos porcentuales."
+        : code.includes("interanual") ? "Variación porcentual respecto del mismo período del año anterior."
+          : code.includes("acumulada") ? "Variación porcentual acumulada desde el período de referencia anual."
+            : code.includes("mensual") ? "Variación porcentual respecto del período inmediatamente anterior."
+              : code.includes("índice") || code.includes("indice") ? "Nivel del índice respecto de su período base; no es una tasa de variación."
+                : "");
+    if (dynamicDefinition) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${dynamicDefinition}` };
   }
   if (value?.trim() && field === "serie") {
     const series = value.toLocaleLowerCase("es-AR");
@@ -158,6 +177,7 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
     if (metricValue === "Indice") return { description: "Nivel del índice publicado para la selección actual.", interpretation: "Interpretalo con la base, el indicador y la apertura seleccionados." };
   }
   if (canonicalId === "emae") {
+    if (metric.includes("índice") || metric.includes("indice")) return { description: "Número índice que representa el nivel de actividad económica respecto de la base 2004=100.", interpretation: "La serie original conserva efectos estacionales; la desestacionalizada y la tendencia-ciclo tienen tratamientos diferentes." };
     if (metric.includes("interanual")) return { description: "Cambio respecto del mismo mes del año anterior, calculado sobre la serie original.", interpretation: "El índice del EMAE usa base 2004=100. La serie original conserva efectos estacionales; no comparar esta tasa con la variación mensual desestacionalizada." };
     if (metric.includes("desestacionalizada")) return { description: "Serie ajustada para remover patrones estacionales y facilitar comparaciones entre meses.", interpretation: "El índice del EMAE usa base 2004=100; la variación mensual se calcula sobre la serie ajustada. No mezclar con serie original o tendencia-ciclo." };
     if (metric.includes("tendencia-ciclo")) return { description: "Estimación suavizada de la trayectoria subyacente de la actividad.", interpretation: "El índice del EMAE usa base 2004=100. No reemplaza la serie original y puede revisarse al incorporar nuevos datos." };
