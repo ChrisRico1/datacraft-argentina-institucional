@@ -20,6 +20,15 @@ const services = [
   { id: "costo-construccion", period: "periodo", required: ["valor", "indicador", "tipo_de_indicador", "codigo_CPC_1"], filters: { region: "region", indicator: "indicador", classification: "clasificador", level: "nivel", openingCode: "codigo_apertura", metric: "tipo_de_indicador" }, dimensions: ["codigo_CPC_1"] },
 ];
 
+const metricCases = [
+  { id: "ipc", param: "metric", field: "tipo_de_indicador", values: ["Indice", "v_m", "v_ia", "v_acum", "Incidencia_m", "Incidencia_ia", "Incidencia_acum"], extra: { region: "GBA" } },
+  { id: "salarios", param: "metric", field: "tipo_de_indicador", values: ["Indice", "v_m", "v_ia", "v_acum"] },
+  { id: "emae", param: "metric", field: "tipo_de_indicador_descripcion", values: ["Var % interanual serie original", "Var % mensual serie desestacionalizada", "Var % mensual serie tendencia-ciclo", "Índice serie desestacionalizada", "Índice serie original", "Índice serie tendencia-ciclo"] },
+  { id: "cba-cbt", param: "indicatorType", field: "tipo_de_indicador", values: ["CBA", "CBT", "ICE", "Hogar 1", "Hogar 2", "Hogar 3", "v_m", "v_ia"], extra: { region: "GBA" } },
+  { id: "sipm", param: "metric", field: "tipo_de_indicador", values: ["Indice", "incidencia", "v_acum", "v_ia", "v_m"], extra: { indicator: "IPIB", region: "Total del país" } },
+  { id: "costo-construccion", param: "metric", field: "tipo_de_indicador", values: ["Indice", "incidencia", "v_acum", "v_ia", "v_m"], extra: { indicator: "ICC", region: "GBA" } },
+];
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const failures = [];
 
@@ -107,7 +116,31 @@ for (const service of services) {
   await sleep(PAUSE_MS);
 }
 
-console.log(`Resultado: ${services.length - failures.length}/${services.length} servicios superaron el smoke test de Production.`);
+let metricChecks = 0;
+let metricFailures = 0;
+for (const metricCase of metricCases) {
+  for (const value of metricCase.values) {
+    const params = new URLSearchParams({ limit: "1", [metricCase.param]: value, ...(metricCase.extra ?? {}) });
+    try {
+      const result = await queryService(metricCase.id, params);
+      const actual = String(result.payload.data[0]?.[metricCase.field] ?? "");
+      if (actual !== value) {
+        throw new Error(`La métrica solicitada ${value} devolvió ${actual || "sin valor"}.`);
+      }
+      metricChecks++;
+      console.log(`PASS ${metricCase.id} · métrica ${value}`);
+    } catch (error) {
+      metricFailures++;
+      const message = error instanceof Error ? error.message : String(error);
+      failures.push({ indicator: metricCase.id, metric: value, error: message });
+      console.error(`FAIL ${metricCase.id} · métrica ${value}: ${message}`);
+    }
+    await sleep(700);
+  }
+}
+
+console.log(`Resultado: ${services.length - failures.filter((item) => !item.metric).length}/${services.length} servicios superaron el smoke test de Production.`);
+console.log(`Métricas consultadas: ${metricChecks}/${metricCases.reduce((sum, item) => sum + item.values.length, 0)}; fallas de métrica: ${metricFailures}.`);
 if (failures.length > 0) {
   console.error(JSON.stringify(failures, null, 2));
   process.exitCode = 1;
