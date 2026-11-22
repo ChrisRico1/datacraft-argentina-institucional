@@ -10,6 +10,10 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 **Alcance:** cubre conceptualmente los 15 servicios del catálogo y sus dimensiones configuradas. Esta mejora de comprensión no altera el estado de validación de ejecución: un servicio con metadatos explicativos no se considera validado por ese motivo. IPI manufacturero permanece deshabilitado.
 
+## Smoke automatizado de Production
+
+Se agrega `scripts/radar-production-smoke.mjs` y el workflow `.github/workflows/radar-production-smoke.yml` para consultar los 15 servicios contra el Worker real, verificar CORS, esquema mínimo, período y un conjunto de filtros representativos derivados de una observación. El alcance y las limitaciones están documentados en `docs/radar-production-smoke.md`. Este control no equivale a conciliar el universo completo ni a validar todas las métricas y filtros; no modifica el estado de validación de la tabla.
+
 ## Criterio de lectura
 
 Esta auditoría distingue tres cosas que no deben confundirse:
