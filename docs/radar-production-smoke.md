@@ -33,3 +33,10 @@ Un resultado exitoso se denomina **smoke de servicio y filtro representativo**, 
 El workflow se ejecuta automáticamente después de cambios en el código del Radar que llegan a `main`. También admite ejecución manual desde GitHub Actions mediante `workflow_dispatch`.
 
 No requiere secretos ni expone el token de INDEC: consulta exclusivamente los endpoints públicos de la API de Radar, que mantienen la credencial upstream en el Worker.
+
+
+## Resultado de la ejecución inicial
+
+El 22/11/2026, el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Los conteos de registros y el alcance de esta prueba están asentados en `docs/radar-indec-indicator-audit.md`.
+
+El primer intento detectó dos supuestos del test que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`. La segunda ejecución fue satisfactoria.

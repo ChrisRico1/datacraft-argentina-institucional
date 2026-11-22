@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `72ca07e500e28f9b72d7c84afe9de1b343609b96`, posterior a las PR #82–#87  
+**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#91  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -12,7 +12,33 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 ## Smoke automatizado de Production
 
-Se agrega `scripts/radar-production-smoke.mjs` y el workflow `.github/workflows/radar-production-smoke.yml` para consultar los 15 servicios contra el Worker real, verificar CORS, esquema mínimo, período y un conjunto de filtros representativos derivados de una observación. El alcance y las limitaciones están documentados en `docs/radar-production-smoke.md`. Este control no equivale a conciliar el universo completo ni a validar todas las métricas y filtros; no modifica el estado de validación de la tabla.
+Se ejecutó el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) el 22/11/2026 contra el Worker público de Production.
+
+**Resultado: 15/15 servicios.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado.
+
+Conteos informados por `Content-Range` durante la ejecución:
+
+| Servicio | Registros informados |
+|---|---:|
+| IPC | 235.683 |
+| Salarios | 3.432 |
+| EMAE | 1.632 |
+| Pobreza | 20 |
+| Mercado de trabajo | 41 |
+| CBA / CBT | 1.651 |
+| Canasta de crianza | 82 |
+| Exportaciones | 781.462 |
+| Importaciones | 391.340 |
+| Población por departamento | 14.784 |
+| Población por jurisdicción | 19.152 |
+| Población nacional | 3.838 |
+| IPI manufacturero | 41.667 |
+| SIPM | 236.062 |
+| Costo de construcción | 14.124 |
+
+El smoke detectó y corrigió una suposición de contrato: la respuesta de importaciones no contiene `Peso_Neto`; no se infiere ni se reemplaza por cero. La primera ejecución también detectó que `Content-Range` no está expuesto uniformemente como encabezado HTTP; el test lee el campo del sobre JSON cuando existe.
+
+**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo y un filtro representativo por servicio. No concilia todos los registros, no valida cada combinación de filtros ni todas las métricas y no valida por sí solo la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
 
 ## Criterio de lectura
 
@@ -36,7 +62,7 @@ La existencia de un endpoint o una prueba unitaria del armado de URL no demuestr
 | CBA / CBT | `valorizacion_canastas_cba_cbt` | `periodo`, `region`, `clasificador`, `nivel`, `codigo`, `indicador`, `tipo_de_indicador`, `valor` | Gran Buenos Aires; mensual | Activo. Filtros por región y apertura estadística; índice, variación e incidencia no se mezclan. Validación de ejecución pendiente. |
 | Canasta de crianza | `canasta-crianza` | `Periodo`, `bys_*`, `cuid_*`, `tot_*` | Gran Buenos Aires; mensual; cuatro tramos etarios | Activo. Doce series configuradas: tres componentes por cuatro tramos. Nueva comparación apilada de bienes/servicios y cuidado; el total se muestra desde el campo publicado por INDEC. Validación individual de las 12 métricas pendiente. |
 | Exportaciones | `comercio_exterior_exportacion_bienes` | `Periodo`, `rubro_cod`, `subrubro_cod`, `pais_cod`, `valor_FOB`, `Peso_Neto` | Nacional; mensual | Activo. Subrubro y país destino dependen del rubro; nomenclaturas oficiales. Treemap/composición pendiente de validación de supresiones y exhaustividad. |
-| Importaciones | `comercio_exterior_importacion_bienes` | `Periodo`, `uso_economico_cod`, `gce_cod`, `pais_cod`, `valor_CIF`, `Peso_Neto` | Nacional; mensual | Activo. GCE depende del uso económico; país origen es independiente. Visualización de composición pendiente. |
+| Importaciones | `comercio_exterior_importacion_bienes` | `Periodo`, `uso_economico_cod`, `gce_cod`, `pais_cod`, `valor_CIF` | Nacional; mensual | Activo. GCE depende del uso económico; país origen es independiente. La respuesta actual de API no incluye `Peso_Neto`; no se muestra ni infiere. Visualización de composición pendiente. |
 | Población por departamento | `estimaciones_poblacion_departamento_2022_2035` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `departamento_cod`, `departamento_nom`, `sexo_cod`, `poblacion`, `rmba` | Departamentos/partidos/comunas; anual, 2022–2035 | Activo. Estimaciones por departamento y sexo. Mapa pendiente de vincular códigos oficiales con geometrías compatibles. |
 | Población por jurisdicción | `proyecciones_poblacion_jurisdiccion_2022_2040` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `sexo_cod`, `edad_cod`, `edad_nom`, `poblacion` | Jurisdicciones; anual, 2022–2040 | Activo. Proyecciones por grupos quinquenales de edad. Mapa/comparación territorial pendiente. |
 | Población nacional | `proyecciones_poblacion_nacional_2022_2040` | `fecha`, `edad`, `sexo_cod`, `sexo_nom`, `poblacion` | Total nacional; anual, 2022–2040 | Activo. Pirámide poblacional solo con ambos sexos y una misma fecha; al filtrar edad/sexo se utiliza la serie temporal. Validación de ejecución pendiente. |
