@@ -99,8 +99,8 @@ export function PopulationPyramidChart({ rows, periodKey, valueKey }: Population
           <p className="mt-1 text-xs text-ink-muted">Población por edad y sexo · {periodLabel(result.period)}</p>
         </div>
         <div className="flex gap-4 text-xs text-ink-muted">
-          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-[#b7e36a]" />Mujeres</span>
-          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-[#66b8dc]" />Varones</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-[#C34811]" />Mujeres</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-[#0B369A]" />Varones</span>
         </div>
       </div>
       <div className="h-[440px] w-full" role="img" aria-label="Pirámide poblacional: mujeres a la izquierda y varones a la derecha, agrupados por edad">
@@ -126,13 +126,13 @@ export function PopulationPyramidChart({ rows, periodKey, valueKey }: Population
             />
             <ReferenceLine x={0} stroke="currentColor" opacity={0.35} />
             <Tooltip
-              contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
-              labelStyle={{ color: "#c5d0c7" }}
+              contentStyle={{ background: "var(--carbon)", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "var(--background)" }}
+              labelStyle={{ color: "var(--brand-stone-linen)" }}
               labelFormatter={(label) => `${label} años`}
               formatter={(value, name) => [full.format(Math.abs(Number(value))), name === "female" ? "Mujeres" : "Varones"]}
             />
-            <Bar dataKey="female" name="Mujeres" fill="#b7e36a" stackId="population" maxBarSize={14} />
-            <Bar dataKey="male" name="Varones" fill="#66b8dc" stackId="population" maxBarSize={14} />
+            <Bar dataKey="female" name="Mujeres" fill="var(--brand-terracotta)" stackId="population" maxBarSize={14} />
+            <Bar dataKey="male" name="Varones" fill="var(--brand-gallery-blue)" stackId="population" maxBarSize={14} />
           </BarChart>
         </ResponsiveContainer>
       </div>

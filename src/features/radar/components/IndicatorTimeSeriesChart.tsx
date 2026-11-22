@@ -183,8 +183,8 @@ export function IndicatorTimeSeriesChart({
                 : ["auto", "auto"]}
             />
             <Tooltip
-              contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
-              labelStyle={{ color: "#c5d0c7" }}
+              contentStyle={{ background: "var(--carbon)", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "var(--background)" }}
+              labelStyle={{ color: "var(--brand-stone-linen)" }}
               labelFormatter={(label) => formatChartPeriod(String(label))}
               formatter={(value) => [formatMetricValue(Number(value), unit, valueLabel), valueLabel]}
             />
@@ -193,7 +193,7 @@ export function IndicatorTimeSeriesChart({
               type="monotone"
               dataKey="value"
               name={valueLabel}
-              stroke="#b7e36a"
+              stroke="var(--brand-gallery-blue)"
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 5, strokeWidth: 0 }}

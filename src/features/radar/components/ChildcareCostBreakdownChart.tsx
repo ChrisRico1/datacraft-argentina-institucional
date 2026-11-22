@@ -56,8 +56,8 @@ export function ChildcareCostBreakdownChart({ rows }: ChildcareCostBreakdownChar
           <p className="mt-1 text-xs text-ink-muted">Último período disponible: {formatChildcarePeriodLabel(result.period)}</p>
         </div>
         <div className="flex flex-wrap gap-3 text-xs text-ink-muted">
-          <span><span className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#b7e36a]" />Bienes y servicios</span>
-          <span><span className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#66b8dc]" />Tiempo de cuidado</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#C34811]" />Bienes y servicios</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#0B369A]" />Tiempo de cuidado</span>
         </div>
       </div>
       <div className="h-[300px] w-full" role="img" aria-label="Barras horizontales apiladas de bienes y servicios y tiempo de cuidado para cuatro tramos de edad">
@@ -80,12 +80,12 @@ export function ChildcareCostBreakdownChart({ rows }: ChildcareCostBreakdownChar
               axisLine={false}
             />
             <Tooltip
-              contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
-              labelStyle={{ color: "#c5d0c7" }}
+              contentStyle={{ background: "var(--carbon)", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "var(--background)" }}
+              labelStyle={{ color: "var(--brand-stone-linen)" }}
               formatter={(value, name) => [currency.format(Number(value)), name]}
             />
-            <Bar dataKey="goods" name="Bienes y servicios" stackId="cost" fill="#b7e36a" maxBarSize={28} />
-            <Bar dataKey="care" name="Tiempo de cuidado" stackId="cost" fill="#66b8dc" maxBarSize={28}>
+            <Bar dataKey="goods" name="Bienes y servicios" stackId="cost" fill="var(--brand-terracotta)" maxBarSize={28} />
+            <Bar dataKey="care" name="Tiempo de cuidado" stackId="cost" fill="var(--brand-gallery-blue)" maxBarSize={28}>
               <LabelList dataKey="total" position="right" formatter={(value: unknown) => currency.format(Number(value))} />
             </Bar>
           </BarChart>

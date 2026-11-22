@@ -192,11 +192,11 @@ export function EconomicCategoryComparison({
               interval={0}
             />
             <Tooltip
-              contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
-              labelStyle={{ color: "#c5d0c7" }}
+              contentStyle={{ background: "var(--carbon)", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "var(--background)" }}
+              labelStyle={{ color: "var(--brand-stone-linen)" }}
               formatter={(value) => [formatValue(Number(value), unit), metricLabel]}
             />
-            <Bar dataKey="value" name={metricLabel} fill="#b7e36a" radius={[0, 5, 5, 0]} maxBarSize={22} />
+            <Bar dataKey="value" name={metricLabel} fill="var(--brand-terracotta)" radius={[0, 5, 5, 0]} maxBarSize={22} />
           </BarChart>
         </ResponsiveContainer>
       </div>
