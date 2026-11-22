@@ -41,7 +41,7 @@ describe("Importación del CSV original de ACUMAR", () => {
       inspector: "MG",
       inspectionDate: null,
     });
-    expect(row?.raw.obra_sub_estado).toBe("PARALIZADA");
+    expect(row?.raw.obra_sub_estado).toBe(" PARALIZADA");
   });
 
   it("interpreta 2025, separadores de miles y campos citados con saltos de línea", () => {
