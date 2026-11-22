@@ -1,6 +1,13 @@
 name: Radar Production smoke
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-production-smoke.yml"
+      - "scripts/radar-production-smoke.mjs"
+      - "src/features/radar/**"
+      - "src/routes/observatorio.radar-estadistico-argentina.tsx"
   push:
     branches: [main]
     paths:
