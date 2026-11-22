@@ -51,7 +51,7 @@ function ObservatoryIndex() {
           </div>
           <p className="text-sm text-ink-muted">Soluciones demostrativas · desarrollos a medida</p>
         </div>
-        <div className="grid items-stretch gap-5 md:grid-cols-2">
+        <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
           <article className="dc-card flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
