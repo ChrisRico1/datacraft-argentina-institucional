@@ -24,6 +24,13 @@ describe("Radar metadata dictionary", () => {
     expect(getRadarFieldMetadata("emae", "serie", "Serie desestacionalizada")?.interpretation).toContain("patrones estacionales");
   });
 
+  it("explains SIPM and ICC index bases and classifiers", () => {
+    expect(getRadarFieldMetadata("sipm", "tipo_de_indicador", "Indice")?.interpretation).toContain("diciembre de 2015 = 100");
+    expect(getRadarFieldMetadata("costo-construccion", "clasificador", "ICC 93-CPC")?.interpretation).toContain("enero de 2022 = 100");
+    expect(getRadarFieldMetadata("costo-construccion", "codigo_CPC_1", "-")?.interpretation).toContain("no tiene un código CPC");
+    expect(getRadarMetricMetadata("costo-construccion", "Indice", "Índice")?.interpretation).toContain("enero de 2022 = 100");
+  });
+
   it("explains structurally missing values without converting them to zero", () => {
     expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_empleo_formal")?.interpretation).toContain("2023T4");
     expect(getRadarIndicatorMetadata("exportaciones")?.interpretation).toContain("no se infiere su causa");
