@@ -21,6 +21,7 @@ import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorT
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
+import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -880,6 +881,11 @@ function RadarEstadisticoArgentina() {
                       Para aislar una serie mensual, completá los niveles de desagregación en orden: categoría principal, apertura secundaria y país. Si falta una dimensión, pueden quedar varias observaciones para el mismo período y el gráfico no trazará una línea única.
                     </p>
                   ) : null}
+                  {selected.id === "poblacion-nacional" ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      Cada observación combina edad en años cumplidos y sexo. Para construir una serie anual sin mezclar grupos, seleccioná ambos filtros. Sexo: código 1 = Mujer y 2 = Varón. La población se estima al 1 de julio de cada año.
+                    </p>
+                  ) : null}
                   {selectedDimensionFilters.length > 0 ? (
                     <div className="mt-3 grid gap-3 sm:grid-cols-2">
                       {selectedDimensionFilters.map((filter) => {
@@ -1126,7 +1132,7 @@ function RadarEstadisticoArgentina() {
                             return (
                               <tr key={`${String(periodValue)}-${index}`} className="border-b border-ink-foreground/10 last:border-0">
                                 <td className="whitespace-nowrap px-3 py-3 font-medium">{formatEphPeriod(periodValue)}</td>
-                                <td className="px-3 py-3 text-ink-muted">{contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
+                                <td className="px-3 py-3 text-ink-muted">{selected.id === "poblacion-nacional" ? formatNationalPopulationDimensions(row) : contextValue === null || contextValue === undefined ? "—" : contextValue === "T_31_A" ? "Total 31 aglomerados urbanos" : String(contextValue)}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-right font-semibold text-lime">{displayValue}</td>
                                 <td className="whitespace-nowrap px-3 py-3 text-xs font-medium text-amber-200">{markerText || <span className="text-ink-muted">—</span>}</td>
                                 <td className="max-w-[180px] px-3 py-3 text-xs">{noteText ? <span className={isProvisional ? "inline-flex rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-amber-200" : "text-ink-muted"}>{noteText}</span> : <span className="text-ink-muted">—</span>}</td>
