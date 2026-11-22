@@ -56,6 +56,27 @@ Referencias:
 
 La matriz de campos, claves primarias y filtros está definida en `src/features/radar/server/indec.ts`; los rótulos y dependencias de los filtros visibles están en `src/features/radar/filterConfig.ts`. Los endpoints no deben habilitarse o renombrarse sin volver a verificar el catálogo oficial.
 
+## Cobertura del catálogo en la interfaz
+
+El catálogo visual debe mantener una correspondencia explícita con los 15 servicios registrados en el servidor:
+
+| Servicio | Estado en la interfaz | Observación |
+|---|---|---|
+| IPC, salarios, EMAE | Disponible | Métricas y series específicas configuradas |
+| Pobreza, mercado laboral | Disponible | Cobertura EPH: 31 aglomerados urbanos |
+| CBA/CBT | Disponible | Gran Buenos Aires; dimensiones estadísticas |
+| Canasta de crianza | Parcial | Se presenta inicialmente el tramo menor de 1 año; los otros tramos requieren validar sus campos y métricas antes de exponerlos |
+| Exportaciones e importaciones | Disponible | Filtros jerárquicos de clasificación y país |
+| Población por departamento | Disponible | Estimaciones por departamento |
+| Población por jurisdicción | Disponible | Proyecciones por jurisdicción, sexo y edad |
+| Población nacional | Disponible | Proyecciones nacionales por edad y sexo |
+| IPI manufacturero | Registrado, temporalmente deshabilitado | No habilitar en la interfaz hasta validar en Production la respuesta, los campos y las dimensiones del endpoint |
+| SIPM e ICC | Disponible | Métricas económicas y comparación de aperturas |
+
+La interfaz incluye un acceso independiente para población nacional. No debe confundirse con las proyecciones por jurisdicción ni con las estimaciones departamentales.
+
+La cantidad de servicios registrados en el servidor no equivale a la cantidad de indicadores plenamente explorables: canasta de crianza conserva una cobertura parcial y el IPI manufacturero permanece deshabilitado hasta su validación operativa.
+
 ## Consideraciones estadísticas
 
 - Pobreza e indigencia y mercado laboral de EPH tienen cobertura de aglomerados urbanos; no son automáticamente representativos de cada departamento o municipio.
