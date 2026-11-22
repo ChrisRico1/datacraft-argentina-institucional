@@ -1,0 +1,30 @@
+name: Radar Production sample audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/radar-production-sample-audit.yml"
+      - "scripts/radar-production-sample-audit.mjs"
+      - "src/features/radar/server/indec.ts"
+      - "src/features/radar/radarMetadata.tsx"
+      - "src/routes/observatorio.radar-estadistico-argentina.tsx"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sample-audit:
+    name: Profile up to 1,000 Production rows per service
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Profile metrics, periods, missing values and duplicate keys
+        run: node scripts/radar-production-sample-audit.mjs
