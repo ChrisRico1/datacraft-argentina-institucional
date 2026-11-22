@@ -94,7 +94,7 @@ const sampleWorks = [
     type: "Vialidad",
     status: "En ejecución",
     progress: 68,
-    color: "bg-lime",
+    color: "bg-[var(--brand-terracotta)]",
   },
   {
     name: "Ampliación de red pluvial",
@@ -102,7 +102,7 @@ const sampleWorks = [
     type: "Desagües",
     status: "En ejecución",
     progress: 42,
-    color: "bg-sky",
+    color: "bg-[var(--brand-gallery-blue)]",
   },
   {
     name: "Nuevo espacio comunitario",
@@ -110,7 +110,7 @@ const sampleWorks = [
     type: "Equipamiento",
     status: "Planificada",
     progress: 12,
-    color: "bg-mint",
+    color: "bg-[var(--brand-stone-linen)]",
   },
 ];
 
@@ -224,11 +224,11 @@ function MunicipioEnObraPage() {
                     <MapPinned className="h-4 w-4 text-lime" />
                   </div>
                   <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-ink-foreground/10 bg-ink-2">
-                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, #78918d 47%, transparent 48%), linear-gradient(120deg, transparent 46%, #78918d 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
+                    <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "linear-gradient(30deg, transparent 46%, var(--brand-stone-linen) 47%, transparent 48%), linear-gradient(120deg, transparent 46%, var(--brand-stone-linen) 47%, transparent 48%)", backgroundSize: "42px 42px" }} />
                     <svg viewBox="0 0 220 145" className="absolute inset-0 h-full w-full" aria-label="Mapa ilustrativo de puntos de obras">
-                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="#78918d" strokeWidth="2" strokeDasharray="4 5" />
-                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="#78918d" strokeWidth="1.5" opacity=".6" />
-                      {[[48,80],[98,48],[130,64],[158,25],[182,105],[72,92],[202,45]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill={i%2===0 ? "#d7ff62" : "#9ed7df"} stroke="#18232d" strokeWidth="2" />)}
+                      <path d="M15 110 L48 80 L72 92 L98 48 L130 64 L158 25 L202 45" fill="none" stroke="var(--brand-stone-linen)" strokeWidth="2" strokeDasharray="4 5" />
+                      <path d="M20 30 L66 52 L96 36 L134 88 L182 105 L210 90" fill="none" stroke="var(--brand-stone-linen)" strokeWidth="1.5" opacity=".6" />
+                      {[[48,80],[98,48],[130,64],[158,25],[182,105],[72,92],[202,45]].map(([cx,cy],i)=><circle key={i} cx={cx} cy={cy} r="5" fill={i%2===0 ? "var(--brand-terracotta)" : "var(--brand-gallery-blue)"} stroke="var(--ink)" strokeWidth="2" />)}
                     </svg>
                     <span className="absolute bottom-2 left-2 rounded bg-ink/80 px-2 py-1 text-[9px] text-ink-muted">Ubicaciones de ejemplo</span>
                   </div>
