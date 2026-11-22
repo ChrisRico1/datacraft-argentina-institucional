@@ -24,7 +24,9 @@ const FIELD_METADATA: Record<string, RadarMetadata> = {
   tipo_de_indicador: { description: "Define qué medida publica la observación: nivel de índice, variación o incidencia, según el servicio.", interpretation: "No mezcles índices, porcentajes y puntos porcentuales: tienen unidades y significados distintos." },
   serie: { description: "Versión estadística de la serie: original, desestacionalizada o tendencia-ciclo, cuando el servicio las publica.", interpretation: "No compares directamente niveles o variaciones de distintas versiones de una serie." },
   unidad_de_medida: { description: "Unidad en la que está expresado el valor publicado, por ejemplo número índice, porcentaje, pesos o puntos porcentuales.", interpretation: "La unidad determina cómo debe leerse y graficarse el valor." },
-  frecuencia: { description: "Periodicidad con la que se publica el indicador: mensual, trimestral, semestral o anual.", interpretation: "No interpolar períodos sin observaciones ni tratar frecuencias distintas como equivalentes." },
+  frecuencia: { description: "Periodicidad con la que INDEC publica nuevas observaciones del indicador.", interpretation: "Los períodos no publicados no deben completarse por interpolación sin una metodología explícita." },
+  servicio: { description: "Operación estadística del INDEC que produce la información consultada.", interpretation: "El servicio identifica la fuente; no implica que todas sus aperturas estén validadas en Radar." },
+  frequency: { description: "Periodicidad con la que se publica el indicador: mensual, trimestral, semestral o anual.", interpretation: "No interpolar períodos sin observaciones ni tratar frecuencias distintas como equivalentes." },
   tasa_pobreza_personas: { description: "Porcentaje de personas cuyos ingresos no alcanzan el valor de la Canasta Básica Total.", interpretation: "El denominador es la población de referencia; cobertura EPH: total de 31 aglomerados urbanos." },
   tasa_indigencia_personas: { description: "Porcentaje de personas cuyos ingresos no alcanzan el valor de la Canasta Básica Alimentaria.", interpretation: "El denominador es la población de referencia; cobertura EPH: total de 31 aglomerados urbanos." },
   tasa_pobreza_hogares: { description: "Porcentaje de hogares cuyos ingresos no alcanzan el valor de la Canasta Básica Total.", interpretation: "Es una tasa de hogares, no de personas; cobertura EPH: total de 31 aglomerados urbanos." },
@@ -99,6 +101,18 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     else if (field.startsWith("tot_")) metadata = FIELD_METADATA.total;
   }
   if (!metadata) return null;
+  if (value?.trim() && field === "region" && canonicalId === "ipc") {
+    const regions: Record<string, string> = {
+      GBA: "Gran Buenos Aires, agrupamiento estadístico que incluye la Ciudad Autónoma de Buenos Aires y los partidos del conurbano relevados por INDEC.",
+      Nacional: "Total nacional; reúne el conjunto de hogares cubiertos por la medición del IPC.",
+      Pampeana: "Región estadística Pampeana definida por INDEC; no equivale a una provincia individual.",
+      Noreste: "Región estadística Noreste definida por INDEC; no equivale a una provincia individual.",
+      Noroeste: "Región estadística Noroeste definida por INDEC; no equivale a una provincia individual.",
+      Cuyo: "Región estadística Cuyo definida por INDEC; no equivale a una provincia individual.",
+      Patagonia: "Región estadística Patagonia definida por INDEC; no equivale a una provincia individual.",
+    };
+    if (regions[value]) return { description: metadata.description, interpretation: `Selección actual: ${regions[value]}` };
+  }
   if (value?.trim() && field === "periodRange") {
     const ranges: Record<string, string> = { all: "Todos los períodos disponibles", "5y": "Últimos cinco años", "2y": "Últimos dos años", "1y": "Último año" };
     return { description: metadata.description, interpretation: `Selección actual: ${ranges[value] ?? value}. El rango limita la consulta, no modifica la frecuencia de publicación.` };
@@ -175,6 +189,9 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
     if (metric.includes("acumulada")) return { description: "Cambio porcentual acumulado desde el período de referencia anual definido por INDEC.", interpretation: "No equivale a la variación mensual ni a la interanual." };
     if (metric.includes("mensual")) return { description: "Cambio porcentual respecto del período inmediatamente anterior.", interpretation: "Representa un cambio entre períodos consecutivos, no de doce meses." };
     if (metricValue === "Indice") return { description: "Nivel del índice publicado para la selección actual.", interpretation: "Interpretalo con la base, el indicador y la apertura seleccionados." };
+  }
+  if (canonicalId === "cba-cbt") {
+    return { description: "Valor en pesos corrientes de la Canasta Básica Alimentaria (CBA) o la Canasta Básica Total (CBT) para Gran Buenos Aires.", interpretation: "La CBA se usa como línea de indigencia; la CBT, que incorpora bienes y servicios no alimentarios, como línea de pobreza." };
   }
   if (canonicalId === "emae") {
     if (metric.includes("índice") || metric.includes("indice")) return { description: "Número índice que representa el nivel de actividad económica respecto de la base 2004=100.", interpretation: "La serie original conserva efectos estacionales; la desestacionalizada y la tendencia-ciclo tienen tratamientos diferentes." };
