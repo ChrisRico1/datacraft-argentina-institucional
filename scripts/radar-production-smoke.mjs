@@ -1,6 +1,8 @@
 const API_BASE = process.env.RADAR_API_BASE_URL ?? "https://datacraft-argentina-institucional.digitalperseo.workers.dev/api/radar";
 const ORIGIN = process.env.RADAR_PRODUCTION_ORIGIN ?? "https://datacraft-argentina.lovable.app";
 const PAUSE_MS = 350;
+const FILTER_SAMPLE_LIMIT = 100;
+const MAX_FILTER_VALUES = 3;
 
 const services = [
   { id: "ipc", period: "periodo", required: ["valor", "tipo_de_indicador", "region"], filters: { region: "region", indicatorType: "tipo_de_indicador", classification: "clasificador", level: "nivel", openingCode: "codigo", category: "descripcion" } },
@@ -83,12 +85,24 @@ function buildFilterParams(service, row, periodValue) {
   return params;
 }
 
-function buildSingleFilterParams(service, row, periodValue, field) {
-  const params = new URLSearchParams({ limit: "1", period: String(periodValue) });
+function buildSingleFilterParams(service, row, field, value) {
+  const params = new URLSearchParams({ limit: "5", period: String(row[service.period]) });
   const filterEntry = Object.entries(service.filters ?? {}).find(([, filterField]) => filterField === field);
-  if (filterEntry) params.set(filterEntry[0], String(row[field]));
-  else params.set("dimensions", JSON.stringify({ [field]: String(row[field]) }));
+  if (filterEntry) params.set(filterEntry[0], String(value));
+  else params.set("dimensions", JSON.stringify({ [field]: String(value) }));
   return params;
+}
+
+function sampleFilterValues(rows, field, max = MAX_FILTER_VALUES) {
+  const selected = new Map();
+  for (const row of rows) {
+    const value = row[field];
+    if (value === null || value === undefined || String(value).trim() === "") continue;
+    const key = String(value);
+    if (!selected.has(key)) selected.set(key, row);
+    if (selected.size >= max) break;
+  }
+  return [...selected.entries()].map(([value, row]) => ({ value, row }));
 }
 
 function hasNumericValue(value) {
@@ -96,6 +110,7 @@ function hasNumericValue(value) {
   return Number.isFinite(Number(value));
 }
 console.log(`Radar Production smoke · ${new Date().toISOString()}`);
+console.log(`Muestra de filtros: hasta ${FILTER_SAMPLE_LIMIT} observaciones por servicio; máximo ${MAX_FILTER_VALUES} valores distintos por dimensión.`);
 console.log(`API: ${API_BASE}`);
 console.log(`Origen CORS esperado: ${ORIGIN}`);
 
@@ -125,15 +140,20 @@ for (const service of services) {
     ])];
     let individualFilterChecks = 0;
     for (const field of filterFields) {
-      const value = row[field];
-      if (value === null || value === undefined || String(value).trim() === "") continue;
-      await sleep(PAUSE_MS);
-      const individual = await queryService(service.id, buildSingleFilterParams(service, row, periodValue, field));
-      const actual = individual.payload.data[0]?.[field];
-      if (String(actual ?? "") !== String(value)) {
-        throw new Error(`El filtro individual ${field}=${value} devolvió ${String(actual ?? "sin valor")}.`);
+      const selectedValues = sampleFilterValues(initial.payload.data, field);
+      for (const { value, row: sourceRow } of selectedValues) {
+        await sleep(PAUSE_MS);
+        const individual = await queryService(service.id, buildSingleFilterParams(service, sourceRow, field, value));
+        const mismatches = individual.payload.data.filter((resultRow) =>
+          String(resultRow[field] ?? "") !== value
+          || String(resultRow[service.period] ?? "") !== String(sourceRow[service.period] ?? ""),
+        );
+        if (mismatches.length > 0) {
+          const actual = mismatches[0]?.[field];
+          throw new Error(`El filtro individual ${field}=${value} devolvió ${String(actual ?? "sin valor")} o alteró el período ${sourceRow[service.period]}.`);
+        }
+        individualFilterChecks++;
       }
-      individualFilterChecks++;
     }
 
     if (service.seriesFields) {
@@ -144,7 +164,7 @@ for (const service of services) {
       console.log(`PASS ${service.id} · ${service.seriesFields.length} series numéricas.`);
     }
 
-    console.log(`PASS ${service.id}: HTTP ${initial.status}; filtro combinado y período: HTTP ${filtered.status}; ${individualFilterChecks}/${filterFields.length} filtros individuales comprobados.`);
+    console.log(`PASS ${service.id}: HTTP ${initial.status}; filtro combinado y período: HTTP ${filtered.status}; ${individualFilterChecks} valores de filtros individuales comprobados en ${filterFields.length} dimensiones.`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     failures.push({ indicator: service.id, error: message });
