@@ -33,6 +33,9 @@ jobs:
         run: bun install --frozen-lockfile
 
       # Keep semantic ESLint checks blocking while legacy formatting debt is handled separately.
+      - name: Validate Radar production smoke script
+        run: node --check scripts/radar-production-smoke.mjs
+
       - name: Lint
         run: >-
           bunx eslint . --rule 'prettier/prettier: off'
