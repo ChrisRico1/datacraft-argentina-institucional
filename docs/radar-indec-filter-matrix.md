@@ -17,8 +17,8 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 | Mercado de trabajo EPH | Especificación: `area_geografica_nom`, `area_geografica_cod` | La respuesta observada publica `T_31_A` (total de 31 aglomerados), no una lista seleccionable de aglomerados individuales. Mantener separadas las tasas por sus distintos denominadores. |
 | CBA/CBT | `region`, `clasificador`, `nivel`, `codigo`, `indicador`, `tipo_de_indicador` | Región y apertura estadística; mantener separados índice, variación e incidencia. |
 | Canasta de crianza | `Periodo` y 12 métricas: `bys_*`, `cuid_*`, `tot_*` | No tiene una dimensión de edad común: cada tramo publica bienes/servicios, cuidado y total como campos independientes. |
-| Exportaciones | `rubro_cod`, `subrubro_cod`, `pais_cod` | Subrubro depende del rubro; país es una dimensión independiente. Usar nomenclaturas oficiales. |
-| Importaciones | `uso_economico_cod`, `gce_cod`, `pais_cod` | GCE depende del uso económico; país de origen es independiente. Usar nomenclaturas oficiales. |
+| Exportaciones | `rubro_cod`, `subrubro_cod`, `pais_cod` | Subrubro y país de destino dependen del rubro seleccionado; ambos se limitan a opciones presentes en las observaciones de ese rubro. Usar nomenclaturas oficiales. |
+| Importaciones | `uso_economico_cod`, `gce_cod`, `pais_cod` | GCE depende del uso económico; país de origen permanece independiente. Usar nomenclaturas oficiales. |
 | Población por departamento | `jurisdiccion_nom`, `jurisdiccion_cod`, `departamento_cod`, `sexo_cod`, `rmba` | Jurisdicción, departamento, sexo y pertenencia a RMBA. |
 | Población por jurisdicción | `jurisdiccion_nom`, `jurisdiccion_cod`, `sexo_cod`, `edad_cod` | Proyecciones por grupos quinquenales de edad. |
 | Población nacional | `edad`, `sexo_cod` | Edad en años cumplidos y sexo; referencia al 1 de julio. |
@@ -30,7 +30,7 @@ La API utiliza filtros por columna estilo PostgREST. Cada campo debe enviarse co
 
 - La allowlist del servidor es la autoridad: un campo no incluido para un indicador se rechaza.
 - Los nombres visibles deben explicar qué representa cada dimensión; los códigos deben conservar el formato original.
-- Las dependencias solo se aplican cuando existe jerarquía real en la nomenclatura. El país no depende del subrubro ni de la GCE.
+- Las dependencias solo se aplican cuando existe jerarquía real en la nomenclatura. En exportaciones, país de destino y subrubro se recalculan al elegir Rubro (el país no depende del subrubro). En importaciones, país de origen es independiente del uso económico y de la GCE.
 - Un filtro dependiente se habilita solo después de elegir su dimensión padre y sus opciones se recalculan con las observaciones devueltas para esa selección. No se ofrecen valores nulos/vacíos ni opciones huérfanas; si no hay resultados válidos, el selector permanece deshabilitado e informa que no hay opciones.
 - Las sugerencias de autocompletado derivadas de una página parcial no equivalen a un catálogo completo.
 - Para comercio exterior, el INDEC publica `comercio_exterior_nomenclaturas` con `nombre_columna`, `codigo` y `codigo_descripcion`. Radar debe usarlo como diccionario oficial para país, rubros y aperturas; no inferir nombres ni opciones completas desde una muestra de operaciones.
