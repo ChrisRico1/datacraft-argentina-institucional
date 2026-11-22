@@ -928,9 +928,14 @@ function RadarEstadisticoArgentina() {
                     <h4 className="font-semibold">Configurar filtros estadísticos</h4>
                     <p className="mt-1 text-xs leading-relaxed text-ink-muted">Elegí las dimensiones de la observación que querés consultar. Las opciones disponibles dependen de la estructura de cada servicio del INDEC.</p>
                   </div>
-                  {(selected.id === "exportaciones" || selected.id === "importaciones") ? (
+                  {selected.id === "exportaciones" ? (
                     <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
-                      País es un filtro independiente: podés elegir destino/origen sin completar rubro, subrubro, uso económico o GCE. Las aperturas secundarias sí dependen de su categoría principal. Si la consulta conserva varias observaciones por período, Radar evita dibujar una serie mezclada.
+                      En Exportaciones, primero elegí un rubro. Subrubro y país de destino se habilitan con opciones presentes en ese rubro; al cambiarlo, ambas selecciones se reinician. País y subrubro no dependen entre sí. Si la consulta conserva varias observaciones por período, Radar evita dibujar una serie mezclada.
+                    </p>
+                  ) : null}
+                  {selected.id === "importaciones" ? (
+                    <p className="mt-3 rounded-lg border border-sky-300/20 bg-sky-300/5 p-3 text-xs leading-relaxed text-ink-muted">
+                      En Importaciones, país de origen es independiente del uso económico. GCE se habilita después de elegir un uso económico y se limita a las categorías disponibles. Si la consulta conserva varias observaciones por período, Radar evita dibujar una serie mezclada.
                     </p>
                   ) : null}
                   {(selected.id === "pobreza" || selected.id === "mercado-laboral") ? (
