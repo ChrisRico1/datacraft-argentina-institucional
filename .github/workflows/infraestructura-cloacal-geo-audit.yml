@@ -9,10 +9,12 @@ on:
       - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
       - 'scripts/infraestructura-cloacal-geo-audit.py'
       - 'scripts/infraestructura-cloacal-service-discovery.py'
+      - 'scripts/infraestructura-cloacal-wms-getmap-diagnostic.py'
   pull_request:
     paths:
       - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
       - 'scripts/infraestructura-cloacal-geo-audit.py'
+      - 'scripts/infraestructura-cloacal-wms-getmap-diagnostic.py'
 
 permissions:
   contents: read
@@ -41,6 +43,8 @@ jobs:
         run: python -m py_compile scripts/infraestructura-cloacal-service-discovery.py
       - name: Discover public GIS download and map services
         run: python scripts/infraestructura-cloacal-service-discovery.py
+      - name: Probe IGN WMS GetMap with default and Datacraft styles
+        run: python scripts/infraestructura-cloacal-wms-getmap-diagnostic.py
       - name: Download and audit official sources
         run: python scripts/infraestructura-cloacal-geo-audit.py
       - name: Upload audit report and source files
@@ -51,5 +55,6 @@ jobs:
           path: |
             artifacts/infraestructura-cloacal-geo-audit/
             artifacts/infraestructura-cloacal-service-discovery/
+            artifacts/infraestructura-cloacal-wms-getmap/
           if-no-files-found: warn
           retention-days: 14
