@@ -1147,6 +1147,7 @@ function RadarEstadisticoArgentina() {
                         <select value={economicRegion} onChange={(event) => { setEconomicRegion(event.target.value); setOffset(0); setChartContext(""); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
                           {["GBA", "Nacional", "Pampeana", "Noreste", "Noroeste", "Cuyo", "Patagonia"].map((region) => <option key={region} value={region}>{region}</option>)}
                         </select>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "region", economicRegion)} />
                       </label>
                       <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                         <label className="text-xs text-ink-muted">Clasificador
