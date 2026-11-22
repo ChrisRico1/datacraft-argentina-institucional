@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowUpRight, BarChart3, Building2 } from "lucide-react";
+import { ArrowRight, BarChart3, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { observatories } from "@/features/observatorio/catalog";
 import { ProjectCard } from "@/features/observatorio/components";
