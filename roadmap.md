@@ -25,6 +25,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [ ] Validar en Production el manejo de límites de consulta (`429`), su mensaje visible y el procedimiento de recuperación.
 - [ ] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos para que refleje el estado real.
 - [ ] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
+  - [x] Incorporar guías contextuales para IPC, salarios, EMAE, pobreza, mercado de trabajo y SIPM: distinguir índices, variaciones e incidencias; explicar bases, períodos de comparación, universos y denominadores. No se habilitan indicadores pendientes.
 - [ ] Revisar la selección de visualizaciones según el tipo de variable y evitar comparaciones estadísticamente inválidas.
 - [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
 - [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
