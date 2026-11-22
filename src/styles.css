@@ -126,6 +126,137 @@
 @keyframes dc-pulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
 @utility pulse-soft { animation: dc-pulse 3.2s ease-in-out infinite; }
 
+/* Datacraft interaction language: precise light, depth and restrained motion. */
+@keyframes dc-shine {
+  from { background-position: 120% 0; }
+  to { background-position: -120% 0; }
+}
+@keyframes dc-rise {
+  from { opacity: 0; transform: scaleY(.18); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+@keyframes dc-float {
+  0%, 100% { transform: perspective(1100px) translateY(0) rotateX(0deg); }
+  50% { transform: perspective(1100px) translateY(-7px) rotateX(1deg); }
+}
+
+.dc-button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition:
+    transform 240ms cubic-bezier(.2,.75,.25,1),
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    color 240ms ease,
+    background-color 240ms ease;
+}
+.dc-button::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 25%, rgb(255 255 255 / .26) 48%, transparent 70%);
+  background-size: 220% 100%;
+  background-position: 120% 0;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+.dc-button-primary {
+  box-shadow: 0 4px 18px color-mix(in oklab, var(--lime) 16%, transparent);
+}
+.dc-button-outline {
+  box-shadow: inset 0 0 0 1px transparent;
+}
+.dc-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition:
+    transform 320ms cubic-bezier(.2,.75,.25,1),
+    border-color 260ms ease,
+    box-shadow 320ms ease,
+    background-color 260ms ease;
+}
+.dc-card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(440px circle at 85% 0%, color-mix(in oklab, var(--lime) 13%, transparent), transparent 58%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+}
+.dc-card > * { position: relative; }
+.dc-nav-link {
+  position: relative;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+.dc-nav-link::after {
+  position: absolute;
+  right: 13px;
+  bottom: 5px;
+  left: 13px;
+  height: 1px;
+  background: var(--lime);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+.dc-hero-visual {
+  transform-style: preserve-3d;
+  animation: dc-float 7s ease-in-out infinite;
+  box-shadow: 0 24px 80px rgb(0 0 0 / .2), 0 0 42px color-mix(in oklab, var(--sky) 10%, transparent);
+}
+.dc-bar {
+  transform-origin: bottom;
+  animation: dc-rise 900ms cubic-bezier(.2,.75,.25,1) both;
+}
+.dc-glow-dot { box-shadow: 0 0 0 5px color-mix(in oklab, var(--lime) 12%, transparent), 0 0 22px color-mix(in oklab, var(--lime) 65%, transparent); }
+
+@media (hover: hover) and (pointer: fine) {
+  .dc-button:hover {
+    transform: translateY(-2px);
+  }
+  .dc-button:hover::after {
+    opacity: .8;
+    animation: dc-shine 850ms ease forwards;
+  }
+  .dc-button-primary:hover {
+    box-shadow: 0 8px 28px color-mix(in oklab, var(--lime) 28%, transparent);
+  }
+  .dc-button-outline:hover {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--lime) 40%, transparent), 0 0 24px color-mix(in oklab, var(--lime) 13%, transparent);
+  }
+  .dc-card:hover {
+    transform: perspective(1100px) translateY(-5px) rotateX(1deg);
+    box-shadow: 0 18px 42px rgb(0 0 0 / .12), 0 0 0 1px color-mix(in oklab, var(--lime) 12%, transparent);
+  }
+  .dc-card:hover::before { opacity: 1; }
+  .dc-nav-link:hover {
+    background: color-mix(in oklab, var(--lime) 8%, transparent);
+  }
+  .dc-nav-link:hover::after { transform: scaleX(1); }
+  .dc-hero-visual:hover {
+    animation-play-state: paused;
+    transform: perspective(1100px) translateY(-4px) rotateX(2deg) rotateY(-1deg);
+    box-shadow: 0 30px 90px rgb(0 0 0 / .28), 0 0 52px color-mix(in oklab, var(--sky) 18%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dc-hero-visual { animation: none; }
+  .dc-bar { animation: none; }
+  .dc-button, .dc-card, .dc-card::before, .dc-nav-link::after { transition: none; }
+  .dc-button::after { animation: none !important; }
+}
+
+
 .observatory { letter-spacing: 0; }
 .observatory :is(h1,h2,h3,h4,.eyebrow) { letter-spacing: 0; }
 .observatory-map { color: var(--foreground); z-index: 0; }
