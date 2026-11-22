@@ -397,12 +397,12 @@ function Index() {
             <Wordmark light />
           </a>
           <nav aria-label="Principal" className="hidden lg:block">
-            <ul className="flex gap-1">
+            <ul className="flex gap-0 xl:gap-1">
               {nav.map(([id, label]) => (
                 <li key={id}>
                   <a
                     href={`#${id}`}
-                    className="dc-nav-link rounded-full px-3 py-2 text-sm text-ink-muted"
+                    className="dc-nav-link rounded-full px-2 py-2 text-sm text-ink-muted xl:px-3"
                   >
                     {label}
                   </a>
@@ -411,7 +411,7 @@ function Index() {
               <li>
                 <Link
                   to="/observatorio"
-                  className="rounded-full px-3 py-2 text-sm text-ink-muted transition hover:text-lime"
+                  className="rounded-full px-2 py-2 text-sm text-ink-muted transition hover:text-lime xl:px-3"
                 >
                   Proyectos
                 </Link>
