@@ -63,7 +63,7 @@ Comandos de validación:
 
 ```bash
 bun run lint
-bun test
+bun run test
 bun run build
 ```
 
