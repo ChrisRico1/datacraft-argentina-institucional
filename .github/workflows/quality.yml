@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -35,7 +35,7 @@ jobs:
       # The current codebase has legacy Prettier violations; keep semantic ESLint checks
       # blocking while formatting debt is addressed separately.
       - name: Lint
-        run: bunx eslint . --rule 'prettier/prettier: off'
+        run: "bunx eslint . --rule 'prettier/prettier: off'"
 
       - name: Tests
         run: bun run test
