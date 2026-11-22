@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-export type AcumarService = "Agua potable" | "Cloacal" | "Desconocido";
+export type AcumarService = "Agua potable" | "Cloacal" | "Mixto" | "Desconocido";
 
 export interface AcumarImportRow {
   raw: Record<string, string>;
@@ -76,32 +76,58 @@ export function parseAcumarPercent(value: unknown): number | null {
   if (!text) return null;
   const match = /^(\d{1,3})(?:,(\d+))?%$/.exec(text);
   if (!match) return null;
-  const result = Number(match[1] + (match[2] ? `.${match[2]}` : ""));
+  const result = Number(match[1] + (match[2] ? "." + match[2] : ""));
   return result >= 0 && result <= 100 ? result : null;
 }
 
-/** The supplied ACUMAR samples use M/D/YYYY. Invalid or ambiguous values stay null. */
+/**
+ * ACUMAR dates are predominantly M/D/YYYY. The 2024 file also contains
+ * unambiguous D/M/YYYY values (the first component is greater than 12).
+ * When both components are <= 12, the dominant M/D/YYYY convention is used.
+ */
 export function parseAcumarDate(value: unknown): string | null {
   const text = textValue(value);
   if (!text) return null;
   const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(text);
   if (!match) return null;
-  const month = Number(match[1]);
-  const day = Number(match[2]);
+
+  const first = Number(match[1]);
+  const second = Number(match[2]);
   const year = Number(match[3]);
+  let month = first;
+  let day = second;
+
+  if (first > 12 && second <= 12) {
+    month = second;
+    day = first;
+  } else if (second > 12 && first <= 12) {
+    month = first;
+    day = second;
+  } else if (first > 12 || second > 12) {
+    return null;
+  }
+
   const date = new Date(Date.UTC(year, month - 1, day));
   if (
     date.getUTCFullYear() !== year ||
     date.getUTCMonth() !== month - 1 ||
     date.getUTCDate() !== day
   ) return null;
-  return `${year.toString().padStart(4, "0")}-${match[1].padStart(2, "0")}-${match[2].padStart(2, "0")}`;
+  return (
+    year.toString().padStart(4, "0") + "-" +
+    month.toString().padStart(2, "0") + "-" +
+    day.toString().padStart(2, "0")
+  );
 }
 
 function mapService(value: string | null): AcumarService {
-  const normalized = value?.trim().toLocaleUpperCase("es-AR");
+  const normalized = value
+    ?.trim()
+    .toLocaleUpperCase("es-AR")
+    .replace(/[^A-Z0-9]+/g, "");
   if (normalized === "AGUA") return "Agua potable";
   if (normalized === "CLOACA" || normalized === "CLOACAS") return "Cloacal";
+  if (normalized?.includes("AGUA") && /CLOACAS?/.test(normalized)) return "Mixto";
   return "Desconocido";
 }
 
@@ -118,7 +144,8 @@ export function parseAcumarCsv(csv: string): AcumarImportRow[] {
   });
 
   if (result.errors.length > 0) {
-    throw new Error(`No se pudo interpretar el CSV de ACUMAR: ${result.errors[0]?.message ?? "error de formato"}`);
+    const detail = result.errors[0]?.message ?? "error de formato";
+    throw new Error("No se pudo interpretar el CSV de ACUMAR: " + detail);
   }
 
   const required = [
@@ -132,9 +159,11 @@ export function parseAcumarCsv(csv: string): AcumarImportRow[] {
   const fields = result.meta.fields ?? [];
   const missing = required.filter((field) => !fields.includes(field));
   if (missing.length) {
-    throw new Error(`Faltan columnas obligatorias de ACUMAR: ${missing.join(", ")}`);
+    throw new Error("Faltan columnas obligatorias de ACUMAR: " + missing.join(", "));
   }
 
+  // ACUMAR work IDs are not unique and can be blank. Preserve every source row;
+  // callers must use a row identity that also includes its source cut.
   return result.data.map((record) => {
     const serviceRaw = read(record, "tipo_fluido");
     return {

@@ -16,24 +16,33 @@ const headers = [
   "obra_fecha_inicio", "INSPECTOR", "FECHA   DE INSPECCIÃ“N", "INFORME",
 ].join(",");
 
+const row = (id: string, service: string, name: string) =>
+  [
+    id, "02", "Provincia de Buenos Aires", "06028", "Almirante Brown",
+    service, name, "PRIMARIA", "15000", "ENOHSA", "MUNICIPIO",
+    "EN EJECUCIÓN", "PARALIZADA", "CARBE S.A.", "150", "39%",
+    "5/1/2018", "MG", "-", "-",
+  ].join(",");
+
 describe("Importación del CSV original de ACUMAR", () => {
   it("normaliza encabezados con acentos dañados y espacios inconsistentes", () => {
     expect(normalizeAcumarHeader("responsable_ejecuciÃ³n")).toBe("responsable_ejecucion");
     expect(normalizeAcumarHeader("FECHA   DE INSPECCIÃ“N")).toBe("fecha_de_inspeccion");
   });
 
-  it("interpreta filas 2024 y conserva estado y subestado por separado", () => {
+  it("interpreta una fila 2024 y conserva estado y subestado por separado", () => {
     const csv = [
       headers,
-      "SCP003,02,Provincia de Buenos Aires,06028,Almirante Brown,AGUA,COLECTOR BURZACO 1,PRIMARIA,15000,ENOHSA,MUNICIPIO,EN EJECUCIÃ“N, PARALIZADA,CARBE S.A.,150,39%,5/1/2018,MG,-,-",
+      row("SCP003", "AGUA", "COLECTOR BURZACO 1"),
     ].join("\n");
-    const [row] = parseAcumarCsv(csv);
-    expect(row).toMatchObject({
+    const parsed = parseAcumarCsv(csv);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0]).toMatchObject({
       sourceWorkId: "SCP003",
       departmentCode: "06028",
       departmentName: "Almirante Brown",
       service: "Agua potable",
-      executionStatus: "EN EJECUCIÃ“N",
+      executionStatus: "EN EJECUCIÓN",
       subStatus: "PARALIZADA",
       progressPercent: 39,
       beneficiaries: 15000,
@@ -41,7 +50,7 @@ describe("Importación del CSV original de ACUMAR", () => {
       inspector: "MG",
       inspectionDate: null,
     });
-    expect(row?.raw.obra_sub_estado).toBe(" PARALIZADA");
+    expect(parsed[0]?.raw.obra_sub_estado).toBe("PARALIZADA");
   });
 
   it("interpreta 2025, separadores de miles y campos citados con saltos de línea", () => {
@@ -72,11 +81,46 @@ describe("Importación del CSV original de ACUMAR", () => {
     });
   });
 
-  it("no inventa valores cuando el número, porcentaje o fecha son ambiguos", () => {
+  it("reconoce servicios mixtos sin clasificarlos como desconocidos", () => {
+    const csv = [
+      headers,
+      row("M1", "AGUA - CLOACA", "Obra mixta uno"),
+      row("M2", '"AGUA\nCLOACA"', "Obra mixta dos"),
+      row("A1", "AGUA ", "Obra de agua"),
+      row("C1", "CLOACA", "Obra cloacal"),
+    ].join("\n");
+    const rows = parseAcumarCsv(csv);
+    expect(rows.map((item) => item.service)).toEqual([
+      "Mixto", "Mixto", "Agua potable", "Cloacal",
+    ]);
+    expect(rows[1]?.serviceRaw).toBe("AGUA\nCLOACA");
+  });
+
+  it("admite identificadores repetidos o vacíos sin descartar filas", () => {
+    const csv = [
+      headers,
+      row("SP3", "CLOACA", "Primera obra"),
+      row("SP3", "CLOACA", "Segunda obra"),
+      row("", "CLOACA", "Obra sin identificador"),
+    ].join("\n");
+    const rows = parseAcumarCsv(csv);
+    expect(rows).toHaveLength(3);
+    expect(rows.map((item) => item.sourceWorkId)).toEqual(["SP3", "SP3", null]);
+  });
+
+  it("interpreta fechas M/D y excepciones D/M inequívocas del corte 2024", () => {
+    expect(parseAcumarDate("8/22/2022")).toBe("2022-08-22");
+    expect(parseAcumarDate("22/12/2024")).toBe("2024-12-22");
+    expect(parseAcumarDate("17/8/2023")).toBe("2023-08-17");
+    expect(parseAcumarDate("12/11/2022")).toBe("2022-12-11");
+  });
+
+  it("no inventa valores cuando el número, porcentaje o fecha son ambiguos o inválidos", () => {
     expect(parseAcumarInteger("5,244")).toBeNull();
     expect(parseAcumarInteger("12.34")).toBeNull();
     expect(parseAcumarPercent("101%")).toBeNull();
     expect(parseAcumarDate("31/02/2025")).toBeNull();
+    expect(parseAcumarDate("22/22/2024")).toBeNull();
     expect(parseAcumarDate("-")).toBeNull();
   });
 

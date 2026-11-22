@@ -23,4 +23,15 @@ id,municipality,jurisdiction,sector,name,service,infrastructure,status,progress,
 
 Las métricas JSON requieren `id,label,value,unit,year,scope,sourceId`. No agregar una métrica municipal como si fuera de cuenca. Los gráficos permanecen vacíos hasta implementar una serie validada con metadatos por visualización; cargar un inventario no habilita automáticamente gráficos ni sumatorias.
 
+## Importador aislado de ACUMAR
+
+`acumar-import.ts` interpreta los CSV oficiales de seguimiento 2024 y 2025, pero no alimenta la ruta pública ni sustituye el inventario comprimido.
+
+- Los servicios se distinguen como `Agua potable`, `Cloacal`, `Mixto` o `Desconocido`. Los registros mixtos no se clasifican automáticamente como cloacales.
+- `obra_estado` y `obra_sub_estado` se conservan por separado.
+- `obra_id` se conserva como identificador de origen, pero puede repetirse o estar vacío; no es una clave única.
+- Las fechas se interpretan como M/D/YYYY cuando esa lectura es inequívoca. Se admite D/M/YYYY cuando el primer componente supera 12; si ambos componentes son <= 12, se mantiene M/D/YYYY como convención dominante.
+- El campo `raw` conserva los valores originales del registro.
+- La auditoría de los dos archivos completos está en `docs/acumar-works-2024-2025-reconciliation.md`.
+
 Los puntos del mapa son centros urbanos aproximados sin fuente geodésica oficial y nunca representan obras, límites o pertenencia espacial. El polígono oficial aún no está integrado. Monitor PISA es el visualizador oficial vinculado.
