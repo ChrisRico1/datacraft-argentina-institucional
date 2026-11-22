@@ -31,10 +31,18 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [x] Mejorar la visibilidad del botón CSV e indicar claramente cuántos registros cargados se exportan.
 - [ ] Evaluar comparaciones adicionales solo después de validar los datos y sus dimensiones.
 
-## P1 — Proyectos demostrativos
+## P1 — Infraestructura Cloacal
 
-- [ ] Revisar fuentes, fecha de corte, alcance territorial y trazabilidad de Infraestructura Cloacal.
-- [ ] Mantener diferenciadas las referencias municipales aproximadas de la localización real de obras y límites oficiales.
+- [x] Auditar la arquitectura actual, la ruta pública, el modelo de datos, la cartografía y las fuentes registradas; documentar la línea de base en `docs/infraestructura-cloacal-audit.md`.
+- [ ] Reconciliar el inventario comprimido de obras con los recursos originales 2024 y 2025 de ACUMAR; verificar registros, campos, cortes, servicios y alcance territorial.
+- [ ] Obtener y validar geometrías oficiales de la cuenca hidrográfica/jurisdiccional y radios censales compatibles.
+- [ ] Auditar variables censales de desagüe a red pública, universo y nivel geográfico.
+- [ ] Verificar capas e indicadores de cobertura cloacal del Monitor PISA, su fecha y su definición; distinguir cobertura de conexión efectiva.
+- [ ] Diseñar cruces territoriales reproducibles sin atribuir a la cuenca datos municipales completos ni usar centros urbanos como ubicación de obras.
+- [ ] Incorporar estados visibles de carga, error y actualización de datos.
+
+## P1 — Otros proyectos demostrativos
+
 - [ ] Revisar el recorrido de demostración de Municipio en Obra y la identificación visible de datos ficticios.
 - [ ] Verificar que el orden del catálogo sea Radar Estadístico Argentina, Infraestructura Cloacal y Municipio en Obra.
 
