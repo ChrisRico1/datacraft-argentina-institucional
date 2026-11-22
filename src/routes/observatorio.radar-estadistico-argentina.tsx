@@ -994,6 +994,7 @@ function RadarEstadisticoArgentina() {
                   >
                     <span className="block text-sm font-medium">{indicator.title}</span>
                     <span className="mt-1 block text-xs text-ink-muted">{indicator.available === false ? "Consulta no habilitada por API-INDEC" : `${indicator.frequency} · ${indicator.unit}`}</span>
+                    <span className="mt-1 block text-[11px] leading-relaxed text-ink-muted/80">{indicator.description}</span>
                   </button>
                 )) : (
                   <p className="rounded-lg border border-dashed border-ink-foreground/15 p-4 text-sm text-ink-muted">
