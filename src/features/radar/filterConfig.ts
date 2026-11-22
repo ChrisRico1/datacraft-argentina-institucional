@@ -47,8 +47,8 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
     { field: "edad_cod", label: "Edad", placeholder: "Código o grupo de edad" },
   ],
   "poblacion-nacional": [
-    { field: "edad", label: "Edad", placeholder: "Edad publicada" },
-    { field: "sexo_cod", label: "Sexo", placeholder: "Código de sexo" },
+    { field: "edad", label: "Edad (años cumplidos)", placeholder: "Ej. 35" },
+    { field: "sexo_cod", label: "Sexo (código INDEC)", placeholder: "1 = Mujer · 2 = Varón" },
   ],
   "ipi-manufacturero": [
     { field: "cuadro_web", label: "Cuadro", placeholder: "Código del cuadro" },
