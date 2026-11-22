@@ -21,12 +21,9 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 ## P1 — Radar Estadístico Argentina
 
 - [x] Incorporar paginación incremental desde el código vigente de `main`: carga inicial acotada, bloques de 1.000, conservación de filtros, cancelación al cambiar la consulta y límite de offset del servidor.
-- [ ] Probar los 15 indicadores registrados contra el catálogo vigente del INDEC y documentar cobertura, campos y limitaciones.
-  - [x] Automatizar un smoke de Production para los 15 servicios: contrato mínimo, CORS, período y filtros representativos. Ver `docs/radar-production-smoke.md`.
-  - [x] Ejecutar el smoke en Production: 15/15 servicios superaron disponibilidad, esquema mínimo y filtro representativo. Documentado en `docs/radar-indec-indicator-audit.md`. El smoke ampliado también valida 35/35 opciones de métrica en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC; siguen pendientes las combinaciones exhaustivas y la validación manual de interfaz.
-  - [x] Automatizar el perfil de hasta 1.000 filas por servicio para revisar períodos, cardinalidad de métricas/dimensiones, nulos, marcas, valores no numéricos y duplicados de clave compuesta. Ver `docs/radar-production-sample-audit.md`.
-  - [x] Ejecutar el perfil de muestra en Production, revisar los resultados y actualizar el estado por indicador sin extrapolar la muestra al universo completo. El perfil posterior al merge #99 confirmó 15/15 servicios disponibles, campos mínimos presentes y cero duplicados en claves completas. Hallazgos y límites en `docs/radar-indec-indicator-audit.md`. **Estado de validación funcional manual:** 5/15 (IPC, salarios, EMAE nivel general, pobreza y mercado de trabajo); SIPM validado en el alcance acotado documentado. IPI manufacturero sigue deshabilitado: la muestra detectó 19 nulos con marcas `s` y `-`, pero faltan integridad del universo, filtros y prueba de interfaz.
-- [ ] Validar en Production el manejo de límites de consulta (`429`) contra el upstream. **Implementado y probado en código:** traducción 429→503, mensaje visible y guía para esperar unos minutos y reintentar una sola vez. La respuesta 429 real no se forzó en Production.
+- [x] Verificar en Production los 15 servicios del Radar a nivel API: contrato, CORS, filtros representativos, perfil de hasta 1.000 filas, claves compuestas, nulos, marcas y cobertura muestral. Resultado: 15/15 servicios disponibles, cero duplicados en claves completas y 35/35 opciones de métrica verificadas en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC. Ver `docs/radar-production-smoke.md`, `docs/radar-production-sample-audit.md` y `docs/radar-indec-indicator-audit.md`.
+- [ ] Completar validación manual de la interfaz para los 8 servicios activos restantes: CBA/CBT, Canasta de crianza, Exportaciones, Importaciones, Población por departamento, Población por jurisdicción, Población nacional e ICC. Estado manual: 5/15 indicadores completos; SIPM validado en alcance acotado. IPI manufacturero permanece deshabilitado y no se incluye como indicador activo.
+- [x] Implementar y probar el manejo de límites de consulta (`429`): el servidor transforma 429→503, la interfaz muestra el mensaje y guía al usuario para esperar y reintentar una sola vez. Se cubre con pruebas unitarias; no se fuerza una respuesta 429 real en Production para no provocar una limitación artificial de la cuenta.
 - [x] Revisar la etiqueta comercial/funcional del Radar en el catálogo de Proyectos: ahora se presenta como «Demo disponible», con sus capacidades de métricas, filtros explicados, visualizaciones y CSV. La etiqueta no implica que los 15 indicadores estén validados manualmente.
 - [x] Mejorar la explicación de unidades, períodos, cobertura geográfica, faltantes y marcas estadísticas.
   - [x] Incorporar guías contextuales para IPC, salarios, EMAE, pobreza, mercado de trabajo y SIPM: distinguir índices, variaciones e incidencias; explicar bases, períodos de comparación, universos y denominadores. No se habilitan indicadores pendientes.
@@ -36,7 +33,7 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 - [x] Incorporar composición apilada de Canasta de crianza con componentes y total publicados por INDEC, sin recalcular ni ocultar diferencias de redondeo.
 - [x] Incorporar exportación CSV de los registros efectivamente cargados, con encabezados originales y codificación UTF-8.
 - [x] Mejorar la visibilidad del botón CSV e indicar claramente cuántos registros cargados se exportan.
-- [ ] Evaluar comparaciones adicionales solo después de validar los datos y sus dimensiones.
+- [x] Evaluar comparaciones adicionales: no se agregan gráficos comparativos nuevos por ahora porque comercio exterior y parte de las proyecciones solo se perfilan parcialmente; se prioriza conservar tablas y evitar participaciones o comparaciones no exhaustivas. Reabrir cuando se valide la cobertura completa.
 
 ## P1 — Infraestructura Cloacal
 
