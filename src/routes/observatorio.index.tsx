@@ -53,7 +53,7 @@ function ObservatoryIndex() {
           <p className="text-sm text-ink-muted">Soluciones demostrativas · desarrollos a medida</p>
         </div>
         <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
-          <article className="dc-card flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7">
+          <article className="dc-card flex h-full flex-col rounded-2xl border border-ink-foreground/15 bg-ink-2/60 p-7">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
                 <BarChart3 className="h-6 w-6 text-lime" />
@@ -72,16 +72,16 @@ function ObservatoryIndex() {
               <li>Indicadores oficiales y trazabilidad</li>
               <li>Exploración temática y visualización de datos</li>
             </ul>
-            <Button asChild variant="lab" className="mt-auto w-fit">
+            <Button asChild variant="lab" className="mt-auto h-10 w-fit px-5">
               <Link to="/observatorio/radar-estadistico-argentina">
-                Explorar proyecto <ArrowUpRight />
+                Explorar proyecto <ArrowRight />
               </Link>
             </Button>
           </article>
           {observatories.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
-          <article className="dc-card flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7">
+          <article className="dc-card flex h-full flex-col rounded-2xl border border-ink-foreground/15 bg-ink-2/60 p-7">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
                 <Building2 className="h-6 w-6 text-lime" />
@@ -95,9 +95,9 @@ function ObservatoryIndex() {
               Una propuesta de gestión inteligente para organizar proyectos de infraestructura
               pública y mejorar su seguimiento y trazabilidad.
             </p>
-            <Button asChild variant="lab" className="mt-auto w-fit">
+            <Button asChild variant="lab" className="mt-auto h-10 w-fit px-5">
               <Link to="/municipio-en-obra">
-                Conocer la propuesta <ArrowUpRight />
+                Conocer la propuesta <ArrowRight />
               </Link>
             </Button>
           </article>
