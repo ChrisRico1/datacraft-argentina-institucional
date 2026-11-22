@@ -14,6 +14,7 @@ on:
       - fix/radar-sample-audit-origin-header
       - audit/radar-sample-full-report-logs
       - audit/radar-sample-null-periods-and-marks
+      - audit/radar-sample-null-periods-and-marks-finalize
   workflow_dispatch:
 
 permissions:
