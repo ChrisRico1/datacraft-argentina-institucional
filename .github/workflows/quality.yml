@@ -11,6 +11,7 @@ on:
       - fix/radar-import-smoke-contract
       - audit/radar-production-sample-profiling
       - ci/radar-sample-audit-configurable-run
+      - fix/radar-sample-audit-origin-header
   workflow_dispatch:
 
 permissions:
