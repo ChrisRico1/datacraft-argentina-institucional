@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorTimeSeriesChart";
 import { PopulationPyramidChart } from "@/features/radar/components/PopulationPyramidChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
+import { MetricReadingGuide } from "@/features/radar/components/MetricReadingGuide";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
 import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
@@ -1017,6 +1018,8 @@ function RadarEstadisticoArgentina() {
                 <Metadata label="Cobertura geográfica" value={selected.coverage} icon={MapPinned} />
                 <Metadata label="Serie estadística" value={selected.service} icon={Database} />
               </div>
+
+              <MetricReadingGuide indicatorId={selected.id} metricLabel={selectedValueLabel} />
 
               {(selectedEconomicMetrics.length > 0 || selected.id === "sipm" || selected.id === "costo-construccion" || selected.id === "canasta-crianza" || selectedDimensionFilters.length > 0) ? (
                 <div className="mt-6 rounded-xl border border-ink-foreground/10 bg-ink/50 p-4 sm:p-5">
