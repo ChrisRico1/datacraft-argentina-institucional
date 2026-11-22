@@ -1,4 +1,5 @@
 import { buildLatestMetricSummary, formatEphPeriodLabel } from "./latestMetricSummary";
+import { formatMetricValue } from "@/features/radar/utils/formatMetricValue";
 
 type LatestMetricSummaryProps = {
   rows: Record<string, unknown>[];
@@ -24,8 +25,11 @@ export function LatestMetricSummary({
   const summary = buildLatestMetricSummary(rows, periodKey, valueKey, contextKey, contextValue);
   const percentage = /porcentaje|%/i.test(unit);
   const percentagePoints = /puntos/i.test(unit);
-  const formatValue = (value: number) => `${numberFormat.format(value)}${percentage ? "%" : percentagePoints ? " pp" : ""}`;
-  const changeSuffix = percentage || percentagePoints ? " p.p." : /índice/i.test(unit) ? " pts. índice" : "";
+  const formatValue = (value: number) => formatMetricValue(value, unit, valueLabel);
+  const formatChange = (value: number) =>
+    percentage || percentagePoints
+      ? `${numberFormat.format(value)} p.p.`
+      : formatMetricValue(value, unit, valueLabel);
 
   if (summary.status === "select-context") {
     return (
@@ -88,7 +92,7 @@ export function LatestMetricSummary({
             <p className="mt-3 text-sm text-ink-muted">No disponible</p>
           ) : (
             <>
-              <p className="mt-2 font-display text-3xl font-semibold">{summary.change > 0 ? "+" : ""}{numberFormat.format(summary.change)}{changeSuffix}</p>
+              <p className="mt-2 font-display text-3xl font-semibold">{summary.change > 0 ? "+" : ""}{formatChange(summary.change)}</p>
               <p className="mt-2 text-xs text-ink-muted">Entre períodos consecutivos</p>
             </>
           )}
