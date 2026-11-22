@@ -12,7 +12,7 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 ## Perfil de muestra de Production
 
-El workflow [Radar Production sample audit #45067505221](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45067505221) perfiló hasta 1.000 filas por servicio el 22/11/2026. Resultado: **15/15 servicios con muestra disponible, campos mínimos presentes y cero duplicados en las claves compuestas declaradas**.
+El workflow [Radar Production sample audit #45067505221](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45067505221) perfiló hasta 1.000 filas por servicio el 22/11/2026. Resultado: **15/15 servicios con muestra disponible y campos mínimos presentes.** No se observaron duplicados en las claves completas; en mercado laboral, la primera definición de clave omitió las 41 filas porque `area_geografica_cod` llega nulo. La clave se corrigió a período + `area_geografica_nom`; queda pendiente verificarla en la siguiente ejecución.
 
 Hallazgos de la muestra:
 - IPC: 7 tipos de indicador, 3 unidades y 7 regiones; la primera página de 1.000 filas corresponde solo a 202610.
