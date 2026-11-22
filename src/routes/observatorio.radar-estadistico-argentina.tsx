@@ -719,15 +719,7 @@ function RadarEstadisticoArgentina() {
 
   const exportLoadedRows = () => {
     if (apiRows.length === 0) return;
-    const exportRows = apiRows.map((row) =>
-      Object.fromEntries(
-        Object.entries(row).map(([key, value]) => [
-          key,
-          value !== null && typeof value === "object" ? JSON.stringify(value) : value,
-        ]),
-      ),
-    );
-    const csv = createRadarCsv(exportRows);
+    const csv = createRadarCsv(apiRows);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -1415,7 +1407,7 @@ function RadarEstadisticoArgentina() {
               </div>
 
               {selected.id === "costo-construccion" ? <p className="mt-3 text-xs text-ink-muted">Cobertura geográfica: Gran Buenos Aires (GBA). Los resultados no representan el costo de construcción de todo el país.</p> : null}
-              <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+              <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto]">
                 <label className="text-xs text-ink-muted">
                   Período
                   <select
@@ -1433,7 +1425,7 @@ function RadarEstadisticoArgentina() {
                   <span className="font-semibold uppercase tracking-wider">Fuente</span>
                   <span className="mt-2">INDEC · Catálogo API v1</span>
                 </div>
-                <Button className="self-end" variant="outline" disabled={apiRows.length === 0 || apiLoading} onClick={exportLoadedRows}>
+                <Button className="self-end" variant="outline" title="Exporta únicamente los registros cargados en la consulta actual" disabled={apiRows.length === 0 || apiLoading} onClick={exportLoadedRows}>
                   Exportar CSV
                 </Button>
                 <Button className="self-end" variant="lab" disabled={apiLoading} onClick={() => setRefreshKey((value) => value + 1)}>
