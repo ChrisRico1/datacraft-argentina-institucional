@@ -699,8 +699,11 @@ function RadarEstadisticoArgentina() {
         return;
       }
 
-      const totalMatch = /\\/(\d+)$/.exec(payload.contentRange ?? "");
-      const expectedTotal = totalMatch ? Number(totalMatch[1]) : null;
+      const totalPart = (payload.contentRange ?? "").split("/").at(-1);
+      const expectedTotal =
+        totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))
+          ? Number(totalPart)
+          : null;
       const nextRows = [...apiRows, ...rows];
       setApiRows(nextRows);
       setContentRange(`0-${nextRows.length - 1}/${expectedTotal ?? totalRows ?? "*"}`);
@@ -791,8 +794,11 @@ function RadarEstadisticoArgentina() {
             : [];
           collected.push(...pageRows);
 
-          const totalMatch = /\/(\d+)$/.exec(payload.contentRange ?? "");
-          if (totalMatch) expectedTotal = Number(totalMatch[1]);
+      const totalPart = (payload.contentRange ?? "").split("/").at(-1);
+      const expectedTotal =
+        totalPart && totalPart !== "*" && Number.isSafeInteger(Number(totalPart))
+          ? Number(totalPart)
+          : null;
           if (pageRows.length < pageSize || (expectedTotal !== null && collected.length >= expectedTotal)) break;
         }
 
