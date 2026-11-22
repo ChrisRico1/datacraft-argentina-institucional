@@ -12,7 +12,33 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 ## Smoke automatizado de Production
 
-Se agrega `scripts/radar-production-smoke.mjs` y el workflow `.github/workflows/radar-production-smoke.yml` para consultar los 15 servicios contra el Worker real, verificar CORS, esquema mínimo, período y un conjunto de filtros representativos derivados de una observación. El alcance y las limitaciones están documentados en `docs/radar-production-smoke.md`. Este control no equivale a conciliar el universo completo ni a validar todas las métricas y filtros; no modifica el estado de validación de la tabla.
+Se ejecutó el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) el 22/11/2026 contra el Worker público de Production.
+
+**Resultado: 15/15 servicios.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado.
+
+Conteos informados por `Content-Range` durante la ejecución:
+
+| Servicio | Registros informados |
+|---|---:|
+| IPC | 235.683 |
+| Salarios | 3.432 |
+| EMAE | 1.632 |
+| Pobreza | 20 |
+| Mercado de trabajo | 41 |
+| CBA / CBT | 1.651 |
+| Canasta de crianza | 82 |
+| Exportaciones | 781.462 |
+| Importaciones | 391.340 |
+| Población por departamento | 14.784 |
+| Población por jurisdicción | 19.152 |
+| Población nacional | 3.838 |
+| IPI manufacturero | 41.667 |
+| SIPM | 236.062 |
+| Costo de construcción | 14.124 |
+
+El smoke detectó y corrigió una suposición de contrato: la respuesta de importaciones no contiene `Peso_Neto`; no se infiere ni se reemplaza por cero. La primera ejecución también detectó que `Content-Range` no está expuesto uniformemente como encabezado HTTP; el test lee el campo del sobre JSON cuando existe.
+
+**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo y un filtro representativo por servicio. No concilia todos los registros, no valida cada combinación de filtros ni todas las métricas y no valida por sí solo la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
 
 ## Criterio de lectura
 
