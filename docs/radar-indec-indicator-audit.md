@@ -47,7 +47,7 @@ Los períodos de la primera página dependen del orden de consulta del Worker. U
 
 ## Smoke automatizado de Production
 
-Se ejecutó el workflow [Radar Production smoke #45068591929](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068591929) el 22/11/2026 contra el Worker público de Production.
+Se ejecutó el workflow [Radar Production smoke #45068877709](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068877709) el 22/11/2026 contra el Worker público de Production.
 
 **Resultado: 15/15 servicios y 35/35 opciones de métrica.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado. Las 35 opciones cubren los selectores de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), sin errores.
 
