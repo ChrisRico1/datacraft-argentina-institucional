@@ -35,13 +35,12 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           .addTo(map);
         layers.current = L.layerGroup().addTo(map);
 
-        const subbasins = L.layerGroup();
+        const subbasins = L.layerGroup().addTo(map);
         L.control.layers(
           null,
           { "Subcuencas ACUMAR · IGN": subbasins },
           { collapsed: false, position: "bottomleft" },
         ).addTo(map);
-        subbasins.addTo(map);
 
         try {
           const response = await fetch(acumarSubbasinsWfs.url, {
