@@ -74,6 +74,8 @@ const INDICATOR_METADATA: Record<string, RadarMetadata> = {
   "canasta-crianza": { description: "Estima el costo mensual de bienes y servicios y del tiempo de cuidado para cuatro tramos de edad.", interpretation: "Cobertura Gran Buenos Aires. INDEC publica por separado bienes y servicios, tiempo de cuidado y total; usar el total publicado." },
   exportaciones: { description: "Registra las ventas de bienes al exterior por rubro, subrubro y país de destino.", interpretation: "Los valores monetarios se expresan en FOB; existen supresiones por secreto estadístico y las clasificaciones dependen del nomenclador oficial." },
   importaciones: { description: "Registra las compras de bienes al exterior por uso económico, GCE y país de origen.", interpretation: "Los valores monetarios se expresan en CIF; existen supresiones por secreto estadístico y las clasificaciones dependen del nomenclador oficial." },
+  canastas: { description: "Valoriza la Canasta Básica Alimentaria (CBA) y la Canasta Básica Total (CBT), utilizadas para las líneas de indigencia y pobreza.", interpretation: "Cobertura Gran Buenos Aires. La CBA representa requerimientos alimentarios; la CBT incorpora bienes y servicios no alimentarios." },
+  poblacion: { description: "Presenta estimaciones de población por departamento, partido o comuna y sexo.", interpretation: "Cobertura departamental, frecuencia anual, período 2022–2035. No confundir con las proyecciones por jurisdicción o nacionales." },
   "poblacion-departamento": { description: "Presenta estimaciones de población por departamento/partido/comuna y sexo.", interpretation: "Cobertura departamental, frecuencia anual, período 2022–2035. No confundir con las proyecciones por jurisdicción o nacionales." },
   "poblacion-jurisdiccion": { description: "Presenta proyecciones de población por provincia/jurisdicción, sexo y grupos quinquenales de edad.", interpretation: "Cobertura nacional por jurisdicción, frecuencia anual, horizonte 2022–2040." },
   "poblacion-nacional": { description: "Presenta proyecciones de población del total del país por edad y sexo.", interpretation: "Frecuencia anual, horizonte 2022–2040 y referencia al 1 de julio de cada año." },
@@ -87,16 +89,17 @@ export function getRadarIndicatorMetadata(indicatorId: string): RadarMetadata | 
 }
 
 export function getRadarFieldMetadata(indicatorId: string, field: string, value?: string): RadarMetadata | null {
+  const canonicalId = indicatorId === "canastas" ? "cba-cbt" : indicatorId === "poblacion" ? "poblacion-departamento" : indicatorId;
   const normalized = field.toLocaleLowerCase("es-AR");
   const base = FIELD_METADATA[field] ?? FIELD_METADATA[normalized];
   let metadata = base;
-  if (!metadata && indicatorId === "canasta-crianza") {
+  if (!metadata && canonicalId === "canasta-crianza") {
     if (field.startsWith("bys_")) metadata = FIELD_METADATA.bys;
     else if (field.startsWith("cuid_")) metadata = FIELD_METADATA.cuid;
     else if (field.startsWith("tot_")) metadata = FIELD_METADATA.total;
   }
   if (!metadata) return null;
-  if (value?.trim() && field === "indicador" && indicatorId === "sipm") {
+  if (value?.trim() && field === "indicador" && canonicalId === "sipm") {
     const labels: Record<string, string> = {
       IPIB: "Índice de precios básicos del productor: mide precios en la primera etapa de comercialización, sin impuestos.",
       IPIM: "Índice de precios internos al por mayor: mide la evolución de los precios de productos nacionales e importados ofrecidos en el mercado interno.",
@@ -104,7 +107,7 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
     };
     if (labels[value]) return { description: metadata.description, interpretation: `Selección actual: ${value}. ${labels[value]}` };
   }
-  if (value?.trim() && field === "indicador" && indicatorId === "cba-cbt") {
+  if (value?.trim() && field === "indicador" && canonicalId === "cba-cbt") {
     if (/^CBA$/i.test(value)) return { description: metadata.description, interpretation: "Selección actual: CBA. Canasta Básica Alimentaria: valor de los alimentos necesarios para cubrir requerimientos nutricionales; se utiliza como línea de indigencia." };
     if (/^CBT$/i.test(value)) return { description: metadata.description, interpretation: "Selección actual: CBT. Canasta Básica Total: incorpora a la CBA bienes y servicios no alimentarios; se utiliza como línea de pobreza." };
   }
@@ -140,8 +143,9 @@ export function getRadarFieldMetadata(indicatorId: string, field: string, value?
 }
 
 export function getRadarMetricMetadata(indicatorId: string, metricValue: string, metricLabel: string): RadarMetadata {
+  const canonicalId = indicatorId === "canastas" ? "cba-cbt" : indicatorId === "poblacion" ? "poblacion-departamento" : indicatorId;
   const metric = metricLabel.toLocaleLowerCase("es-AR");
-  if (indicatorId === "ipc" || indicatorId === "salarios" || indicatorId === "sipm" || indicatorId === "costo-construccion" || indicatorId === "cba-cbt") {
+  if (canonicalId === "ipc" || canonicalId === "salarios" || canonicalId === "sipm" || canonicalId === "costo-construccion" || canonicalId === "cba-cbt") {
     if (metric.includes("incidencia")) return { description: "Aporte de una categoría a la variación del indicador general, expresado en puntos porcentuales.", interpretation: "No es el porcentaje de aumento de esa categoría ni una tasa porcentual." };
     if (metric.includes("índice")) return { description: "Nivel del índice en relación con su período base.", interpretation: "No es una variación del período. Para medir aumentos, elegí una variación mensual, interanual o acumulada." };
     if (metric.includes("interanual")) return { description: "Cambio porcentual respecto del mismo período del año anterior.", interpretation: "Compara períodos separados por doce meses; no representa el cambio del último mes." };
@@ -149,19 +153,19 @@ export function getRadarMetricMetadata(indicatorId: string, metricValue: string,
     if (metric.includes("mensual")) return { description: "Cambio porcentual respecto del período inmediatamente anterior.", interpretation: "Representa un cambio entre períodos consecutivos, no de doce meses." };
     if (metricValue === "Indice") return { description: "Nivel del índice publicado para la selección actual.", interpretation: "Interpretalo con la base, el indicador y la apertura seleccionados." };
   }
-  if (indicatorId === "emae") {
+  if (canonicalId === "emae") {
     if (metric.includes("interanual")) return { description: "Cambio respecto del mismo mes del año anterior, calculado sobre la serie original.", interpretation: "Conserva efectos estacionales; no compararlo con la variación mensual desestacionalizada." };
     if (metric.includes("desestacionalizada")) return { description: "Serie ajustada para remover patrones estacionales y facilitar comparaciones entre meses.", interpretation: "La variación mensual se calcula sobre la serie ajustada; no mezclar con serie original o tendencia-ciclo." };
     if (metric.includes("tendencia-ciclo")) return { description: "Estimación suavizada de la trayectoria subyacente de la actividad.", interpretation: "No reemplaza la serie original y puede revisarse al incorporar nuevos datos." };
   }
-  if (indicatorId === "pobreza" || indicatorId === "mercado-laboral" || indicatorId === "canasta-crianza") {
-    const entry = getRadarFieldMetadata(indicatorId, metricValue);
+  if (canonicalId === "pobreza" || canonicalId === "mercado-laboral" || canonicalId === "canasta-crianza") {
+    const entry = getRadarFieldMetadata(canonicalId, metricValue);
     if (entry) return entry;
   }
-  if (indicatorId === "exportaciones" || indicatorId === "importaciones") {
+  if (canonicalId === "exportaciones" || canonicalId === "importaciones") {
     return { description: metricLabel.includes("FOB") ? FIELD_METADATA.valor_FOB.description : metricLabel.includes("CIF") ? FIELD_METADATA.valor_CIF.description : "Magnitud de comercio exterior publicada por INDEC para el período y clasificación seleccionados.", interpretation: "No confundir valor monetario con peso neto; respetar la unidad y las supresiones estadísticas." };
   }
-  if (indicatorId.startsWith("poblacion")) return { description: "Cantidad de personas estimada o proyectada para la selección territorial, temporal, etaria y de sexo.", interpretation: "Distinguir estimaciones de proyecciones y mantener la misma fecha y desagregación al comparar." };
+  if (canonicalId.startsWith("poblacion")) return { description: "Cantidad de personas estimada o proyectada para la selección territorial, temporal, etaria y de sexo.", interpretation: "Distinguir estimaciones de proyecciones y mantener la misma fecha y desagregación al comparar." };
   return { description: `Medida publicada por INDEC: ${metricLabel}.`, interpretation: "La definición y unidad deben leerse junto con el indicador y las dimensiones seleccionadas; no combinar aperturas heterogéneas." };
 }
 
