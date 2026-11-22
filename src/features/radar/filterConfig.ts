@@ -8,8 +8,8 @@ export type RadarDimensionFilter = {
 export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
   salarios: [
     { field: "clasificador", label: "Clasificador", placeholder: "Código o nombre del clasificador" },
-    { field: "nivel", label: "Nivel estadístico", placeholder: "Nivel publicado por INDEC" },
-    { field: "codigo", label: "Código de apertura", placeholder: "Código de la categoría" },
+    { field: "nivel", label: "Nivel estadístico", placeholder: "Nivel publicado por INDEC", dependsOn: "clasificador" },
+    { field: "codigo", label: "Código de apertura", placeholder: "Código de la categoría", dependsOn: "nivel" },
     { field: "indicador", label: "Indicador", placeholder: "Indicador publicado" },
   ],
   pobreza: [
