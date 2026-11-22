@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildChildcareCostBreakdown, childcareMetricOptions } from "./childcareCostBreakdown";
+import { buildChildcareCostBreakdown, childcareMetricOptions, formatChildcarePeriodLabel } from "./childcareCostBreakdown";
 
 const latest = {
   Periodo: "202610",
@@ -72,6 +72,11 @@ describe("childcareCostBreakdown", () => {
   it("refuses ambiguous duplicate rows for the latest period", () => {
     const result = buildChildcareCostBreakdown([latest, { ...latest }]);
     expect(result).toEqual({ status: "duplicate-period", period: "202610" });
+  });
+
+  it("formats monthly periods in Spanish", () => {
+    expect(formatChildcarePeriodLabel("202610")).toBe("octubre de 2026");
+    expect(formatChildcarePeriodLabel("unknown")).toBe("unknown");
   });
 
   it("returns no-data when no period is available", () => {
