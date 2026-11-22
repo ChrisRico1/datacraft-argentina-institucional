@@ -59,18 +59,19 @@ function ObservatoryIndex() {
                 <BarChart3 className="h-6 w-6 text-lime" />
               </span>
               <span className="eyebrow rounded-full bg-ink-foreground/10 px-3 py-1.5">
-                En desarrollo
+                Demo disponible
               </span>
             </div>
             <p className="mt-6 text-xs text-lime">Datos e inteligencia</p>
             <h2 className="mt-2 text-2xl font-semibold">Radar Estadístico Argentina</h2>
             <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-              Una plataforma para explorar estadísticas oficiales de economía, sociedad,
-              comercio exterior y demografía, con información del INDEC.
+              Un explorador de estadísticas oficiales del INDEC sobre economía, sociedad,
+              comercio exterior y demografía, con definiciones metodológicas y filtros explicados.
             </p>
             <ul className="my-6 space-y-2 text-sm text-ink-muted">
               <li>Indicadores oficiales y trazabilidad</li>
-              <li>Exploración temática y visualización de datos</li>
+              <li>Métricas y filtros con explicación contextual</li>
+              <li>Visualizaciones y exportación CSV</li>
             </ul>
             <Button asChild variant="lab" className="mt-auto w-fit">
               <Link to="/observatorio/radar-estadistico-argentina">

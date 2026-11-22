@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#99  
+**Repositorio revisado:** `main`, commit `9c8d619e7a7281f66a5dd82e12aee1fd7479290c`, posterior a las PR #82–#101  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -47,9 +47,9 @@ Los períodos de la primera página dependen del orden de consulta del Worker. U
 
 ## Smoke automatizado de Production
 
-Se ejecutó el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) el 22/11/2026 contra el Worker público de Production.
+Se ejecutó el workflow [Radar Production smoke #45068591929](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068591929) el 22/11/2026 contra el Worker público de Production.
 
-**Resultado: 15/15 servicios.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado.
+**Resultado: 15/15 servicios y 35/35 opciones de métrica.** Todos los endpoints devolvieron HTTP 200/206, JSON válido, observaciones, contrato mínimo, CORS del origen institucional y un filtro representativo de período/dimensiones que devolvió el período solicitado. Las 35 opciones cubren los selectores de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), sin errores.
 
 Conteos informados por `Content-Range` durante la ejecución:
 
@@ -73,7 +73,7 @@ Conteos informados por `Content-Range` durante la ejecución:
 
 El smoke detectó y corrigió una suposición de contrato: la respuesta de importaciones no contiene `Peso_Neto`; no se infiere ni se reemplaza por cero. La primera ejecución también detectó que `Content-Range` no está expuesto uniformemente como encabezado HTTP; el test lee el campo del sobre JSON cuando existe.
 
-**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo y un filtro representativo por servicio. No concilia todos los registros, no valida cada combinación de filtros ni todas las métricas y no valida por sí solo la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
+**Límite:** el resultado es un smoke de disponibilidad, esquema mínimo, un filtro representativo por servicio y todas las opciones de métrica de seis selectores. No concilia todos los registros, no valida cada combinación de filtros, ni sustituye la validación manual de todos los indicadores o la experiencia completa del navegador. No modifica los estados de validación integral de la tabla ni habilita IPI manufacturero.
 
 ## Criterio de lectura
 
@@ -181,6 +181,27 @@ La extracción pública de referencia del 2 de noviembre de 2026 enumera 19 tabl
 | EMAE por sectores | Evolución sectorial de la actividad económica | Evaluar después de validar el endpoint de nivel general y la estructura de sectores. |
 | IPI minero | Producción minera | Evaluar como indicador independiente; no reutilizar el esquema de IPI manufacturero sin comprobar sus campos y unidades. |
 | Redeterminación de precios de contratos de obra pública | Seguimiento de índices y aperturas usados para redeterminar contratos | Candidato relevante para Municipio en Obra; requiere analizar alcance normativo, campos, unidad y lectura adecuada antes de incorporarlo. |
+
+## Decisión de visualizaciones implementadas
+
+La selección se basa en la unidad, frecuencia, dimensiones y completitud de la consulta; no se fuerza un gráfico para cada endpoint.
+
+| Familia | Visualización | Condición / límite |
+|---|---|---|
+| IPC, salarios, EMAE, EPH, SIPM e ICC | Serie temporal | Una sola métrica y una observación por período. Si hay varias aperturas, se exige seleccionar una desagregación; si quedan períodos duplicados, se reemplaza el gráfico por una explicación y la tabla. |
+| IPC, salarios, EMAE, SIPM e ICC | Lectura de índice, variación o incidencia | Índices, porcentajes y puntos porcentuales conservan unidades separadas. Porcentajes y puntos porcentuales incluyen referencia en cero; los índices mantienen escala automática. |
+| SIPM e ICC | Comparación categórica | Solo para un período y métrica comunes, con clasificador y nivel definidos; se bloquea si se selecciona una apertura individual o si la jerarquía no es homogénea. |
+| Canasta de crianza | Barras apiladas | Bienes y servicios + tiempo de cuidado; el total publicado se muestra por separado y nunca se recalcula. |
+| Población nacional | Pirámide poblacional | Solo cuando no se filtra edad ni sexo; con filtros se utiliza la serie temporal. |
+| Exportaciones e importaciones | Tabla y serie condicionada | No se dibuja composición/participación sobre una primera página parcial del universo. Exportaciones presenta 521 nulos en FOB y peso neto en la muestra 202610; no hay base suficiente para afirmar exhaustividad. |
+| Población por departamento/jurisdicción | Tabla y serie condicionada | No se presenta mapa hasta validar geometrías y correspondencia de códigos territoriales. |
+| IPI manufacturero | Sin visualización pública | El indicador permanece deshabilitado hasta validar el conjunto completo, filtros, marcas y lectura de series. |
+
+La implementación se apoya en IndicatorTimeSeriesChart, EconomicCategoryComparison, ChildcareCostBreakdownChart y PopulationPyramidChart. Las reglas de series temporales detectan duplicados por período y valores no numéricos; ante una consulta ambigua o incompleta, Radar conserva la tabla y explica por qué no grafica.
+
+## Límites temporales de consulta (429)
+
+El servidor transforma una respuesta HTTP 429 de INDEC en HTTP 503 con el mensaje “INDEC limitó temporalmente las consultas.”. La interfaz muestra el mensaje y orienta a esperar unos minutos antes de usar «Actualizar datos» una sola vez, evitando reintentos repetidos. La prueba unitaria del servidor cubre la traducción 429→503 y la ayuda contextual tiene prueba propia. **No se forzó una respuesta 429 real en Production**: queda pendiente comprobar ese caso extremo contra el upstream sin provocar una limitación artificial de la cuenta.
 
 ## Reglas para visualizaciones
 

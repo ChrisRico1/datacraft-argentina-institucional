@@ -16,13 +16,14 @@ Para cada servicio registrado:
 3. Lee el período y dimensiones de la observación devuelta.
 4. Repite la consulta con filtro de período y los filtros compatibles que se pueden derivar de esa misma observación.
 5. Comprueba que el resultado filtrado no cambie el período solicitado.
+6. Consulta individualmente las 35 opciones de métrica de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), y verifica que cada respuesta corresponda al valor seleccionado.
 
 Los 15 servicios cubiertos son IPC, salarios, EMAE, pobreza, mercado de trabajo, CBA/CBT, canasta de crianza, exportaciones, importaciones, población por departamento, población por jurisdicción, población nacional, IPI manufacturero, SIPM e ICC.
 
 ## Qué no demuestra
 
 - No exige que `Content-Range` esté expuesto como encabezado HTTP en todos los servicios: el Worker puede transportar esa información dentro del sobre JSON o no disponer de ella para una respuesta concreta. No concilia el universo completo de registros, duplicados, continuidad histórica ni supresiones.
-- No recorre todos los valores posibles de cada filtro ni todas las métricas de cada indicador.
+- No recorre todos los valores posibles de cada filtro ni todas las métricas/campos de los 15 indicadores. Las 35 opciones cubren los seis selectores enumerados arriba; tasas EPH y series de Canasta de crianza se perfilan por campos y valores, no por un parámetro de métrica.
 - No valida por sí solo la visualización, el resumen, la exportación o la interacción completa en el navegador.
 - No habilita IPI manufacturero ni cambia el estado de validación manual registrado en `docs/radar-indec-indicator-audit.md`.
 
@@ -35,8 +36,8 @@ El workflow se ejecuta automáticamente después de cambios en el código del Ra
 No requiere secretos ni expone el token de INDEC: consulta exclusivamente los endpoints públicos de la API de Radar, que mantienen la credencial upstream en el Worker.
 
 
-## Resultado de la ejecución inicial
+## Resultado de Production — 22/11/2026
 
-El 22/11/2026, el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Los conteos de registros y el alcance de esta prueba están asentados en `docs/radar-indec-indicator-audit.md`.
+El workflow [Radar Production smoke #45068591929](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45068591929) comprobó **15/15 servicios**: HTTP, JSON, CORS, campos mínimos y filtro representativo por período/dimensiones. Además, verificó **35/35 opciones de métrica** en IPC, salarios, EMAE, CBA/CBT, SIPM e ICC, sin fallas. Cada consulta devolvió el tipo de indicador o descripción de serie solicitado.
 
-El primer intento detectó dos supuestos del test que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`. La segunda ejecución fue satisfactoria.
+La ejecución inicial del smoke había detectado dos supuestos que se corrigieron: `Content-Range` no está siempre expuesto como encabezado HTTP y el servicio de importaciones no devuelve el campo `Peso_Neto`. La ejecución actual volvió a superar el conjunto de controles.
