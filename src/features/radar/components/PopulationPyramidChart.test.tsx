@@ -29,6 +29,15 @@ describe("buildPopulationPyramid", () => {
     expect(result).toBeNull();
   });
 
+  it("refuses to aggregate duplicate age-sex observations", () => {
+    const result = buildPopulationPyramid(
+      [...rows, { fecha: "2026-07-01", edad: 0, sexo_cod: 1, poblacion: 25 }],
+      "fecha",
+      "poblacion",
+    );
+    expect(result).toBeNull();
+  });
+
   it("ignores missing and non-numeric observations", () => {
     const result = buildPopulationPyramid(
       [
