@@ -2,6 +2,12 @@ name: Infraestructura Cloacal — auditoría cartográfica
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/infraestructura-cloacal-geo-audit.yml'
+      - 'scripts/infraestructura-cloacal-geo-audit.py'
 
 permissions:
   contents: read
@@ -22,7 +28,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: pip
       - name: Install geometry validator
         run: python -m pip install "shapely>=2,<3"
       - name: Validate audit script syntax
