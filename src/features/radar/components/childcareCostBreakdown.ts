@@ -43,14 +43,14 @@ function parsePublishedAmount(value: unknown): number | null {
   if (typeof value !== "string") return null;
 
   const normalized = value.trim();
-  const localized = /^-?(?:\\d+|\\d{1,3}(?:\\.\\d{3})+)(?:,\\d+)?$/.test(normalized);
-  const decimal = /^-?\\d+(?:\\.\\d+)?$/.test(normalized);
+  const localized = /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(normalized);
+  const decimal = /^-?\d+(?:\.\d+)?$/.test(normalized);
   if (!localized && !decimal) return null;
 
   const parsed = normalized.includes(",")
-    ? Number(normalized.replace(/\\./g, "").replace(",", "."))
-    : /^-?\\d{1,3}(?:\\.\\d{3})+$/.test(normalized)
-      ? Number(normalized.replace(/\\./g, ""))
+    ? Number(normalized.replace(/\./g, "").replace(",", "."))
+    : /^-?\d{1,3}(?:\.\d{3})+$/.test(normalized)
+      ? Number(normalized.replace(/\./g, ""))
       : Number(normalized);
   return Number.isFinite(parsed) ? parsed : null;
 }
