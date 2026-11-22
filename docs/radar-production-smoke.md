@@ -11,11 +11,11 @@ Script: `scripts/radar-production-smoke.mjs`
 
 Para cada servicio registrado:
 
-1. Consulta una observación al endpoint público de Production.
+1. Consulta hasta 100 observaciones por endpoint público de Production para construir una muestra de valores reales por dimensión.
 2. Verifica HTTP 200/206, JSON válido, contrato de respuesta, origen CORS de la web, `Content-Range` y presencia de campos representativos del esquema.
 3. Lee el período y dimensiones de la observación devuelta.
 4. Repite la consulta con filtro de período y todos los filtros compatibles derivados de esa observación.
-5. Prueba cada filtro compatible de forma individual y comprueba que el campo devuelto coincide con el valor solicitado.
+5. Para cada dimensión compatible, selecciona hasta tres valores distintos presentes en la muestra y prueba cada uno de forma individual; comprueba que todas las filas devueltas respeten el valor y el período de la observación de origen.
 6. Para Canasta de crianza, comprueba que las 12 series de bienes/servicios, cuidado y total estén presentes con valores numéricos en la observación de muestra.
 7. Comprueba que el resultado filtrado no cambie el período solicitado.
 8. Consulta individualmente las 35 opciones de métrica de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), y verifica que cada respuesta corresponda al valor seleccionado.
@@ -25,7 +25,7 @@ Los 15 servicios cubiertos son IPC, salarios, EMAE, pobreza, mercado de trabajo,
 ## Qué no demuestra
 
 - No exige que `Content-Range` esté expuesto como encabezado HTTP en todos los servicios: el Worker puede transportar esa información dentro del sobre JSON o no disponer de ella para una respuesta concreta. No concilia el universo completo de registros, duplicados, continuidad histórica ni supresiones.
-- No recorre todos los valores posibles de cada filtro ni todas las observaciones de los 15 indicadores. Los filtros individuales se prueban con valores presentes en la primera observación devuelta; esto valida el contrato de consulta, no la exhaustividad de cada nomenclatura. Las 35 opciones cubren los seis selectores enumerados arriba; las 12 series de Canasta de crianza se comprueban por presencia y valor numérico, no por un parámetro de métrica.
+- No recorre todos los valores posibles de cada filtro ni todas las observaciones de los 15 indicadores. Los filtros individuales se prueban con hasta tres valores distintos por dimensión, tomados de una muestra de hasta 100 observaciones por servicio. Esto amplía la cobertura del contrato de consulta, pero no demuestra la exhaustividad de nomenclaturas ni todas las combinaciones dependientes. Las 35 opciones cubren los seis selectores enumerados arriba; las 12 series de Canasta de crianza se comprueban por presencia y valor numérico, no por un parámetro de métrica.
 - No valida por sí solo la visualización, el resumen, la exportación o la interacción completa en el navegador.
 - No habilita IPI manufacturero ni cambia el estado de validación manual registrado en `docs/radar-indec-indicator-audit.md`.
 
