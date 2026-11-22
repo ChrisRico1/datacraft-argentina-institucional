@@ -1,0 +1,39 @@
+name: Infraestructura Cloacal — auditoría cartográfica
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infraestructura-cloacal-geo-audit
+  cancel-in-progress: false
+
+jobs:
+  download-and-audit:
+    name: Descargar y validar fuentes públicas
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install geometry validator
+        run: python -m pip install "shapely>=2,<3"
+      - name: Validate audit script syntax
+        run: python -m py_compile scripts/infraestructura-cloacal-geo-audit.py
+      - name: Download and audit official sources
+        run: python scripts/infraestructura-cloacal-geo-audit.py
+      - name: Upload audit report and source files
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: infraestructura-cloacal-geo-audit-${{ github.run_number }}
+          path: artifacts/infraestructura-cloacal-geo-audit/
+          if-no-files-found: warn
+          retention-days: 14
