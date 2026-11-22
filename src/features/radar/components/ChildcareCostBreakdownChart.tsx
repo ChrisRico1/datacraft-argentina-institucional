@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { buildChildcareCostBreakdown } from "./childcareCostBreakdown";
+import { buildChildcareCostBreakdown, formatChildcarePeriodLabel } from "./childcareCostBreakdown";
 
 type ChildcareCostBreakdownChartProps = {
   rows: Record<string, unknown>[];
@@ -53,7 +53,7 @@ export function ChildcareCostBreakdownChart({ rows }: ChildcareCostBreakdownChar
         <div>
           <p className="eyebrow text-lime">COMPOSICIÓN DE LA CANASTA</p>
           <h4 className="mt-1 text-base font-semibold">Bienes, servicios y tiempo de cuidado</h4>
-          <p className="mt-1 text-xs text-ink-muted">Último período disponible: {result.period}</p>
+          <p className="mt-1 text-xs text-ink-muted">Último período disponible: {formatChildcarePeriodLabel(result.period)}</p>
         </div>
         <div className="flex flex-wrap gap-3 text-xs text-ink-muted">
           <span><span className="mr-1 inline-block h-2 w-2 rounded-sm bg-[#b7e36a]" />Bienes y servicios</span>
