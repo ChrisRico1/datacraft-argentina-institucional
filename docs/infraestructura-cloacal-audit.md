@@ -1,0 +1,118 @@
+# Infraestructura Cloacal — auditoría de línea de base
+
+## 1. Objetivo
+
+Documentar el estado real de la demostración Infraestructura Cloacal antes de ampliar su alcance funcional. La ruta vigente es `/observatorio/infraestructura-cloacal` y el código fuente se encuentra en `src/features/observatorio`.
+
+Esta auditoría no incorpora datos nuevos ni modifica el comportamiento de la aplicación. Separa lo que el repositorio implementa de lo que todavía debe verificarse en las fuentes oficiales.
+
+## 2. Estado actual del repositorio
+
+### Ruta y presentación
+
+- La página pública se resuelve mediante `src/routes/observatorio.$slug.tsx` y el catálogo tipado de `src/features/observatorio/catalog.ts`.
+- El proyecto está registrado como «Infraestructura cloacal», con zona «Cuenca Matanza-Riachuelo».
+- La descripción y el objetivo actuales ponen foco en la Cuenca Baja.
+- La página incluye introducción, enlaces a Monitor PISA y al dataset de obras, mapa de referencias, tabla de obras, metodología, alcance territorial y fuentes.
+- La ruta no incorpora actualmente gráficos de indicadores ni una serie de métricas.
+
+### Datos e inventario de obras
+
+- `src/features/observatorio/data.ts` valida registros mediante Zod y carga el inventario comprimido desde `data/works.json.gz.b64`.
+- `data/works.json` y `data/metrics.json` están vacíos; el runtime no carga el inventario desde `works.json`, sino desde el archivo comprimido.
+- El modelo de obra conserva municipio, jurisdicción, sector, nombre, servicio, infraestructura, estado, avance, beneficiarios, fecha de corte, fuente y alcance territorial.
+- Los valores desconocidos de avance, beneficiarios y estado pueden permanecer nulos. Los registros se filtran para mostrar únicamente servicio «Cloacal».
+- La validación de esquema comprueba coherencia básica entre municipio y jurisdicción, fechas, rangos numéricos, fuente registrada y alcance territorial. Esto no sustituye la validación del contenido contra el CSV original de ACUMAR.
+- El componente de carga de datos remotos `AcumarDataExplorer.tsx` no está importado por la ruta pública actual. No debe considerarse parte de la experiencia publicada ni activarse sin una revisión independiente de campos y semántica.
+
+### Cartografía
+
+- `ReferenceMap.tsx` representa 14 centros urbanos bonaerenses y CABA con coordenadas aproximadas.
+- Los puntos son referencias municipales; no son polígonos, radios censales, ubicaciones de obras ni prueba de pertenencia espacial a la cuenca.
+- No se encontró una geometría oficial de la cuenca integrada en la implementación actual.
+- La página enlaza al Monitor PISA para consultar límites y capas oficiales.
+
+### Experiencia y estados
+
+- El inventario local se carga desde un efecto de React. Si falla, el error se envía a la consola; la ruta no presenta actualmente un estado visible de error o reintento para esa carga.
+- Los filtros actuales son municipio, sector, infraestructura y búsqueda textual. Su utilidad depende de los valores reales disponibles en el inventario.
+- No hay KPIs activos: el archivo de métricas está vacío y la ruta no renderiza el componente de KPI.
+
+## 3. Fuentes oficiales identificadas
+
+| Fuente | Uso posible | Precaución |
+|---|---|---|
+| [ACUMAR — Seguimiento de Obras de Agua y Cloaca (2024–2025)](https://datos.acumar.gob.ar/dataset/seguimiento-de-obras-de-agua-y-cloaca) | Inventario de intervenciones y cortes publicados para 2024 y 2025 | La ficha informa publicación y actualización del 12/12/2025 y frecuencia anual. Cada recurso y registro debe conservar su propio corte. |
+| [ACUMAR — Seguimiento de Obras 2018–2023](https://datos.acumar.gob.ar/dataset/seguimiento-de-obras-de-agua-y-cloaca-2018-2023) | Contexto histórico | No mezclar registros de distintos períodos como si fueran una única foto contemporánea. |
+| [Monitor PISA — Agua Potable y Saneamiento Cloacal](https://monitorpisa.acumar.gob.ar/sistema-de-indicadores/agua-potable-y-saneamiento-cloacal/) | Indicadores y capas oficiales de cobertura y expansión de redes | Mantener agua potable y cloacas como servicios diferentes. Verificar fecha y definición de cada capa. |
+| [Monitor PISA — Población dentro del Área con Servicio de Red Cloacal](https://monitorpisa.acumar.gob.ar/sistema-de-indicadores/agua-potable-y-saneamiento-cloacal/poblacion-incorporada-al-area-servicio-red-cloacal/) | Contexto de cobertura de red en la cuenca | La página informa última actualización en julio de 2024, presenta el valor de 2023 (2.682.574 habitantes; 56%) y declara que el indicador está en proceso de actualización. Es un dato histórico publicado, no una estimación vigente para 2026. |
+| [ACUMAR — ICV 2025](https://datos.acumar.gob.ar/dataset/indice-de-calidad-de-vida-icv-de-la-cuenca-matanza-riachuelo-actualizacion-2025) | Contexto territorial a nivel de radio censal y dimensiones de calidad de vida | No asumir que una variable compuesta de servicios sanitarios básicos representa cobertura cloacal aislada. Revisar ficha metodológica y diccionario antes de usarla. |
+| [INDEC — Censo 2022: desagüe a red pública](https://censo.gob.ar/index.php/mapa_desague_red_publica2/) | Conexión de viviendas/hogares a red pública, según universo y variable censal | No confundir conexión efectiva con disponibilidad/cobertura de red; confirmar universo y nivel geográfico de cada tabla. |
+| [GeoSIDUV — Provincia de Buenos Aires](https://geosiduv.gba.gob.ar/) | Posible cartografía de contexto | Verificar geometría, escala, metadatos, licencia y vigencia antes de integrar. |
+
+### Hallazgo estadístico relevante
+
+El Monitor PISA distingue la población dentro del área con servicio de red cloacal de la conexión efectiva de cada vivienda. La página del indicador aclara que su serie publicada llega a 2023, con 56% de cobertura, y que el dato está en proceso de actualización. Por lo tanto, esa cifra solo puede mostrarse como referencia histórica con su período y advertencia; no debe presentarse como cobertura actual.
+
+El ICV 2025 de ACUMAR es una fuente territorial valiosa, pero su dimensión de servicios sanitarios básicos no debe sustituir automáticamente un indicador específico de saneamiento cloacal. La variable `ind_ssb` usada por el componente experimental requiere comprobar su definición exacta en el diccionario y la ficha metodológica antes de reutilizarla.
+
+## 4. Decisiones metodológicas
+
+1. **Unidad territorial principal:** Cuenca Matanza-Riachuelo. La Cuenca Baja puede conservarse como foco de lectura del proyecto actual, pero no debe confundirse con el universo completo.
+2. **Jurisdicciones:** diferenciar CABA de los 14 municipios bonaerenses. Ningún dato municipal completo debe atribuirse automáticamente a la porción del municipio incluida en la cuenca.
+3. **Cobertura y conexión:** son conceptos distintos. Cobertura describe el área con disponibilidad de servicio; conexión efectiva describe viviendas u hogares conectados, según la definición de la fuente.
+4. **Agua y cloacas:** separar siempre los dos servicios, incluso cuando un dataset los publique juntos.
+5. **Obras:** municipio informado, alcance territorial, ubicación puntual y sector de cuenca son campos diferentes. No geolocalizar una obra a partir del centro urbano municipal.
+6. **Temporalidad:** conservar fecha de publicación, corte de datos y período de referencia por separado.
+7. **Faltantes:** usar nulos o «sin dato»; nunca reemplazar valores ausentes por cero.
+8. **Estimaciones:** no prorratear datos municipales por superficie para inferir cobertura dentro de la cuenca sin un método explícito, supuestos publicados y validación.
+9. **Cartografía:** integrar límites hidrográficos/jurisdiccionales y radios censales solo desde geometrías oficiales, con CRS y metadatos comprobados.
+
+## 5. Brechas identificadas
+
+- Verificar el contenido descomprimido de `works.json.gz.b64` contra los recursos originales 2024 y 2025 de ACUMAR: cantidad de registros, identificadores, columnas, duplicados, fechas, servicios, estados, campos espaciales y cobertura territorial.
+- Confirmar qué registros pertenecen efectivamente a la cuenca y cuáles tienen alcance de partido completo o jurisdicción informada.
+- Revisar la correspondencia entre el inventario local y el recurso 2025 que consulta el componente experimental.
+- Obtener y validar la geometría oficial hidrográfica y jurisdiccional de la cuenca, y evaluar radios censales 2022 compatibles.
+- Auditar la variable censal de desagüe a red pública y sus universos.
+- Definir si existe una serie oficial comparable para cobertura de red y conexión efectiva; no construir una serie temporal mezclando definiciones.
+- Definir estados de carga, error y actualización visibles para los datos.
+- Evaluar el componente experimental `AcumarDataExplorer.tsx`; no conectarlo hasta verificar CORS, disponibilidad, esquema, fecha, semántica y atribución de fuentes.
+
+## 6. Próximas etapas técnicas
+
+| Etapa | Alcance | Condición para avanzar |
+|---|---|---|
+| 1. Auditoría de datos | Comparar inventario local con CSV originales 2024/2025 y documentar diccionario | Registros y campos reconciliados, sin atribuciones territoriales no verificadas |
+| 2. Base geográfica | Obtener límites oficiales, radios censales y sistema de referencia | Geometrías oficiales con metadatos y licencia identificados |
+| 3. Indicadores censales | Integrar conexión a red pública desde Censo 2022 | Variable, universo y nivel geográfico documentados |
+| 4. Cobertura de red | Incorporar capas/indicadores de Monitor PISA | Fecha de referencia, definición y alcance verificables |
+| 5. Análisis territorial | Cruzar información compatible espacial y temporalmente | Método reproducible; sin prorrateos no validados |
+| 6. Experiencia ejecutiva | Mapa temático, indicadores, filtros, tablas y comparaciones | Cada visualización enlazada a fuente, período, unidad y cobertura |
+| 7. Validación | Pruebas funcionales, metodológicas, responsive y accesibilidad | Checklist manual en Preview y Production, más CI verde |
+
+## 7. Criterios de aceptación del proyecto
+
+- El mapa distingue límites oficiales, jurisdicciones, radios y ubicaciones de obras; no usa marcadores aproximados como sustitutos.
+- Toda cifra muestra fuente, período, unidad, universo y alcance territorial.
+- Cobertura de red y conexión efectiva se presentan por separado.
+- Agua potable y saneamiento cloacal no se mezclan.
+- Los registros de obras conservan estado, fecha de corte y alcance tal como los publica la fuente.
+- Los datos históricos no se presentan como actuales.
+- Los filtros no sugieren desagregaciones que la fuente no permite.
+- La carga, los errores y la actualización tienen estados visibles.
+- La aplicación conserva la identidad visual y la estructura responsive del sitio institucional.
+
+## 8. Referencias del código auditado
+
+- `src/routes/observatorio.$slug.tsx`
+- `src/features/observatorio/catalog.ts`
+- `src/features/observatorio/data.ts`
+- `src/features/observatorio/types.ts`
+- `src/features/observatorio/components.tsx`
+- `src/features/observatorio/ReferenceMap.tsx`
+- `src/features/observatorio/AcumarDataExplorer.tsx`
+- `src/features/observatorio/data.test.ts`
+- `src/features/observatorio/README.md`
+
+Esta auditoría es una línea de base documental. No certifica la exactitud del inventario comprimido ni la validación en Production de las fuentes remotas.
