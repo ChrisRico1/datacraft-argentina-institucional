@@ -86,6 +86,14 @@ La cantidad de servicios registrados en el servidor no equivale a la cantidad de
 - Las marcas convencionales y observaciones de INDEC deben conservarse. En particular, `s` indica dato confidencial; `*` provisorio; `**` preliminar; `e` estimado por extrapolación/proyección; `i` estimado por imputación; `u` calidad inferior al estándar; `-` cero absoluto; `.` no registrado; `...` no disponible; `///` no corresponde presentar.
 - Los totales por suma y las variaciones pueden diferir de publicaciones técnicas por redondeo, según advierte la documentación del Catálogo.
 
+## Carga incremental y exportación
+
+El explorador carga automáticamente hasta 10.000 registros por consulta para mantener acotada la respuesta inicial. Cuando INDEC informa un total superior, la interfaz identifica que el conjunto está incompleto y permite solicitar bloques adicionales de 1.000 registros, conservando indicador, período, métrica y filtros. El desplazamiento respeta el máximo de 1.000.000 admitido por la ruta servidor.
+
+La tabla y las visualizaciones representan exclusivamente los registros cargados. Los filtros dependientes que obtienen sus opciones de las observaciones permanecen deshabilitados mientras el conjunto esté incompleto; se habilitan cuando la consulta queda completa. Esta regla evita presentar una muestra parcial como si fuera un catálogo exhaustivo. En SIPM e ICC, cuando no se selecciona una apertura concreta, se conserva la consulta acotada de comparación y no se ofrece paginación de un universo de aperturas mezcladas.
+
+La exportación CSV descarga los registros actualmente cargados, con encabezados originales, valores y marcas INDEC conservados, codificación UTF-8 con BOM y escape estándar de comas/comillas. El archivo no afirma contener el universo completo si la consulta sigue parcial; la interfaz mantiene visible el aviso y la cantidad cargada.
+
 ## Endpoint de la aplicación
 
 `GET /api/radar/:indicator?limit=100&offset=0&from=2021`
