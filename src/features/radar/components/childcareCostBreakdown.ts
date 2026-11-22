@@ -55,6 +55,15 @@ function parsePublishedAmount(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+export function formatChildcarePeriodLabel(period: string): string {
+  const match = /^(\\d{4})(0[1-9]|1[0-2])$/.exec(period);
+  if (!match) return period;
+  const [, year, month] = match;
+  return new Intl.DateTimeFormat("es-AR", { month: "long", year: "numeric" }).format(
+    new Date(Number(year), Number(month) - 1, 1),
+  );
+}
+
 export function buildChildcareCostBreakdown(
   rows: Record<string, unknown>[],
 ): ChildcareBreakdownResult {
