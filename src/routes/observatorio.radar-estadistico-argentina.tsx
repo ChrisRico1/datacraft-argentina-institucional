@@ -698,16 +698,14 @@ function RadarEstadisticoArgentina() {
 
       const totalMatch = /\\/(\\d+)$/.exec(payload.contentRange ?? "");
       const expectedTotal = totalMatch ? Number(totalMatch[1]) : null;
-      setApiRows((current) => {
-        const nextRows = [...current, ...rows];
-        setContentRange(`0-${nextRows.length - 1}/${expectedTotal ?? totalRows ?? "*"}`);
-        setApiIncomplete(
-          expectedTotal !== null
-            ? nextRows.length < expectedTotal
-            : rows.length === 1000 && nextRows.length < 1_000_000,
-        );
-        return nextRows;
-      });
+      const nextRows = [...apiRows, ...rows];
+      setApiRows(nextRows);
+      setContentRange(`0-${nextRows.length - 1}/${expectedTotal ?? totalRows ?? "*"}`);
+      setApiIncomplete(
+        expectedTotal !== null
+          ? nextRows.length < expectedTotal
+          : rows.length === 1000 && nextRows.length < 1_000_000,
+      );
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") return;
       setLoadMoreError(error instanceof Error ? error.message : "No se pudieron cargar más registros.");
