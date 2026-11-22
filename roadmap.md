@@ -34,7 +34,8 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 ## P1 — Infraestructura Cloacal
 
 - [x] Auditar la arquitectura actual, la ruta pública, el modelo de datos, la cartografía y las fuentes registradas; documentar la línea de base en `docs/infraestructura-cloacal-audit.md`.
-- [ ] Reconciliar el inventario comprimido de obras con los recursos originales 2024 y 2025 de ACUMAR; verificar registros, campos, cortes, servicios y alcance territorial.
+- [x] Incorporar parser inicial aislado para los CSV originales ACUMAR, con pruebas basadas en muestras compartidas: encabezados, campos citados multilínea, servicio, estados, cantidades, porcentajes y fechas.
+- [ ] Reconciliar el inventario comprimido de obras con los recursos completos 2024 y 2025 de ACUMAR; verificar cantidades, identificadores, duplicados, cambios entre cortes y alcance territorial. La revisión completa sigue pendiente porque solo se recibieron muestras parciales.
 - [ ] Obtener y validar geometrías oficiales de la cuenca hidrográfica/jurisdiccional y radios censales compatibles.
 - [ ] Auditar variables censales de desagüe a red pública, universo y nivel geográfico.
 - [ ] Verificar capas e indicadores de cobertura cloacal del Monitor PISA, su fecha y su definición; distinguir cobertura de conexión efectiva.

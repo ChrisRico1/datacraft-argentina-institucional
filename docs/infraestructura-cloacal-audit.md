@@ -116,3 +116,33 @@ El ICV 2025 de ACUMAR es una fuente territorial valiosa, pero su dimensión de s
 - `src/features/observatorio/README.md`
 
 Esta auditoría es una línea de base documental. No certifica la exactitud del inventario comprimido ni la validación en Production de las fuentes remotas.
+
+
+## 9. Muestras manuales ACUMAR 2024 y 2025
+
+Se recibieron muestras parciales pegadas en la conversación para ambos recursos. No equivalen a los archivos completos y no permiten certificar cantidades, duplicados ni variaciones totales entre cortes.
+
+Observaciones confirmadas en esas muestras:
+
+- Ambos períodos incluyen los campos principales del inventario y columnas de inspección (INSPECTOR, fecha de inspección e informe).
+- El encabezado de responsable de ejecución y el de fecha de inspección pueden llegar con caracteres dañados o espaciado irregular.
+- Los CSV pueden contener campos entrecomillados con comas o saltos de línea; deben procesarse con un parser CSV y no separando líneas manualmente.
+- tipo_fluido diferencia registros de AGUA y CLOACA.
+- obra_estado y obra_sub_estado son campos distintos. Una obra finalizada puede estar en servicio, sin servicio o pendiente de puesta en servicio.
+- En CABA se observan registros con departamento general C.A.B.A. sin código departamental y registros por comuna con código propio.
+- Las muestras 2025 muestran números con punto como separador de miles y porcentajes con símbolo %. La conversión se debe hacer con reglas estrictas y conservar siempre el dato original.
+- Las fechas de inicio de las muestras siguen el patrón M/D/YYYY. El parser inicial solo acepta ese patrón y devuelve nulo ante fechas inválidas o formatos distintos.
+
+### Parser inicial
+
+Se agregó src/features/observatorio/acumar-import.ts como módulo de importación aislado. No reemplaza el inventario publicado ni modifica la ruta pública.
+
+El parser:
+- Normaliza encabezados conocidos, incluidos los dos encabezados con codificación dañada observados.
+- Conserva el registro original por fila.
+- Normaliza servicio, beneficiarios, plazo, avance y fecha de inicio cuando el formato es inequívoco.
+- Conserva estado y subestado por separado.
+- Admite los campos de inspección cuando están presentes.
+- Rechaza columnas obligatorias faltantes y errores de estructura CSV.
+
+Las pruebas usan exclusivamente las muestras compartidas y casos sintéticos explícitos. No certifican el contenido completo de los recursos ni habilitan la integración automática del inventario. La asignación de sector de cuenca, coordenadas y alcance territorial sigue fuera del parser porque no se desprende de forma segura de estos campos.
