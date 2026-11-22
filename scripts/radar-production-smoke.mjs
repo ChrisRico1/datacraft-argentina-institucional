@@ -11,7 +11,7 @@ const services = [
   { id: "cba-cbt", period: "periodo", required: ["valor", "tipo_de_indicador", "region"], filters: { region: "region", indicatorType: "tipo_de_indicador" }, dimensions: ["clasificador", "nivel", "codigo", "indicador"] },
   { id: "canasta-crianza", period: "Periodo", required: ["bys_men1", "cuid_men1", "tot_men1"] },
   { id: "exportaciones", period: "Periodo", required: ["valor_FOB", "Peso_Neto", "rubro_cod", "subrubro_cod", "pais_cod"], dimensions: ["rubro_cod", "subrubro_cod", "pais_cod"] },
-  { id: "importaciones", period: "Periodo", required: ["valor_CIF", "Peso_Neto", "uso_economico_cod", "gce_cod", "pais_cod"], dimensions: ["uso_economico_cod", "gce_cod", "pais_cod"] },
+  { id: "importaciones", period: "Periodo", required: ["valor_CIF", "uso_economico_cod", "gce_cod", "pais_cod"], dimensions: ["uso_economico_cod", "gce_cod", "pais_cod"] },
   { id: "poblacion-departamento", period: "fecha", required: ["poblacion", "jurisdiccion_cod", "departamento_cod", "sexo_cod"], dimensions: ["jurisdiccion_nom", "jurisdiccion_cod", "departamento_cod", "sexo_cod", "rmba"] },
   { id: "poblacion-jurisdiccion", period: "fecha", required: ["poblacion", "jurisdiccion_cod", "sexo_cod", "edad_cod"], dimensions: ["jurisdiccion_nom", "jurisdiccion_cod", "sexo_cod", "edad_cod"] },
   { id: "poblacion-nacional", period: "fecha", required: ["poblacion", "edad", "sexo_cod"], dimensions: ["edad", "sexo_cod"] },

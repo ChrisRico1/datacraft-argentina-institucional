@@ -56,7 +56,7 @@ La implementación está centralizada en `src/features/radar/radarMetadata.tsx`,
 - **CPC 1:** Clasificación Central de Productos, versión 1.
 - **Cuadro web:** identifica el cuadro de publicación del IPI manufacturero.
 - **FOB / CIF:** bases de valoración de exportaciones e importaciones; no son unidades intercambiables.
-- **Peso neto:** cantidad física comercializada, no valor monetario.
+- **Peso neto:** cantidad física comercializada, no valor monetario. Está disponible en la respuesta consultada de exportaciones; no se presume su disponibilidad en importaciones.
 
 ## Tasas EPH: denominadores
 
