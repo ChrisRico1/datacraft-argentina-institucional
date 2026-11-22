@@ -11,12 +11,12 @@ const services = [
   { id: "ipc", period: "periodo", required: ["periodo", "region", "tipo_de_indicador", "valor"], profile: ["tipo_de_indicador", "tipo_de_indicador_descripcion", "unidad_de_medida", "region", "clasificador", "nivel"], values: ["valor"], key: ["periodo", "region", "clasificador", "nivel", "codigo", "tipo_de_indicador"] },
   { id: "salarios", period: "periodo", required: ["periodo", "valor", "tipo_de_indicador"], profile: ["tipo_de_indicador", "tipo_de_indicador_descripcion", "indicador", "clasificador", "nivel"], values: ["valor"], key: ["periodo", "clasificador", "nivel", "codigo", "indicador", "tipo_de_indicador"] },
   { id: "emae", period: "periodo", required: ["periodo", "valor", "tipo_de_indicador_descripcion"], profile: ["tipo_de_indicador", "tipo_de_indicador_descripcion"], values: ["valor"], key: ["periodo", "tipo_de_indicador_descripcion"] },
-  { id: "pobreza", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], key: ["periodo", "area_geografica_nom", "area_geografica_cod"] },
+  { id: "pobreza", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_pobreza_personas", "tasa_indigencia_personas", "tasa_pobreza_hogares", "tasa_indigencia_hogares"], key: ["periodo", "area_geografica_nom"] },
   { id: "mercado-laboral", period: "periodo", required: ["periodo", "area_geografica_nom", "tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], profile: ["area_geografica_nom", "area_geografica_cod"], values: ["tasa_de_actividad", "tasa_de_empleo", "tasa_de_desocupacion", "tasa_de_ocupacion_demandante", "tasa_de_subocupacion", "tasa_de_subocupacion_demandante", "tasa_de_subocupacion_no_demandante", "tasa_de_empleo_formal", "tasa_de_empleo_informal"], key: ["periodo", "area_geografica_nom", "area_geografica_cod"] },
   { id: "cba-cbt", period: "periodo", required: ["periodo", "region", "indicador", "tipo_de_indicador", "valor"], profile: ["region", "indicador", "tipo_de_indicador", "tipo_de_indicador_descripcion", "unidad_de_medida", "clasificador", "nivel"], values: ["valor"], key: ["periodo", "region", "clasificador", "nivel", "codigo", "indicador", "tipo_de_indicador"] },
   { id: "canasta-crianza", period: "Periodo", required: ["Periodo", "tot_men1", "bys_men1", "cuid_men1"], profile: [], values: ["tot_men1", "bys_men1", "cuid_men1", "tot_1a3", "bys_1a3", "cuid_1a3", "tot_4a5", "bys_4a5", "cuid_4a5", "tot_6a12", "bys_6a12", "cuid_6a12"], key: ["Periodo"] },
-  { id: "exportaciones", period: "Periodo", required: ["Periodo", "valor_FOB", "Peso_Neto", "rubro_cod", "subrubro_cod", "pais_cod"], profile: ["rubro_cod", "subrubro_cod", "pais_cod"], values: ["valor_FOB", "Peso_Neto"], key: ["Periodo", "rubro_cod", "subrubro_cod", "pais_cod"] },
-  { id: "importaciones", period: "Periodo", required: ["Periodo", "valor_CIF", "uso_economico_cod", "gce_cod", "pais_cod"], profile: ["uso_economico_cod", "gce_cod", "pais_cod"], values: ["valor_CIF"], key: ["Periodo", "uso_economico_cod", "gce_cod", "pais_cod"] },
+  { id: "exportaciones", period: "Periodo", required: ["Periodo", "valor_FOB", "Peso_Neto", "rubro_cod", "subrubro_cod", "pais_cod"], profile: ["rubro_cod", "subrubro_cod", "pais_cod", "valor_null", "observaciones"], values: ["valor_FOB", "Peso_Neto"], key: ["Periodo", "rubro_cod", "subrubro_cod", "pais_cod"] },
+  { id: "importaciones", period: "Periodo", required: ["Periodo", "valor_CIF", "uso_economico_cod", "gce_cod", "pais_cod"], profile: ["uso_economico_cod", "gce_cod", "pais_cod", "valor_null", "observaciones"], values: ["valor_CIF"], key: ["Periodo", "uso_economico_cod", "gce_cod", "pais_cod"] },
   { id: "poblacion-departamento", period: "fecha", required: ["fecha", "poblacion", "jurisdiccion_cod", "departamento_cod", "sexo_cod"], profile: ["jurisdiccion_nom", "jurisdiccion_cod", "departamento_nom", "departamento_cod", "sexo_cod", "rmba"], values: ["poblacion"], key: ["fecha", "jurisdiccion_cod", "departamento_cod", "sexo_cod"] },
   { id: "poblacion-jurisdiccion", period: "fecha", required: ["fecha", "poblacion", "jurisdiccion_cod", "sexo_cod", "edad_cod"], profile: ["jurisdiccion_nom", "jurisdiccion_cod", "sexo_cod", "edad_cod", "edad_nom"], values: ["poblacion"], key: ["fecha", "jurisdiccion_cod", "sexo_cod", "edad_cod"] },
   { id: "poblacion-nacional", period: "fecha", required: ["fecha", "poblacion", "edad", "sexo_cod"], profile: ["edad", "sexo_cod", "sexo_nom"], values: ["poblacion"], key: ["fecha", "edad", "sexo_cod"] },
@@ -46,24 +46,29 @@ function distinctValues(rows, field, max = 10) {
   return { count: values.size, values: [...values].slice(0, max), missing, truncated: values.size > max };
 }
 
-function profileNumeric(rows, field) {
+function profileNumeric(rows, field, periodField) {
   let numeric = 0;
   let nulls = 0;
   let markers = 0;
   let nonNumeric = 0;
+  const missingOrMarkedPeriods = new Set();
+  const numericPeriods = new Set();
   for (const row of rows) {
     const value = row[field];
     if (value === null || value === undefined || value === "") {
       nulls++;
+      if (row[periodField] !== null && row[periodField] !== undefined) missingOrMarkedPeriods.add(String(row[periodField]));
     } else if (typeof value === "string" && MARKERS.has(value.trim())) {
       markers++;
+      if (row[periodField] !== null && row[periodField] !== undefined) missingOrMarkedPeriods.add(String(row[periodField]));
     } else if (Number.isFinite(typeof value === "number" ? value : Number(String(value).replace(",", ".")))) {
       numeric++;
+      if (row[periodField] !== null && row[periodField] !== undefined) numericPeriods.add(String(row[periodField]));
     } else {
       nonNumeric++;
     }
   }
-  return { numeric, nulls, markers, nonNumeric };
+  return { numeric, nulls, markers, nonNumeric, missingOrMarkedPeriods: [...missingOrMarkedPeriods].sort(), numericPeriods: [...numericPeriods].sort() };
 }
 
 function duplicateCount(rows, fields) {
@@ -131,7 +136,7 @@ for (const service of services) {
     const missingRequired = service.required.filter((field) => rows.some((row) => !Object.prototype.hasOwnProperty.call(row, field)));
     const periods = [...new Set(rows.map((row) => row[service.period]).filter((value) => value !== null && value !== undefined).map(String))].sort();
     const profile = Object.fromEntries(service.profile.map((field) => [field, distinctValues(rows, field)]));
-    const numericProfile = Object.fromEntries(service.values.map((field) => [field, profileNumeric(rows, field)]));
+    const numericProfile = Object.fromEntries(service.values.map((field) => [field, profileNumeric(rows, field, service.period)]));
     const duplicateProfile = duplicateCount(rows, service.key);
     const nullCount = Object.values(numericProfile).reduce((sum, item) => sum + item.nulls, 0);
     const markerCount = Object.values(numericProfile).reduce((sum, item) => sum + item.markers, 0);

@@ -13,6 +13,7 @@ on:
       - ci/radar-sample-audit-configurable-run
       - fix/radar-sample-audit-origin-header
       - audit/radar-sample-full-report-logs
+      - audit/radar-sample-null-periods-and-marks
   workflow_dispatch:
 
 permissions:

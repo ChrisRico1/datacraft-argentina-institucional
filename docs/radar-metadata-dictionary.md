@@ -24,7 +24,7 @@ La implementación está centralizada en `src/features/radar/radarMetadata.tsx`,
 | EMAE | Evolución mensual de la actividad económica agregada, como indicador de corto plazo del PIB. | Índice base 2004=100 y variaciones. Diferenciar serie original, desestacionalizada y tendencia-ciclo. | Nacional; mensual. Las series no deben mezclarse. |
 | Pobreza e indigencia | Proporción de hogares y personas cuyos ingresos no alcanzan la CBT o CBA. | Cuatro tasas: pobreza/indigencia en hogares/personas. | EPH, total de 31 aglomerados urbanos; semestral. No representa cada municipio ni áreas rurales. |
 | Mercado de trabajo | Tasas de actividad, empleo, desocupación, informalidad, ocupación demandante y subocupación. | Porcentajes con universos y denominadores propios. Actividad y empleo se calculan sobre población total; desocupación y tasas de presión laboral sobre PEA; informalidad sobre ocupados. | EPH, total de 31 aglomerados urbanos; trimestral. |
-| CBA / CBT | Valorización de la Canasta Básica Alimentaria y la Canasta Básica Total. | Pesos corrientes; CBA representa requerimientos alimentarios y CBT agrega bienes y servicios no alimentarios. | Gran Buenos Aires. |
+| CBA / CBT | Valorización de la Canasta Básica Alimentaria y la Canasta Básica Total. | Pesos corrientes por adulto equivalente; incluye la relación de gastos (ICE) y valores para tres hogares de referencia. | Gran Buenos Aires. |
 | Canasta de crianza | Costo mensual de bienes y servicios y valorización del tiempo de cuidado para cuatro tramos etarios. | Pesos corrientes; bienes y servicios, tiempo de cuidado y total publicado. | Gran Buenos Aires; cuatro tramos: menores de 1, 1–3, 4–5 y 6–12 años. El total publicado no se recalcula. |
 | Exportaciones | Ventas de bienes al exterior por rubro, subrubro y país de destino. | Valor FOB en dólares y peso neto en la unidad publicada. FOB no incluye seguro y flete internacionales posteriores al embarque. | Nacional; puede haber supresiones por secreto estadístico. |
 | Importaciones | Compras de bienes al exterior por uso económico, GCE y país de origen. | Valor CIF en dólares y peso neto en la unidad publicada. CIF incluye costo, seguro y flete hasta el punto de ingreso definido por la estadística. | Nacional; puede haber supresiones por secreto estadístico. |
@@ -38,19 +38,20 @@ La implementación está centralizada en `src/features/radar/radarMetadata.tsx`,
 ## Definiciones de dimensiones y códigos
 
 - **Período / fecha:** momento de referencia. El formato depende de la frecuencia del servicio.
-- **Región / área geográfica:** ámbito al que corresponde el dato; no amplía la cobertura del relevamiento.
+- **Región / área geográfica:** ámbito al que corresponde el dato; no amplía la cobertura del relevamiento. En pobreza y mercado de trabajo, el agregado `T_31_A` se identifica por `area_geografica_nom`; `area_geografica_cod` llega nulo y no debe usarse como filtro ni como clave.
 - **Clasificador:** sistema que organiza actividades, productos o categorías.
 - **Nivel:** profundidad de la apertura estadística. Comparar solo niveles equivalentes.
 - **Código de apertura:** identificador oficial de una categoría; debe leerse junto con clasificador, nivel y descripción.
 - **Descripción:** denominación oficial legible de la apertura.
-- **Indicador:** índice u operativo dentro del servicio; por ejemplo IPIM, IPIB o IPP en SIPM, y CBA o CBT en canastas básicas.
+- **Indicador:** índice u operativo dentro del servicio; por ejemplo IPIM, IPIB o IPP en SIPM. En CBA/CBT, el tipo de indicador distingue CBA, CBT, ICE y tres hogares de referencia (Hogar 1, 2 y 3).
 - **Tipo de indicador:** distingue nivel de índice, variación mensual, interanual, acumulada o incidencia. Una incidencia se expresa en puntos porcentuales, no en porcentaje.
 - **Serie:** original, desestacionalizada o tendencia-ciclo. No mezclar sus niveles ni variaciones.
 - **Rubro / subrubro:** niveles de clasificación de bienes exportados; el subrubro depende del rubro.
 - **Uso económico / GCE:** clasificación de importaciones; GCE depende del uso económico.
 - **País de destino / origen:** destino de exportaciones u origen de importaciones. La descripción se toma del nomenclador oficial.
 - **Jurisdicción / departamento:** códigos y nombres de las unidades territoriales. Los códigos se mantienen como texto para preservar ceros iniciales.
-- **Sexo:** dimensión publicada por INDEC; en proyecciones nacionales, los códigos se interpretan según el nomenclador del servicio.
+- **Sexo:** dimensión publicada por INDEC; en proyecciones nacionales, los códigos se interpretan según el nomenclador del servicio. En las proyecciones revisadas, 1 = Mujer y 2 = Varón.
+- **RMBA:** marca de pertenencia a la Región Metropolitana de Buenos Aires en las estimaciones por departamento; 1 = pertenece, 0 = no pertenece.
 - **Edad:** años cumplidos en población nacional o grupos quinquenales en proyecciones por jurisdicción.
 - **ClaNAE 2004:** Clasificación Nacional de Actividades Económicas 2004.
 - **CPC 1:** Clasificación Central de Productos, versión 1.

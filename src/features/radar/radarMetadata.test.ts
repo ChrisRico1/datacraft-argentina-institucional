@@ -24,6 +24,13 @@ describe("Radar metadata dictionary", () => {
     expect(getRadarFieldMetadata("emae", "serie", "Serie desestacionalizada")?.interpretation).toContain("patrones estacionales");
   });
 
+  it("explains CBA/CBT household codes and population geography flags", () => {
+    expect(getRadarFieldMetadata("canastas", "tipo_de_indicador", "Hogar 1")?.interpretation).toContain("tres integrantes");
+    expect(getRadarFieldMetadata("canastas", "tipo_de_indicador", "ICE")?.interpretation).toContain("gasto total");
+    expect(getRadarFieldMetadata("poblacion", "rmba", "1")?.interpretation).toContain("pertenece a la Región Metropolitana");
+    expect(getRadarFieldMetadata("mercado-laboral", "area_geografica_cod")?.interpretation).toContain("llega nulo");
+  });
+
   it("uses the EPH economically active population as denominator for demand and underemployment rates", () => {
     expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_ocupacion_demandante")?.interpretation).toContain("población económicamente activa");
     expect(getRadarFieldMetadata("mercado-laboral", "tasa_de_subocupacion")?.interpretation).toContain("población económicamente activa");
