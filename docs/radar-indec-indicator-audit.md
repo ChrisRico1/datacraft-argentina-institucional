@@ -10,6 +10,28 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 **Alcance:** cubre conceptualmente los 15 servicios del catálogo y sus dimensiones configuradas. Esta mejora de comprensión no altera el estado de validación de ejecución: un servicio con metadatos explicativos no se considera validado por ese motivo. IPI manufacturero permanece deshabilitado.
 
+## Perfil de muestra de Production
+
+El workflow [Radar Production sample audit #45067505221](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45067505221) perfiló hasta 1.000 filas por servicio el 22/11/2026. Resultado: **15/15 servicios con muestra disponible, campos mínimos presentes y cero duplicados en las claves compuestas declaradas**.
+
+Hallazgos de la muestra:
+- IPC: 7 tipos de indicador, 3 unidades y 7 regiones; la primera página de 1.000 filas corresponde solo a 202610.
+- Salarios: 4 tipos de indicador y 39 períodos (202307–202609).
+- EMAE: 6 descripciones de serie/métrica y 167 períodos (201210–202608).
+- Pobreza: 20 períodos semestrales completos; las cuatro tasas revisadas tienen valores en los 20.
+- Mercado laboral: 41 trimestres completos para actividad, empleo, desocupación, ocupados demandantes y subocupación. Empleo formal e informal tienen valores desde 2023T4; los 30 períodos anteriores llegan nulos.
+- CBA/CBT: 8 tipos de indicador, incluidos CBA, CBT, ICE y tres hogares de referencia; 77 períodos.
+- Canasta de crianza: 82 períodos; las 12 series de bienes/servicios, cuidado y total tienen valores en la muestra completa.
+- Exportaciones: 521 de 1.000 filas de la muestra 202610 tienen `valor_FOB` y `Peso_Neto` nulos. La respuesta no aporta `valor_null` ni `observaciones` para explicar esas filas; no se infiere la causa.
+- Importaciones: 1.000 valores CIF numéricos; el servicio no expone `Peso_Neto`.
+- Población por departamento y jurisdicción: la primera página ordenada por fecha contiene 2035 y 2040 respectivamente; no representa el rango completo.
+- Población nacional: cinco años de muestra, 2036–2040.
+- IPI manufacturero: 3 series, 4 tipos de indicador y 2 unidades; 19 valores nulos en la muestra, asociados a marcas `s` y `-`. Sigue deshabilitado.
+- SIPM: 5 tipos de indicador en la muestra; las observaciones llevan la marca textual `* Dato provisorio`. La muestra contiene IPIB e IPIM; la auditoría previa de universo completo registra también IPP.
+- ICC: 5 tipos de indicador; las observaciones incluyen `* Dato provisorio` en parte de la muestra.
+
+Los períodos de la primera página dependen del orden de consulta del Worker. Un único período en una muestra no significa que el servicio tenga cobertura de un solo período. El perfil completo, incluidas frecuencias de marcas y períodos nulos, se publica en los logs y el resumen del workflow.
+
 ## Smoke automatizado de Production
 
 Se ejecutó el workflow [Radar Production smoke #45066574481](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45066574481) el 22/11/2026 contra el Worker público de Production.
