@@ -74,14 +74,14 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     order: "area_geografica_nom,periodo",
     periodField: "periodo",
     regionField: "area_geografica_nom",
-    dimensionFields: ["area_geografica_nom"],
+    dimensionFields: ["area_geografica_nom", "area_geografica_cod"],
   },
   "mercado-laboral": {
     endpoint: "mercado_trabajo_eph",
     order: "area_geografica_nom,periodo",
     periodField: "periodo",
     regionField: "area_geografica_nom",
-    dimensionFields: ["area_geografica_nom"],
+    dimensionFields: ["area_geografica_nom", "area_geografica_cod"],
   },
   "cba-cbt": {
     endpoint: "valorizacion_canastas_cba_cbt",
@@ -91,7 +91,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
-    dimensionFields: ["region", "clasificador", "nivel", "codigo", "indicador"],
+    dimensionFields: ["region", "clasificador", "nivel", "codigo", "indicador", "tipo_de_indicador"],
   },
   "canasta-crianza": {
     endpoint: "canasta-crianza",
@@ -118,7 +118,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     periodField: "fecha",
     regionField: "jurisdiccion_nom",
     categoryField: "departamento_nom",
-    dimensionFields: ["jurisdiccion_nom", "departamento_cod", "sexo_cod"],
+    dimensionFields: ["jurisdiccion_nom", "jurisdiccion_cod", "departamento_cod", "sexo_cod", "rmba"],
   },
   "poblacion-jurisdiccion": {
     endpoint: "proyecciones_poblacion_jurisdiccion_2022_2040",
@@ -137,13 +137,13 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
   },
   "ipi-manufacturero": {
     endpoint: "ipi_manufacturero",
-    order:
-      "periodo,anio,mes,indicador,cuadro_web,codigo_ClaNAE_2010,codigo_CPC_2_1,serie,descripcion,tipo_de_indicador,unidad_de_medida",
+    order: "periodo,indicador,cuadro_web,codigo_CLaNAE_2004,descripcion,serie,tipo_de_indicador",
     periodField: "periodo",
+    indicatorField: "indicador",
     seriesField: "serie",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
-    dimensionFields: ["cuadro_web", "codigo_ClaNAE_2010", "codigo_CPC_2_1", "serie", "tipo_de_indicador", "unidad_de_medida"],
+    dimensionFields: ["indicador", "cuadro_web", "codigo_CLaNAE_2004", "serie", "tipo_de_indicador", "unidad_de_medida"],
   },
   sipm: {
     endpoint: "sipm_precios_mayoristas",
@@ -172,6 +172,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     levelField: "nivel",
     openingCodeField: "codigo_apertura",
     metricField: "tipo_de_indicador",
+    dimensionFields: ["codigo_CPC_1"],
   },
 };
 
