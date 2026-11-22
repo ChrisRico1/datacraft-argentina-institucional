@@ -38,7 +38,8 @@ export default function ReferenceMap({ municipality }: { municipality: string })
           format: "image/png",
           transparent: true,
           version: "1.1.1",
-          opacity: 0.62,
+          opacity: 0.92,
+          SLD_BODY: acumarSubbasinsWms.sldBody,
           attribution: acumarSubbasinsWms.attribution,
         }).addTo(map);
         L.control.layers(
