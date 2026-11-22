@@ -52,7 +52,7 @@ function ObservatoryIndex() {
           <p className="text-sm text-ink-muted">Soluciones demostrativas · desarrollos a medida</p>
         </div>
         <div className="grid items-stretch gap-5 md:grid-cols-2">
-          <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
+          <article className="dc-card flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
                 <BarChart3 className="h-6 w-6 text-lime" />
@@ -73,7 +73,7 @@ function ObservatoryIndex() {
             </ul>
             <Link
               to="/observatorio/radar-estadistico-argentina"
-              className="mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-lime hover:gap-3"
+              className="dc-nav-link mt-auto inline-flex w-fit items-center gap-2 pt-2 text-sm font-semibold text-lime"
             >
               Explorar proyecto <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -81,7 +81,7 @@ function ObservatoryIndex() {
           {observatories.map((project) => (
             <ProjectCard key={project.slug} project={project} />
           ))}
-          <article className="flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7 transition hover:border-lime/40">
+          <article className="dc-card flex flex-col rounded-2xl border border-ink-foreground/10 bg-ink-2/50 p-7">
             <div className="flex items-start justify-between gap-3">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-ink-foreground/10">
                 <Building2 className="h-6 w-6 text-lime" />
@@ -97,7 +97,7 @@ function ObservatoryIndex() {
             </p>
             <Link
               to="/municipio-en-obra"
-              className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime hover:gap-3"
+              className="dc-nav-link mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold text-lime"
             >
               Conocer la propuesta <ArrowUpRight className="h-4 w-4" />
             </Link>
