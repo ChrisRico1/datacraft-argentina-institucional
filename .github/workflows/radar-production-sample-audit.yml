@@ -10,14 +10,22 @@ on:
       - "src/features/radar/radarMetadata.tsx"
       - "src/routes/observatorio.radar-estadistico-argentina.tsx"
   workflow_dispatch:
+    inputs:
+      sample_limit:
+        description: "Cantidad máxima de filas por servicio (1–1000)"
+        required: false
+        default: "1000"
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   sample-audit:
-    name: Profile up to 1,000 Production rows per service
+    name: Profile Production rows per service
     runs-on: ubuntu-latest
+    env:
+      RADAR_AUDIT_LIMIT: ${{ github.event.inputs.sample_limit || '1000' }}
     timeout-minutes: 10
     steps:
       - name: Checkout repository

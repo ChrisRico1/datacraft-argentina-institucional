@@ -2,7 +2,8 @@ import { appendFileSync } from "node:fs";
 
 const API_BASE = process.env.RADAR_API_BASE_URL ?? "https://datacraft-argentina-institucional.digitalperseo.workers.dev/api/radar";
 const ORIGIN = process.env.RADAR_PRODUCTION_ORIGIN ?? "https://datacraft-argentina.lovable.app";
-const LIMIT = 1000;
+const LIMIT = Number(process.env.RADAR_AUDIT_LIMIT ?? 1000);
+if (!Number.isInteger(LIMIT) || LIMIT < 1 || LIMIT > 1000) throw new Error("RADAR_AUDIT_LIMIT debe ser un entero entre 1 y 1000.");
 const PAUSE_MS = 350;
 const MARKERS = new Set(["s", "*", "**", "e", "i", "u", "-", ".", "...", "///"]);
 
