@@ -1,7 +1,7 @@
 # Auditoría del catálogo de indicadores — Radar Estadístico Argentina
 
 **Corte de revisión:** 22 de noviembre de 2026  
-**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#91  
+**Repositorio revisado:** `main`, commit `20b804e9ddd960cac15b52b14c8d92201cbc60e0`, posterior a las PR #82–#99  
 **Documentación de campos:** matriz OpenAPI fechada el 2 de noviembre de 2026; ver limitaciones de evidencia al final.
 
 ## Metadatos de interpretación en la interfaz
@@ -12,25 +12,38 @@ El diccionario de metadatos se implementa en `src/features/radar/radarMetadata.t
 
 ## Perfil de muestra de Production
 
-El workflow [Radar Production sample audit #45067505221](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45067505221) perfiló hasta 1.000 filas por servicio el 22/11/2026. Resultado: **15/15 servicios con muestra disponible y campos mínimos presentes**. No se observaron duplicados en las claves completas; la clave inicial de mercado laboral omitió las 41 filas porque `area_geografica_cod` llega nulo. Se corrigió a período + `area_geografica_nom`; el siguiente perfil confirmará esa clave.
+El workflow posterior al merge [Radar Production sample audit #45067841486](https://github.com/ChrisRico1/datacraft-argentina-institucional/actions/runs/45067841486) perfiló hasta 1.000 filas por servicio el 22/11/2026. Resultado: **15/15 servicios con muestra disponible, campos mínimos presentes y cero duplicados en las claves compuestas completas**. La clave de mercado laboral se corrigió a período + `area_geografica_nom`; el perfil posterior confirmó 41/41 filas comparables y cero duplicados.
 
-Hallazgos de la muestra:
-- IPC: 7 tipos de indicador, 3 unidades y 7 regiones; la primera página de 1.000 filas corresponde solo a 202610.
-- Salarios: 4 tipos de indicador y 39 períodos (202307–202609).
-- EMAE: 6 descripciones de serie/métrica y 167 períodos (201210–202608).
-- Pobreza: 20 períodos semestrales completos; las cuatro tasas revisadas tienen valores en los 20.
-- Mercado laboral: 41 trimestres completos para actividad, empleo, desocupación, ocupados demandantes y subocupación. Empleo formal e informal tienen valores desde 2023T4; los 30 períodos anteriores llegan nulos.
-- CBA/CBT: 8 tipos de indicador, incluidos CBA, CBT, ICE y tres hogares de referencia; 77 períodos.
-- Canasta de crianza: 82 períodos; las 12 series de bienes/servicios, cuidado y total tienen valores en la muestra completa.
-- Exportaciones: 521 de 1.000 filas de la muestra 202610 tienen `valor_FOB` y `Peso_Neto` nulos. La respuesta no aporta `valor_null` ni `observaciones` para explicar esas filas; no se infiere la causa.
-- Importaciones: 1.000 valores CIF numéricos; el servicio no expone `Peso_Neto`.
-- Población por departamento y jurisdicción: la primera página ordenada por fecha contiene 2035 y 2040 respectivamente; no representa el rango completo.
-- Población nacional: cinco años de muestra, 2036–2040.
-- IPI manufacturero: 3 series, 4 tipos de indicador y 2 unidades; 19 valores nulos en la muestra, asociados a marcas `s` y `-`. Sigue deshabilitado.
-- SIPM: 5 tipos de indicador en la muestra; las observaciones llevan la marca textual `* Dato provisorio`. La muestra contiene IPIB e IPIM; la auditoría previa de universo completo registra también IPP.
-- ICC: 5 tipos de indicador; las observaciones incluyen `* Dato provisorio` en parte de la muestra.
+Resultado por servicio (muestra y total informados por la API):
 
-Los períodos de la primera página dependen del orden de consulta del Worker. Un único período en una muestra no significa que el servicio tenga cobertura de un solo período. El perfil completo, incluidas frecuencias de marcas y períodos nulos, se publica en los logs y el resumen del workflow.
+| Servicio | Filas perfiladas | Total API | Períodos en la muestra | Nulos en campos numéricos | Duplicados |
+|---|---:|---:|---|---:|---:|
+| IPC | 1.000 | 235.683 | 202610 (1) | 0 | 0 |
+| Índice de salarios | 1.000 | 3.432 | 202307–202609 (39) | 0 | 0 |
+| EMAE — nivel general | 1.000 | 1.632 | 201210–202608 (167) | 0 | 0 |
+| Pobreza e indigencia | 20 | 20 | 20162S–20261S (20) | 0 | 0 |
+| Mercado de trabajo | 41 | 41 | 20162T–20262T (41) | 60 | 0 |
+| CBA / CBT | 1.000 | 1.651 | 202006–202610 (77) | 0 | 0 |
+| Canasta de crianza | 82 | 82 | 202001–202610 (82) | 0 | 0 |
+| Exportaciones | 1.000 | 781.462 | 202610 (1) | 1.042 | 0 |
+| Importaciones | 1.000 | 391.340 | 202610 (1) | 0 | 0 |
+| Población por departamento | 1.000 | 14.784 | 2035 (1) | 0 | 0 |
+| Población por jurisdicción | 1.000 | 19.152 | 2040 (1) | 0 | 0 |
+| Población nacional | 1.000 | 3.838 | 2036–2040 (5) | 0 | 0 |
+| IPI manufacturero | 1.000 | 41.667 | 202606–202609 (4) | 19 | 0 |
+| SIPM | 1.000 | 236.062 | 202610 (1) | 0 | 0 |
+| ICC | 1.000 | 14.124 | 202601–202610 (10) | 0 | 0 |
+
+**Hallazgos que requieren interpretación, no corrección automática:**
+- Mercado laboral: siete tasas (actividad, empleo, desocupación, ocupación demandante y tres de subocupación) tienen 41/41 valores. Empleo formal e informal tienen 11/41 valores cada una; los 30 períodos anteriores llegan nulos. Total: 60 nulos. La explicación contextual advierte que no equivalen a cero.
+- Exportaciones: 521/1.000 valores de `valor_FOB` y 521/1.000 de `Peso_Neto` son nulos en la muestra 202610. La respuesta no incluye `valor_null` ni `observaciones` para explicar esas filas; no se infiere la causa ni se calculan participaciones con esos registros.
+- IPI manufacturero: 981/1.000 valores numéricos; 19 nulos con marcas `s` (18) y `-` (1). Sigue deshabilitado hasta validar el universo completo, filtros y presentación.
+- SIPM: la muestra contiene IPIB e IPIM y cinco métricas; la auditoría de universo completo ya concilió IPIM, IPIB e IPP. Las 1.000 filas de la muestra llevan `* Dato provisorio` en observaciones.
+- ICC: la muestra cubre diez períodos recientes; 642/1.000 filas llevan `* Dato provisorio`.
+- Población por departamento y por jurisdicción: la primera página ordenada por fecha contiene solo 2035 y 2040 respectivamente. Esto no representa el rango completo de cada endpoint.
+- IPC, salarios, EMAE, pobreza, CBA/CBT, canasta de crianza, importaciones y población nacional no presentan nulos ni valores no numéricos en la muestra perfilada.
+
+Los períodos de la primera página dependen del orden de consulta del Worker. Un período único en una muestra no significa que el servicio tenga un solo período disponible. El perfil es muestral: no reemplaza conciliación exhaustiva ni validación manual de todos los filtros en la interfaz.
 
 ## Smoke automatizado de Production
 
@@ -191,7 +204,7 @@ La extracción pública de referencia del 2 de noviembre de 2026 enumera 19 tabl
 - El snapshot OpenAPI y la extracción de 19 tablas usados como referencia fueron publicados por un tercero y reflejan una consulta al Catálogo API-INDEC del **2 de noviembre de 2026**. Sirven para contrastar estructura y nombres, pero no sustituyen la documentación oficial en vivo ni la respuesta actual de Production.
 - La documentación oficial del Catálogo API-INDEC es https://api.indec.gob.ar/docs. La página pública actual carga el contenido de documentación de forma dinámica; en la consulta del 22/11/2026 el lector de texto solo mostró el contenedor de carga y no expuso el esquema de los servicios. Por eso esta auditoría no afirma haber validado el OpenAPI completo en vivo.
 - Para Canasta de crianza se contrastó además el informe oficial de octubre de 2026, publicado el 16 de noviembre de 2026: https://www.indec.gob.ar/uploads/informesdeprensa/canasta_crianza_11_26F9D722BE15.pdf.
-- La validación de ejecución de los otros 9 indicadores, métricas y filtros en Production sigue pendiente de completar y registrar. SIPM se considera validado dentro del alcance acotado que se detalla arriba. La corrección CORS de la API quedó integrada y comprobada para el origen de Production. Las pruebas unitarias validan el comportamiento del código, no la disponibilidad de datos en el servicio remoto.
+- La validación manual integral de Production sigue registrada para 5/15 indicadores (IPC, salarios, EMAE nivel general, pobreza y mercado laboral). SIPM está validado dentro del alcance acotado descrito arriba. Los 15/15 servicios superaron smoke y perfil de muestra, pero esos controles automatizados no equivalen a validar manualmente cada métrica, filtro, visualización y exportación de los diez restantes. La corrección CORS de la API quedó integrada y comprobada para el origen de Production. Las pruebas unitarias validan el comportamiento del código, no la disponibilidad de datos en el servicio remoto.
 - Las preguntas frecuentes oficiales indican que el token vence automáticamente a los 12 meses y que la regeneración invalida inmediatamente el token anterior. También informan que existen límites de uso por cuenta, sin publicar en esa página una cuota numérica universal. La capa servidor ya transforma respuestas upstream `429` en un error controlado `503`; falta verificar en Production la presentación al usuario y documentar el procedimiento de renovación sin exponer el secreto. Referencia: https://api.indec.gob.ar/ayuda/faq.
 
 
