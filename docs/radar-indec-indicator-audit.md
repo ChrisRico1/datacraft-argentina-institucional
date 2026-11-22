@@ -31,8 +31,47 @@ La existencia de un endpoint o una prueba unitaria del armado de URL no demuestr
 | Población por jurisdicción | `proyecciones_poblacion_jurisdiccion_2022_2040` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `sexo_cod`, `edad_cod`, `edad_nom`, `poblacion` | Jurisdicciones; anual, 2022–2040 | Activo. Proyecciones por grupos quinquenales de edad. Mapa/comparación territorial pendiente. |
 | Población nacional | `proyecciones_poblacion_nacional_2022_2040` | `fecha`, `edad`, `sexo_cod`, `sexo_nom`, `poblacion` | Total nacional; anual, 2022–2040 | Activo. Pirámide poblacional solo con ambos sexos y una misma fecha; al filtrar edad/sexo se utiliza la serie temporal. Validación de ejecución pendiente. |
 | IPI manufacturero | `ipi_manufacturero` | `periodo`, `indicador`, `cuadro_web`, `codigo_CLaNAE_2004`, `serie`, `tipo_de_indicador`, `unidad_de_medida`, `valor` | Nacional; mensual, desde 2016 según especificación | Registrado, pero deshabilitado. No habilitar hasta probar respuesta, dimensiones y filtros reales en Production. |
-| SIPM | `sipm_precios_mayoristas` | `periodo`, `operativo`, `indicador`, `clasificador`, `nivel`, `codigo_apertura`, `region`, `tipo_de_indicador`, `valor` | Nacional; mensual | Activo. Comparación de aperturas condicionada a indicador, clasificador y nivel homogéneos. Validación de ejecución pendiente. |
+| SIPM | `sipm_precios_mayoristas` | `periodo`, `operativo`, `indicador`, `clasificador`, `nivel`, `codigo_apertura`, `region`, `tipo_de_indicador`, `valor`, `observaciones` y marcas `valor_null` | Total del país; mensual | **Validado manualmente en Production (22/11/2026):** 236.062 registros; IPIB, IPIM e IPP; cinco métricas por indicador; filtros de clasificación, nivel, apertura y región; paginación y series mensuales. Integridad comprobada para aperturas A. Ver detalle de alcance y límites debajo. |
 | ICC | `icc_precios_construccion` | `periodo`, `indicador`, `codigo_apertura`, `codigo_CPC_1`, `clasificador`, `nivel`, `region`, `tipo_de_indicador`, `valor` | Gran Buenos Aires; mensual | Activo. Comparación de aperturas condicionada a clasificador y nivel homogéneos. Validación de ejecución pendiente. |
+
+
+### Validación de ejecución — SIPM (22/11/2026)
+
+Se consultó el endpoint real `sipm_precios_mayoristas` desde la API de Radar y se contrastaron los conteos, filtros y series en Production.
+
+**Cobertura y conciliación de registros**
+
+- Total general: **236.062 registros**, con período más reciente 202610.
+- Por indicador: IPIB **79.124**, IPIM **79.124** e IPP **77.814**. La suma coincide con el total general.
+- Las cinco métricas consultadas fueron `Indice`, `incidencia`, `v_acum`, `v_ia` y `v_m`. Los conteos por métrica concilian exactamente con el total de cada indicador.
+- Filtros observados: `clasificador=CIIU3` (227.940 registros), `nivel=Categoría de Tabulación` (9.825), `codigo_apertura=A` (1.965) y `region=Total del país` (236.062).
+- La combinación IPIB + índice + CIIU3 + Categoría de Tabulación + apertura A devuelve 131 registros.
+- Los filtros categóricos combinados funcionan; una combinación válida pero sin coincidencias devuelve una respuesta vacía, sin error.
+
+**Paginación y límites**
+
+- `limit=10` devuelve `Content-Range: 0-9/236062`; `offset=10` devuelve el bloque siguiente.
+- `limit=1000` es aceptado; valores 0 y 5000 se rechazan por rango y valores decimales por tipo.
+- `offset=1000001` se rechaza por exceder el máximo configurado.
+- El filtro `from` acepta años de cuatro dígitos y funciona como límite inferior sobre `periodo`. El parámetro `to` no está implementado; las consultas que lo incluyen no lo aplican. No documentarlo como filtro disponible.
+
+**Integridad de series**
+
+Para IPIB, IPIM e IPP, con `clasificador=CIIU3`, `nivel=Categoría de Tabulación` y `codigo_apertura=A`:
+
+- La métrica `Indice` contiene 131 períodos mensuales únicos y consecutivos, desde 201512 hasta 202610, sin duplicados ni valores nulos.
+- `incidencia`, `v_acum` y `v_m` presentan un valor nulo por serie, en el período inicial 201512.
+- `v_ia` presenta 12 valores nulos iniciales por serie, entre 201512 y 201611.
+- El patrón de nulos es idéntico en los tres indicadores. Es compatible con la necesidad de períodos de referencia previos, pero no se registró como validación metodológica oficial exhaustiva. Los nulos deben conservarse; nunca reemplazarse por cero.
+- Se observó una marca de dato provisorio en el período más reciente. Las marcas y observaciones se mantienen separadas del valor numérico en la tabla.
+
+**Límites de esta validación**
+
+- La integridad temporal se comprobó para apertura A y el nivel indicados; no equivale a auditar cada apertura de las 236.062 filas.
+- La comprobación de nulos se limita a las series y métricas descritas.
+- No se realizó una conciliación exhaustiva de cada valor con los cuadros publicados por INDEC.
+- La corrección CORS se integró mediante el PR #82 (merge commit `7d93e0547d307a7edf437cefdee25aafb6af62f0`). Se verificó en Production el preflight `OPTIONS` y una respuesta `GET` parcial HTTP 206: ambas incluyen `Access-Control-Allow-Origin: https://datacraft-argentina.lovable.app`. La consulta GET devolvió `Content-Range: 0-9/131`. La validación confirma el acceso desde el origen de producción; no se generaliza a otros orígenes.
+- La interfaz ya conserva valores nulos como interrupciones de la línea temporal, presenta la marca `valor_null` en una columna independiente y exporta los campos originales a CSV. Esto se verificó mediante inspección del código; no se afirma una prueba visual adicional específica para cada serie SIPM.
 
 ## Servicios del catálogo todavía no integrados
 
@@ -66,5 +105,5 @@ La extracción pública de referencia del 2 de noviembre de 2026 enumera 19 tabl
 - El snapshot OpenAPI y la extracción de 19 tablas usados como referencia fueron publicados por un tercero y reflejan una consulta al Catálogo API-INDEC del **2 de noviembre de 2026**. Sirven para contrastar estructura y nombres, pero no sustituyen la documentación oficial en vivo ni la respuesta actual de Production.
 - La documentación oficial del Catálogo API-INDEC es https://api.indec.gob.ar/docs. La página pública actual carga el contenido de documentación de forma dinámica; en la consulta del 22/11/2026 el lector de texto solo mostró el contenedor de carga y no expuso el esquema de los servicios. Por eso esta auditoría no afirma haber validado el OpenAPI completo en vivo.
 - Para Canasta de crianza se contrastó además el informe oficial de octubre de 2026, publicado el 16 de noviembre de 2026: https://www.indec.gob.ar/uploads/informesdeprensa/canasta_crianza_11_26F9D722BE15.pdf.
-- La validación de ejecución de los otros 10 indicadores, métricas y filtros en Production sigue pendiente de completar y registrar. Las pruebas unitarias validan el comportamiento del código, no la disponibilidad de datos en el servicio remoto.
+- La validación de ejecución de los otros 9 indicadores, métricas y filtros en Production sigue pendiente de completar y registrar. SIPM se considera validado dentro del alcance acotado que se detalla arriba. La corrección CORS de la API quedó integrada y comprobada para el origen de Production. Las pruebas unitarias validan el comportamiento del código, no la disponibilidad de datos en el servicio remoto.
 - Las preguntas frecuentes oficiales indican que el token vence automáticamente a los 12 meses y que la regeneración invalida inmediatamente el token anterior. También informan que existen límites de uso por cuenta, sin publicar en esa página una cuota numérica universal. La capa servidor ya transforma respuestas upstream `429` en un error controlado `503`; falta verificar en Production la presentación al usuario y documentar el procedimiento de renovación sin exponer el secreto. Referencia: https://api.indec.gob.ar/ayuda/faq.
