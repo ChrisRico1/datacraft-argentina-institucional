@@ -15,6 +15,7 @@ on:
       - audit/radar-sample-full-report-logs
       - audit/radar-sample-null-periods-and-marks
       - audit/radar-sample-profile-final
+      - 'test/**'
   workflow_dispatch:
 
 permissions:
