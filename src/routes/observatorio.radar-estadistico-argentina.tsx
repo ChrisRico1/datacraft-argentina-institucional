@@ -1016,10 +1016,10 @@ function RadarEstadisticoArgentina() {
               </div>
 
               <div className="mt-5 grid grid-cols-2 gap-2 xl:grid-cols-4">
-                <Metadata label="Unidad de medida" value={selectedUnit} icon={BarChart3} />
-                <Metadata label="Frecuencia" value={selected.frequency} icon={CalendarDays} />
-                <Metadata label="Cobertura geográfica" value={selected.coverage} icon={MapPinned} />
-                <Metadata label="Serie estadística" value={selected.service} icon={Database} />
+                <Metadata label="Unidad de medida" value={selectedUnit} icon={BarChart3} description={getRadarMetricMetadata(selected.id, selectedValueKey, selectedValueLabel).description} />
+                <Metadata label="Frecuencia" value={selected.frequency} icon={CalendarDays} description={getRadarFieldMetadata(selected.id, "frecuencia")?.description} />
+                <Metadata label="Cobertura geográfica" value={selected.coverage} icon={MapPinned} description={getRadarIndicatorMetadata(selected.id)?.interpretation} />
+                <Metadata label="Servicio INDEC" value={selected.service} icon={Database} description={getRadarFieldMetadata(selected.id, "servicio")?.description} />
               </div>
 
               <MetricReadingGuide indicatorId={selected.id} metricLabel={selectedValueLabel} />
@@ -1545,17 +1545,20 @@ function Metadata({
   label,
   value,
   icon: Icon,
+  description,
 }: {
   label: string;
   value: string;
   icon: typeof BarChart3;
+  description?: string;
 }) {
   return (
-    <div className="flex min-h-[68px] gap-2.5 rounded-lg border border-ink-foreground/10 bg-ink/50 p-3">
+    <div className="flex min-h-[92px] gap-2.5 rounded-lg border border-ink-foreground/10 bg-ink/50 p-3">
       <Icon className="mt-0.5 h-4 w-4 shrink-0 text-lime" />
       <div>
         <p className="text-[11px] uppercase tracking-wider text-ink-muted">{label}</p>
         <p className="mt-1 text-sm font-medium leading-snug">{value}</p>
+        {description ? <p className="mt-1 text-[11px] leading-relaxed text-ink-muted">{description}</p> : null}
       </div>
     </div>
   );
