@@ -24,6 +24,8 @@ import { EconomicCategoryComparison } from "@/features/radar/components/Economic
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
 import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
 import { createRadarCsv } from "@/features/radar/utils/radarExport";
+import { ChildcareCostBreakdownChart } from "@/features/radar/components/ChildcareCostBreakdownChart";
+import { childcareMetricOptions } from "@/features/radar/components/childcareCostBreakdown";
 
 type TopicId = "economia" | "sociedad" | "comercio" | "demografia";
 type MetricOption = { valueKey: string; label: string; description?: string };
@@ -299,20 +301,7 @@ const metricOptions: Record<string, MetricOption[]> = {
     { valueKey: "tasa_de_subocupacion_demandante", label: "Subocupación demandante (%)" },
     { valueKey: "tasa_de_subocupacion_no_demandante", label: "Subocupación no demandante (%)" },
   ],
-  "canasta-crianza": [
-    { valueKey: "tot_men1", label: "Total · menores de 1 año" },
-    { valueKey: "bys_men1", label: "Bienes y servicios · menores de 1 año" },
-    { valueKey: "cuid_men1", label: "Tiempo de cuidado · menores de 1 año" },
-    { valueKey: "tot_1a3", label: "Total · de 1 a 3 años" },
-    { valueKey: "bys_1a3", label: "Bienes y servicios · de 1 a 3 años" },
-    { valueKey: "cuid_1a3", label: "Tiempo de cuidado · de 1 a 3 años" },
-    { valueKey: "tot_4a5", label: "Total · de 4 a 5 años" },
-    { valueKey: "bys_4a5", label: "Bienes y servicios · de 4 a 5 años" },
-    { valueKey: "cuid_4a5", label: "Tiempo de cuidado · de 4 a 5 años" },
-    { valueKey: "tot_6a12", label: "Total · de 6 a 12 años" },
-    { valueKey: "bys_6a12", label: "Bienes y servicios · de 6 a 12 años" },
-    { valueKey: "cuid_6a12", label: "Tiempo de cuidado · de 6 a 12 años" },
-  ],
+  "canasta-crianza": childcareMetricOptions,
 };
 
 const economicMetricOptions: Record<string, EconomicMetricOption[]> = {
@@ -1285,7 +1274,7 @@ function RadarEstadisticoArgentina() {
                         </select>
                       </div>
                     ) : null}
-                    {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "ipc" || selected.id === "salarios" || selected.id === "sipm" || selected.id === "costo-construccion" ? (
+                    {selected.id === "pobreza" || selected.id === "mercado-laboral" || selected.id === "emae" || selected.id === "ipc" || selected.id === "salarios" || selected.id === "sipm" || selected.id === "costo-construccion" || selected.id === "canasta-crianza" ? (
                       <LatestMetricSummary
                         rows={apiRows}
                         periodKey={selected.periodKey}
@@ -1308,6 +1297,9 @@ function RadarEstadisticoArgentina() {
                             error={comparisonPrerequisiteMessage ?? comparisonError}
                             incomplete={comparisonIncomplete}
                           />
+                        ) : null}
+                        {selected.id === "canasta-crianza" && !apiIncomplete ? (
+                          <ChildcareCostBreakdownChart rows={apiRows} />
                         ) : null}
                         {selected.id === "poblacion-nacional" && !dimensionFilters["edad"] && !dimensionFilters["sexo_cod"] ? (
                           <PopulationPyramidChart

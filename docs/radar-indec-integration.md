@@ -73,6 +73,8 @@ El catálogo visual debe mantener una correspondencia explícita con los 15 serv
 | IPI manufacturero | Registrado, temporalmente deshabilitado | No habilitar en la interfaz hasta validar en Production la respuesta, los campos y las dimensiones del endpoint |
 | SIPM e ICC | Disponible | Métricas económicas y comparación de aperturas |
 
+La Canasta de crianza dispone de una visualización apilada por tramo etario que presenta los componentes publicados de bienes y servicios y tiempo de cuidado. El total se toma de `tot_*` y no se recalcula; el informe oficial advierte que la suma de componentes puede diferir por redondeo. Referencia: [informe INDEC de octubre de 2026](https://www.indec.gob.ar/uploads/informesdeprensa/canasta_crianza_11_26F9D722BE15.pdf).
+
 La interfaz incluye un acceso independiente para población nacional. No debe confundirse con las proyecciones por jurisdicción ni con las estimaciones departamentales.
 
 La cantidad de servicios registrados en el servidor no equivale a la cantidad de indicadores plenamente validados. La interfaz de canasta de crianza configura 12 series (cuatro tramos por tres componentes), cuya disponibilidad debe comprobarse con datos reales en PRD. El IPI manufacturero permanece deshabilitado hasta validar su respuesta y dimensiones.
@@ -112,8 +114,10 @@ Respuesta normalizada: `indicator`, `endpoint`, `source`, `fetchedAt`, `contentR
 
 ## Pendientes operativos
 
-- Configurar `INDEC_API_TOKEN` en los entornos local y de producción.
-- Verificar compatibilidad de `process.env` en el Worker desplegado.
-- Ejecutar build, lint y pruebas en CI/entorno de despliegue.
-- Probar cada endpoint con el token real y cotejar los nombres de campos y claves contra la versión vigente del catálogo.
-- Ampliar la exploración para seleccionar desagregaciones, indicadores múltiples y exportar CSV.
+- Completar y registrar la validación de ejecución en Production de los 15 indicadores, sus métricas, filtros y dimensiones.
+- Recorrer individualmente las 12 series de Canasta de crianza en Production y contrastar el último período con el informe oficial correspondiente.
+- Mantener IPI manufacturero deshabilitado hasta validar su respuesta real y sus campos.
+- Revisar periódicamente la vigencia del token de INDEC (el portal indica vencimiento automático a los 12 meses) y la disponibilidad del secreto en el Worker, sin exponer su valor.
+- Evaluar los tres servicios aún no integrados (EMAE por sectores, IPI minero y redeterminación de precios de obra pública) con un caso de uso y un contrato de datos propios.
+
+La auditoría detallada, el estado de cada indicador y las limitaciones de evidencia están en `docs/radar-indec-indicator-audit.md`.
