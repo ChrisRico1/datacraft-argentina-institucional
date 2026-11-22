@@ -14,20 +14,22 @@ Para cada servicio registrado:
 1. Consulta una observación al endpoint público de Production.
 2. Verifica HTTP 200/206, JSON válido, contrato de respuesta, origen CORS de la web, `Content-Range` y presencia de campos representativos del esquema.
 3. Lee el período y dimensiones de la observación devuelta.
-4. Repite la consulta con filtro de período y los filtros compatibles que se pueden derivar de esa misma observación.
-5. Comprueba que el resultado filtrado no cambie el período solicitado.
-6. Consulta individualmente las 35 opciones de métrica de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), y verifica que cada respuesta corresponda al valor seleccionado.
+4. Repite la consulta con filtro de período y todos los filtros compatibles derivados de esa observación.
+5. Prueba cada filtro compatible de forma individual y comprueba que el campo devuelto coincide con el valor solicitado.
+6. Para Canasta de crianza, comprueba que las 12 series de bienes/servicios, cuidado y total estén presentes con valores numéricos en la observación de muestra.
+7. Comprueba que el resultado filtrado no cambie el período solicitado.
+8. Consulta individualmente las 35 opciones de métrica de IPC (7), salarios (4), EMAE (6), CBA/CBT (8), SIPM (5) e ICC (5), y verifica que cada respuesta corresponda al valor seleccionado.
 
 Los 15 servicios cubiertos son IPC, salarios, EMAE, pobreza, mercado de trabajo, CBA/CBT, canasta de crianza, exportaciones, importaciones, población por departamento, población por jurisdicción, población nacional, IPI manufacturero, SIPM e ICC.
 
 ## Qué no demuestra
 
 - No exige que `Content-Range` esté expuesto como encabezado HTTP en todos los servicios: el Worker puede transportar esa información dentro del sobre JSON o no disponer de ella para una respuesta concreta. No concilia el universo completo de registros, duplicados, continuidad histórica ni supresiones.
-- No recorre todos los valores posibles de cada filtro ni todas las métricas/campos de los 15 indicadores. Las 35 opciones cubren los seis selectores enumerados arriba; tasas EPH y series de Canasta de crianza se perfilan por campos y valores, no por un parámetro de métrica.
+- No recorre todos los valores posibles de cada filtro ni todas las observaciones de los 15 indicadores. Los filtros individuales se prueban con valores presentes en la primera observación devuelta; esto valida el contrato de consulta, no la exhaustividad de cada nomenclatura. Las 35 opciones cubren los seis selectores enumerados arriba; las 12 series de Canasta de crianza se comprueban por presencia y valor numérico, no por un parámetro de métrica.
 - No valida por sí solo la visualización, el resumen, la exportación o la interacción completa en el navegador.
 - No habilita IPI manufacturero ni cambia el estado de validación manual registrado en `docs/radar-indec-indicator-audit.md`.
 
-Un resultado exitoso se denomina **smoke de servicio y filtro representativo**, no validación integral del indicador.
+Un resultado exitoso se denomina **smoke de servicio, filtros individuales representativos y series configuradas**, no validación integral del indicador.
 
 ## Ejecución
 
