@@ -18,7 +18,7 @@ describe("radarDimensionFilters", () => {
     "keeps every visible %s dimension accepted by the server allowlist",
     async (indicatorId, filters) => {
       process.env["INDEC_API_TOKEN"] = "test-secret-token";
-      const fetchMock = vi.fn().mockResolvedValue(new Response("[]", { status: 200 }));
+      const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(new Response("[]", { status: 200 })));
       vi.stubGlobal("fetch", fetchMock);
 
       for (const filter of filters) {
