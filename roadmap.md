@@ -11,11 +11,11 @@ Este documento organiza el trabajo pendiente. Las prioridades se revisan contra 
 
 ## P0 — Verificación de la base
 
-- [ ] Ejecutar `bun install --frozen-lockfile`, lint, pruebas y build desde un checkout limpio de `main`.
+- [x] Ejecutar instalación con lockfile congelado, lint, pruebas y build mediante GitHub Actions en las PR del repositorio.
 - [ ] Verificar el despliegue real, las rutas públicas y los logs de runtime; distinguir preview, build y producción.
 - [ ] Confirmar la disponibilidad de `INDEC_API_TOKEN` en Cloudflare sin exponer su valor.
 - [ ] Revisar compatibilidad Nitro/Cloudflare y la configuración Wrangler actual.
-- [ ] Incorporar CI reproducible para lint, pruebas y build si no existe un mecanismo equivalente.
+- [x] Incorporar CI reproducible para lint, pruebas y build mediante GitHub Actions.
 - [ ] Comprobar navegación, errores, responsive y accesibilidad de las rutas principales.
 
 ## P1 — Radar Estadístico Argentina
