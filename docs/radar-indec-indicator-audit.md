@@ -30,10 +30,38 @@ La existencia de un endpoint o una prueba unitaria del armado de URL no demuestr
 | Población por departamento | `estimaciones_poblacion_departamento_2022_2035` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `departamento_cod`, `departamento_nom`, `sexo_cod`, `poblacion`, `rmba` | Departamentos/partidos/comunas; anual, 2022–2035 | Activo. Estimaciones por departamento y sexo. Mapa pendiente de vincular códigos oficiales con geometrías compatibles. |
 | Población por jurisdicción | `proyecciones_poblacion_jurisdiccion_2022_2040` | `fecha`, `jurisdiccion_cod`, `jurisdiccion_nom`, `sexo_cod`, `edad_cod`, `edad_nom`, `poblacion` | Jurisdicciones; anual, 2022–2040 | Activo. Proyecciones por grupos quinquenales de edad. Mapa/comparación territorial pendiente. |
 | Población nacional | `proyecciones_poblacion_nacional_2022_2040` | `fecha`, `edad`, `sexo_cod`, `sexo_nom`, `poblacion` | Total nacional; anual, 2022–2040 | Activo. Pirámide poblacional solo con ambos sexos y una misma fecha; al filtrar edad/sexo se utiliza la serie temporal. Validación de ejecución pendiente. |
-| IPI manufacturero | `ipi_manufacturero` | `periodo`, `indicador`, `cuadro_web`, `codigo_CLaNAE_2004`, `serie`, `tipo_de_indicador`, `unidad_de_medida`, `valor` | Nacional; mensual, desde 2016 según especificación | Registrado, pero deshabilitado. No habilitar hasta probar respuesta, dimensiones y filtros reales en Production. |
+| IPI manufacturero | `ipi_manufacturero` | `periodo`, `indicador`, `cuadro_web`, `codigo_CLaNAE_2004`, `descripcion`, `serie`, `tipo_de_indicador`, `unidad_de_medida`, `valor`, `valor_null` | Nacional; mensual, según especificación | **Validación parcial de Production (22/11/2026):** transferencia paginada completa de 41.667 registros en 42 solicitudes, sin errores. Se verificó el esquema y se exploró una muestra inicial de 2.000 registros. Faltan integridad del conjunto completo, filtros y validación de interfaz. Permanece deshabilitado. Ver detalle debajo. |
 | SIPM | `sipm_precios_mayoristas` | `periodo`, `operativo`, `indicador`, `clasificador`, `nivel`, `codigo_apertura`, `region`, `tipo_de_indicador`, `valor`, `observaciones` y marcas `valor_null` | Total del país; mensual | **Validado manualmente en Production (22/11/2026):** 236.062 registros; IPIB, IPIM e IPP; cinco métricas por indicador; filtros de clasificación, nivel, apertura y región; paginación y series mensuales. Integridad comprobada para aperturas A. Ver detalle de alcance y límites debajo. |
 | ICC | `icc_precios_construccion` | `periodo`, `indicador`, `codigo_apertura`, `codigo_CPC_1`, `clasificador`, `nivel`, `region`, `tipo_de_indicador`, `valor` | Gran Buenos Aires; mensual | Activo. Comparación de aperturas condicionada a clasificador y nivel homogéneos. Validación de ejecución pendiente. |
 
+
+### Validación parcial de ejecución — IPI manufacturero (22/11/2026)
+
+Se consultó en Production el endpoint `ipi_manufacturero` a través de la API de Radar.
+
+**Transferencia y paginación**
+
+- Total informado por la API: **41.667 registros**.
+- La descarga se completó en **42 solicitudes**: páginas de 1.000 registros y una última página de 667.
+- Rangos recibidos sin errores: desde `0-999/41667` hasta `41000-41666/41667`; la descarga acumuló 41.667 registros.
+- Las respuestas parciales utilizan HTTP 206 y exponen `Content-Range`. Se observó el encabezado CORS del origen de Production.
+
+**Estructura observada**
+
+Los campos devueltos incluyen `periodo`, `anio`, `mes`, `indicador`, `cuadro_web`, `codigo_CLaNAE_2004`, `descripcion`, `serie`, `tipo_de_indicador`, `unidad_de_medida`, `valor` y `valor_null`.
+
+En los primeros 2.000 registros inspeccionados se observaron tres series (`Serie original`, `Serie desestacionalizada` y `Serie tendencia-ciclo`), cuatro tipos de indicador (índice, variación interanual, variación acumulada interanual y variación intermensual), dos unidades (número índice y porcentaje) y cinco cuadros (2 a 6).
+
+En esa muestra inicial se detectaron 39 valores sin dato, con marcas `s` y `-`. La clave compuesta por período, cuadro, código, descripción, serie y tipo de indicador no presentó duplicados en la muestra. Los códigos por sí solos no identifican necesariamente una observación única: por ejemplo, un mismo código puede corresponder a varias descripciones de productos.
+
+**Pendiente antes de habilitar**
+
+- Repetir la conciliación de duplicados, nulos y dimensiones sobre los 41.667 registros; la descarga completa se confirmó, pero el análisis posterior no quedó conservado en la sesión de PowerShell.
+- Verificar cobertura histórica, continuidad temporal, filtros admitidos y conteos por dimensión contra la respuesta real del servicio.
+- Confirmar la codificación de textos: PowerShell mostró cadenas con caracteres acentuados mal interpretados, pero todavía no se determinó si el problema está en el payload o en la representación de consola.
+- Validar tabla, gráficos, unidades, marcas de valores nulos y exportación CSV en la interfaz.
+
+**Decisión:** mantener IPI manufacturero deshabilitado. La descarga paginada y la inspección inicial no equivalen a una validación funcional ni metodológica completa.
 
 ### Validación de ejecución — SIPM (22/11/2026)
 
