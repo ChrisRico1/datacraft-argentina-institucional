@@ -91,7 +91,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
-    dimensionFields: ["region", "clasificador", "nivel", "codigo"],
+    dimensionFields: ["region", "clasificador", "nivel", "codigo", "indicador"],
   },
   "canasta-crianza": {
     endpoint: "canasta-crianza",

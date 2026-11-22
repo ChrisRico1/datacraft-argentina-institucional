@@ -10,6 +10,7 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
     { field: "clasificador", label: "Clasificador", placeholder: "Código o nombre del clasificador" },
     { field: "nivel", label: "Nivel estadístico", placeholder: "Nivel publicado por INDEC" },
     { field: "codigo", label: "Código de apertura", placeholder: "Código de la categoría" },
+    { field: "indicador", label: "Indicador", placeholder: "Indicador publicado" },
   ],
   pobreza: [
     { field: "area_geografica_nom", label: "Aglomerado / área geográfica", placeholder: "Código o nombre del área EPH" },
@@ -41,7 +42,7 @@ export const radarDimensionFilters: Record<string, RadarDimensionFilter[]> = {
   ],
   "poblacion-jurisdiccion": [
     { field: "jurisdiccion_nom", label: "Jurisdicción", placeholder: "Nombre de jurisdicción" },
-    { field: "jurisdiccion_cod", label: "Jurisdicción", placeholder: "Código de jurisdicción" },
+    { field: "jurisdiccion_cod", label: "Código de jurisdicción", placeholder: "Código de jurisdicción" },
     { field: "sexo_cod", label: "Sexo", placeholder: "Código de sexo" },
     { field: "edad_cod", label: "Edad", placeholder: "Código o grupo de edad" },
   ],
