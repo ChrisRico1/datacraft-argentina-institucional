@@ -337,12 +337,20 @@ function MunicipioEnObraPage() {
                 </div>
                 <span className="rounded-lg border border-ink-foreground/15 px-3 py-2 text-xs text-ink-muted">Todos los proyectos</span>
               </div>
-              <div className="overflow-x-auto">
+              <div
+                className="overflow-x-auto rounded-lg border border-ink-foreground/10"
+                tabIndex={0}
+                role="region"
+                aria-label="Tabla ilustrativa de cartera de obras"
+              >
                 <table className="w-full min-w-[650px] text-left text-sm">
+                  <caption className="sr-only">
+                    Ejemplo ficticio de proyectos municipales, tipo de obra, estado y porcentaje de avance
+                  </caption>
                   <thead className="bg-ink-2 text-xs text-ink-muted">
                     <tr>
                       {["Proyecto", "Tipo", "Estado", "Avance"].map((heading) => (
-                        <th key={heading} className="px-5 py-3 font-medium">{heading}</th>
+                        <th key={heading} scope="col" className="px-5 py-3 font-medium">{heading}</th>
                       ))}
                     </tr>
                   </thead>
