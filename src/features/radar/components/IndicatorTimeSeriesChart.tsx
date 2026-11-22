@@ -178,7 +178,9 @@ export function IndicatorTimeSeriesChart({
               tickLine={false}
               axisLine={false}
               tickFormatter={(value: number) => formatMetricValue(value, unit, valueLabel, { compact: true })}
-              domain={shouldUseZeroBaseline(unit)\n                ? [(dataMin: number) => Math.min(0, dataMin), (dataMax: number) => Math.max(0, dataMax)]\n                : ["auto", "auto"]}
+              domain={shouldUseZeroBaseline(unit)
+                ? [(dataMin: number) => Math.min(0, dataMin), (dataMax: number) => Math.max(0, dataMax)]
+                : ["auto", "auto"]}
             />
             <Tooltip
               contentStyle={{ background: "#101713", border: "1px solid rgba(255,255,255,.16)", borderRadius: 10, color: "#f4f7f3" }}
