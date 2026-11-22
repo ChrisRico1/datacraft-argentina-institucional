@@ -54,7 +54,7 @@ Referencias:
 | `sipm` | `/sipm_precios_mayoristas` | Índices de precios mayoristas |
 | `costo-construccion` | `/icc_precios_construccion` | Índice del costo de la construcción |
 
-La matriz de campos, claves primarias y filtros está definida en `src/features/radar/server/indec.ts`. Los endpoints no deben habilitarse o renombrarse sin volver a verificar el catálogo oficial.
+La matriz de campos, claves primarias y filtros está definida en `src/features/radar/server/indec.ts`; los rótulos y dependencias de los filtros visibles están en `src/features/radar/filterConfig.ts`. Los endpoints no deben habilitarse o renombrarse sin volver a verificar el catálogo oficial.
 
 ## Consideraciones estadísticas
 

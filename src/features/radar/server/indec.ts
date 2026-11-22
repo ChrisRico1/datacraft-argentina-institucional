@@ -35,6 +35,7 @@ type IndicatorConfig = {
   levelField?: string | undefined;
   openingCodeField?: string | undefined;
   metricField?: string | undefined;
+  dimensionFields?: readonly string[] | undefined;
 };
 
 const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
@@ -59,6 +60,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
     metricField: "tipo_de_indicador",
+    dimensionFields: ["clasificador", "nivel", "codigo"],
   },
   emae: {
     endpoint: "estimador-mensual-de-actividad-economica-nivel-general",
@@ -72,12 +74,14 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     order: "area_geografica_nom,periodo",
     periodField: "periodo",
     regionField: "area_geografica_nom",
+    dimensionFields: ["area_geografica_nom"],
   },
   "mercado-laboral": {
     endpoint: "mercado_trabajo_eph",
     order: "area_geografica_nom,periodo",
     periodField: "periodo",
     regionField: "area_geografica_nom",
+    dimensionFields: ["area_geografica_nom"],
   },
   "cba-cbt": {
     endpoint: "valorizacion_canastas_cba_cbt",
@@ -87,6 +91,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     regionField: "region",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    dimensionFields: ["region", "clasificador", "nivel", "codigo"],
   },
   "canasta-crianza": {
     endpoint: "canasta-crianza",
@@ -98,12 +103,14 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     order: "Anio,Mes,Periodo,rubro_cod,subrubro_cod,pais_cod",
     periodField: "Periodo",
     categoryField: "rubro_cod",
+    dimensionFields: ["rubro_cod", "subrubro_cod", "pais_cod"],
   },
   importaciones: {
     endpoint: "comercio_exterior_importacion_bienes",
     order: "Anio,Mes,Periodo,uso_economico_cod,gce_cod,pais_cod",
     periodField: "Periodo",
     categoryField: "uso_economico_cod",
+    dimensionFields: ["uso_economico_cod", "gce_cod", "pais_cod"],
   },
   "poblacion-departamento": {
     endpoint: "estimaciones_poblacion_departamento_2022_2035",
@@ -111,6 +118,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     periodField: "fecha",
     regionField: "jurisdiccion_nom",
     categoryField: "departamento_nom",
+    dimensionFields: ["jurisdiccion_nom", "departamento_cod", "sexo_cod"],
   },
   "poblacion-jurisdiccion": {
     endpoint: "proyecciones_poblacion_jurisdiccion_2022_2040",
@@ -118,12 +126,14 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     periodField: "fecha",
     regionField: "jurisdiccion_nom",
     categoryField: "edad_nom",
+    dimensionFields: ["jurisdiccion_nom", "jurisdiccion_cod", "sexo_cod", "edad_cod"],
   },
   "poblacion-nacional": {
     endpoint: "proyecciones_poblacion_nacional_2022_2040",
     order: "edad,sexo_cod,fecha",
     periodField: "fecha",
     categoryField: "sexo_nom",
+    dimensionFields: ["edad", "sexo_cod"],
   },
   "ipi-manufacturero": {
     endpoint: "ipi_manufacturero",
@@ -133,6 +143,7 @@ const INDICATORS: Record<IndecIndicatorId, IndicatorConfig> = {
     seriesField: "serie",
     indicatorTypeField: "tipo_de_indicador",
     categoryField: "descripcion",
+    dimensionFields: ["cuadro_web", "codigo_ClaNAE_2010", "codigo_CPC_2_1", "serie", "tipo_de_indicador", "unidad_de_medida"],
   },
   sipm: {
     endpoint: "sipm_precios_mayoristas",
@@ -182,6 +193,7 @@ export type IndecQuery = {
   level?: string | undefined;
   openingCode?: string | undefined;
   metric?: string | undefined;
+  dimensions?: string | undefined;
   limit?: string | undefined;
   offset?: string | undefined;
 };
@@ -271,6 +283,29 @@ export async function getIndecIndicator(
   const level = cleanFilter(query.level, "level");
   const openingCode = cleanFilter(query.openingCode, "openingCode");
   const metric = cleanFilter(query.metric, "metric");
+  let dimensions: Record<string, string> = {};
+  if (query.dimensions) {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(query.dimensions);
+    } catch {
+      throw new IndecServiceError("La configuración de dimensiones no es válida.", 400);
+    }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new IndecServiceError("La configuración de dimensiones debe ser un objeto.", 400);
+    }
+    const allowedFields = new Set(config.dimensionFields ?? []);
+    for (const [field, rawValue] of Object.entries(parsed)) {
+      if (!allowedFields.has(field)) {
+        throw new IndecServiceError(`El indicador no admite el filtro de dimensión ${field}.`, 400);
+      }
+      if (typeof rawValue !== "string") {
+        throw new IndecServiceError(`El filtro de dimensión ${field} debe ser texto.`, 400);
+      }
+      const value = cleanFilter(rawValue, field);
+      if (value) dimensions[field] = value;
+    }
+  }
 
   if (period && from) {
     throw new IndecServiceError("Usá un período exacto o un año desde, no ambos.", 400);
@@ -319,6 +354,7 @@ export async function getIndecIndicator(
     if (value && field) params.set(field, `eq.${value}`);
     else if (value) throw new IndecServiceError(`Este indicador no admite filtro por ${label}.`, 400);
   }
+  for (const [field, value] of Object.entries(dimensions)) params.set(field, `eq.${value}`);
 
   let upstream: Response;
   try {
