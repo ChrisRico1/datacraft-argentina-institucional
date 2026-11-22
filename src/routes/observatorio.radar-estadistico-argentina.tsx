@@ -22,6 +22,7 @@ import { IndicatorTimeSeriesChart } from "@/features/radar/components/IndicatorT
 import { PopulationPyramidChart } from "@/features/radar/components/PopulationPyramidChart";
 import { LatestMetricSummary } from "@/features/radar/components/LatestMetricSummary";
 import { MetricReadingGuide } from "@/features/radar/components/MetricReadingGuide";
+import { RadarMetadataHelp, getRadarFieldMetadata, getRadarIndicatorMetadata, getRadarMetricMetadata } from "@/features/radar/radarMetadata";
 import { EconomicCategoryComparison } from "@/features/radar/components/EconomicCategoryComparison";
 import { radarDimensionFilters } from "@/features/radar/filterConfig";
 import { formatNationalPopulationDimensions } from "@/features/radar/utils/formatNationalPopulationDimensions";
@@ -1008,6 +1009,7 @@ function RadarEstadisticoArgentina() {
                   <p className="eyebrow text-lime">{activeTopicData.title}</p>
                   <h3 className="mt-3 max-w-xl text-2xl font-semibold">{selected.title}</h3>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-muted">{selected.description}</p>
+                  <RadarMetadataHelp metadata={getRadarIndicatorMetadata(selected.id)} className="mt-2" />
                 </div>
                 <span className="rounded-full border border-lime/25 bg-lime/10 px-3 py-1.5 text-[11px] text-lime">{selected.available === false ? "No disponible vía API" : "Fuente INDEC"}</span>
               </div>
@@ -1120,7 +1122,7 @@ function RadarEstadisticoArgentina() {
                                 </datalist>
                               </>
                             )}
-                            {filter.description ? <span className="mt-1 block text-[11px] leading-relaxed text-ink-muted">{filter.description}</span> : null}
+                            <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, filter.field, dimensionFilters[filter.field])} />
                             {filter.suggestion ? <span className="mt-1 block text-[11px] leading-relaxed text-lime/90">Sugerencia: {filter.suggestion}</span> : null}
                           </label>
                         );
@@ -1136,6 +1138,7 @@ function RadarEstadisticoArgentina() {
                       <select value={activeEconomicMetric?.value ?? ""} onChange={(event) => { setEconomicMetric(event.target.value); setOffset(0); setChartContext(""); }} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
                         {selectedEconomicMetrics.map((metric) => <option key={metric.value} value={metric.value}>{metric.label}</option>)}
                       </select>
+                      <RadarMetadataHelp metadata={getRadarMetricMetadata(selected.id, activeEconomicMetric?.value ?? "", activeEconomicMetric?.label ?? selectedValueLabel)} />
                     </label>
                   ) : null}
                   {selected.id === "ipc" ? (
@@ -1149,18 +1152,22 @@ function RadarEstadisticoArgentina() {
                         <label className="text-xs text-ink-muted">Clasificador
                           <input list="radar-ipc-classifications" value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un clasificador" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                           <datalist id="radar-ipc-classifications">{economicFilterSuggestions.classifications.map((value) => <option key={value} value={value} />)}</datalist>
+                          <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "clasificador", economicClassification)} />
                         </label>
                         <label className="text-xs text-ink-muted">Nivel estadístico
                           <input list="radar-ipc-levels" value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                           <datalist id="radar-ipc-levels">{economicFilterSuggestions.levels.map((value) => <option key={value} value={value} />)}</datalist>
+                          <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "nivel", economicLevel)} />
                         </label>
                         <label className="text-xs text-ink-muted">Código de apertura
                           <input list="radar-ipc-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Código publicado por INDEC" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                           <datalist id="radar-ipc-codes">{economicFilterSuggestions.ipcCodes.map((value) => <option key={value} value={value} />)}</datalist>
+                          <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "codigo", economicOpeningCode)} />
                         </label>
                         <label className="text-xs text-ink-muted">Descripción exacta
                           <input list="radar-ipc-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="División, grupo, clase o subclase" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                           <datalist id="radar-ipc-categories">{economicFilterSuggestions.categories.map((value) => <option key={value} value={value} />)}</datalist>
+                          <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "descripcion", economicCategory)} />
                         </label>
                       </div>
                       <p className="mt-2 text-[11px] leading-relaxed text-ink-muted">El IPC publica índices, variaciones porcentuales e incidencias en puntos porcentuales. Son medidas distintas y se consultan por separado. Usá clasificador y nivel para mantener comparaciones entre aperturas equivalentes; las combinaciones sin dato o no aplicables (///) se conservan según INDEC.</p>
@@ -1171,18 +1178,22 @@ function RadarEstadisticoArgentina() {
                       <label className="text-xs text-ink-muted">Indicador
                         <input list="radar-economic-indicators" value={economicIndicator} onChange={(event) => { setEconomicIndicator(event.target.value); setOffset(0); setChartContext(""); }} placeholder={selected.id === "sipm" ? "Ej. IPIB" : "Ej. ICC"} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-indicators">{economicFilterSuggestions.indicators.map((value) => <option key={value} value={value} />)}</datalist>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "indicador", economicIndicator)} />
                       </label>
                       <label className="text-xs text-ink-muted">Clasificador
                         <input list="radar-economic-classifications" value={economicClassification} onChange={(event) => { setEconomicClassification(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un clasificador" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-classifications">{economicFilterSuggestions.classifications.map((value) => <option key={value} value={value} />)}</datalist>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "clasificador", economicClassification)} />
                       </label>
                       <label className="text-xs text-ink-muted">Nivel
                         <input list="radar-economic-levels" value={economicLevel} onChange={(event) => { setEconomicLevel(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí un nivel" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-levels">{economicFilterSuggestions.levels.map((value) => <option key={value} value={value} />)}</datalist>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "nivel", economicLevel)} />
                       </label>
                       <label className="text-xs text-ink-muted">Código de apertura
                         <input list="radar-economic-opening-codes" value={economicOpeningCode} onChange={(event) => { setEconomicOpeningCode(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Ej. 0111" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
                         <datalist id="radar-economic-opening-codes">{economicFilterSuggestions.openingCodes.map((value) => <option key={value} value={value} />)}</datalist>
+                        <RadarMetadataHelp metadata={getRadarFieldMetadata(selected.id, "codigo_apertura", economicOpeningCode)} />
                       </label>
                       <label className="text-xs text-ink-muted col-span-full">Categoría o descripción exacta
                         <input list="radar-economic-categories" value={economicCategory} onChange={(event) => { setEconomicCategory(event.target.value); setOffset(0); setChartContext(""); }} placeholder="Elegí o escribí una descripción" className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground" />
@@ -1233,6 +1244,7 @@ function RadarEstadisticoArgentina() {
                         <select id="radar-metric" value={selectedValueKey} onChange={(event) => setSelectedMetric(event.target.value)} className="mt-2 h-10 w-full rounded-md border border-ink-foreground/15 bg-ink px-3 text-sm text-ink-foreground">
                           {availableMetrics.map((metric) => <option key={metric.valueKey} value={metric.valueKey}>{metric.label}</option>)}
                         </select>
+                        <RadarMetadataHelp metadata={getRadarMetricMetadata(selected.id, activeMetric?.valueKey ?? selectedValueKey, activeMetric?.label ?? selectedValueLabel)} />
                       </div>
                     ) : null}
                     {(selected.id === "pobreza" || selected.id === "mercado-laboral") ? (
